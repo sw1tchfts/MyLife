@@ -67,6 +67,17 @@ export default function HomePage() {
         ))}
       </div>
 
+      <div className="mt-4">
+        <button
+          onClick={() => {
+            throw new Error("Sentry test error — safe to ignore");
+          }}
+          className="rounded-md bg-red-100 px-3 py-1 text-xs text-red-700 hover:bg-red-200"
+        >
+          Test Sentry
+        </button>
+      </div>
+
       <div className="mt-6">
         {loading ? (
           <p className="text-center text-gray-500">Loading tasks...</p>
