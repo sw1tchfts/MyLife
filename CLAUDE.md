@@ -31,6 +31,15 @@ Personal task tracking web app. Single user (no sharing/collaboration features).
 - API routes at `src/app/api/tasks/` (GET, POST) and `src/app/api/tasks/[id]/` (GET, PUT, DELETE)
 - Validation logic in `src/lib/types.ts`
 
+## Testing
+- **Framework**: Vitest
+- **Run tests**: `npm test` (single run) or `npm run test:watch` (watch mode)
+- **Test location**: `src/lib/__tests__/` for unit tests
+- **What's tested**: Validation functions in `types.ts` (26 tests)
+- **Convention**: Test files use `*.test.ts` suffix
+- **After making changes**: Always run `npm test` to check for regressions
+- Config: `vitest.config.ts` (path aliases configured to match tsconfig)
+
 ## File Structure
 ```
 prisma/schema.prisma          # Data model
@@ -100,6 +109,7 @@ Why things are the way they are — don't refactor away from these without askin
 | Supabase Auth (not NextAuth/Auth.js) | Already using Supabase for the database — one fewer service to manage. | 2025 |
 | Prisma (not raw SQL or Drizzle) | Type-safe queries, auto-generated types, good migration story. | Project start |
 | Single CLAUDE.md (not split docs) | AI reads CLAUDE.md automatically. Split files require AI to know they exist and go find them. One file = guaranteed context. | 2026-04 |
+| Vitest (not Jest) | Faster, native TypeScript support, simpler config. Standard for modern Vite/Next.js projects. | 2026-04 |
 
 ## Known Constraints
 Things that have caused problems before. Read before making changes.
