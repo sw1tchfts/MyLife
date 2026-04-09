@@ -49,8 +49,14 @@ src/
     layout.tsx                 # Root layout
     api/tasks/route.ts         # GET + POST tasks
     api/tasks/[id]/route.ts    # GET + PUT + DELETE single task
+    api/categories/route.ts    # GET + POST categories
+    api/categories/[id]/route.ts # PUT + DELETE single category
+    api/settings/app/route.ts  # GET + PUT app-wide settings
+    api/settings/user/route.ts # GET + PUT user preferences
     tasks/new/page.tsx         # Create task page
     tasks/[id]/edit/page.tsx   # Edit task page
+    admin/page.tsx             # Admin settings (categories, defaults, stats)
+    settings/page.tsx          # User settings (theme, account, notifications)
   components/
     TaskCard.tsx               # Task card display
     TaskForm.tsx               # Shared create/edit form
@@ -99,6 +105,8 @@ src/
 - #6 Recurring tasks
 - #7 Dark mode
 - #8 Calendar view
+- #9 Admin settings page — DONE
+- #10 User settings page — DONE
 
 ## Development Workflow (ALWAYS follow these)
 

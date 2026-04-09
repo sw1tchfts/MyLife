@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
 import { SignOutButton } from "@/components/SignOutButton";
 import { createClient } from "@/lib/supabase/server";
@@ -25,7 +26,21 @@ export default async function RootLayout({
           {user && (
             <div className="mb-6 flex items-center justify-between">
               <span className="text-sm text-gray-500">{user.email}</span>
-              <SignOutButton />
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/admin"
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Admin
+                </Link>
+                <Link
+                  href="/settings"
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Settings
+                </Link>
+                <SignOutButton />
+              </div>
             </div>
           )}
           {children}
