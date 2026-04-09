@@ -54,7 +54,44 @@ src/
     DeleteConfirmDialog.tsx    # Delete confirmation modal
 ```
 
+## Authentication
+- **Supabase Auth** with email/password sign-in
+- Packages: `@supabase/supabase-js`, `@supabase/ssr`
+- Browser client: `src/lib/supabase/client.ts` (uses `createBrowserClient`)
+- Server client: `src/lib/supabase/server.ts` (uses `createServerClient`, async `cookies()`)
+- Session management: `src/proxy.ts` (Next.js 16 renamed middleware to proxy)
+- Login page: `src/app/login/page.tsx`
+- Auth callback: `src/app/auth/callback/route.ts`
+- Sign-out button: `src/components/SignOutButton.tsx`
+- All API routes check auth via `supabase.auth.getUser()`
+- Env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+## Next.js 16 Breaking Changes (important!)
+- `middleware.ts` → `proxy.ts`, export `proxy()` not `middleware()`
+- `cookies()` and `headers()` are **async** — must `await` them
+- `params` in route handlers are `Promise` — must `await` them
+- Proxy uses `nodejs` runtime (NOT edge)
+
 ## Deployment Notes
 - Vercel auto-deploys on push to `main`
-- Environment variable `DATABASE_URL` must be set in Vercel project settings
+- Vercel URL: `my-life-phi-coral.vercel.app`
+- Environment variables in Vercel: `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - Framework Preset must be set to "Next.js" in Vercel settings
+- Database tables were created via Supabase SQL Editor (not Prisma migrate)
+- Merge feature branch to `main` and push to trigger deploy
+
+## Feature Backlog (GitHub Issues)
+- #1 Authentication (Supabase Auth) — DONE
+- #2 Categories/Tags
+- #3 Subtasks/Checklists
+- #4 Highlight overdue tasks
+- #5 Search and sort
+- #6 Recurring tasks
+- #7 Dark mode
+- #8 Calendar view
+
+## User Notes
+- Single-user app — no sharing/collaboration features
+- User is new to development — be explicit with instructions
+- Can't run Prisma migrations from Claude Code (network restricted) — use Supabase SQL Editor for schema changes
+- Always merge to `main` and push for Vercel to deploy
