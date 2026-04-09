@@ -5,13 +5,15 @@ import { createClient } from "@/lib/supabase/server";
 
 async function requireAuth() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return user;
 }
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await requireAuth();
@@ -30,14 +32,14 @@ export async function GET(
     console.error("Failed to fetch task:", error);
     return NextResponse.json(
       { error: "Failed to fetch task" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await requireAuth();
@@ -76,14 +78,14 @@ export async function PUT(
     console.error("Failed to update task:", error);
     return NextResponse.json(
       { error: "Failed to update task" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await requireAuth();
@@ -103,7 +105,7 @@ export async function DELETE(
     console.error("Failed to delete task:", error);
     return NextResponse.json(
       { error: "Failed to delete task" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

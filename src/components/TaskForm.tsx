@@ -31,7 +31,7 @@ export default function TaskForm({
       status: "TODO",
       priority: "MEDIUM",
       dueDate: "",
-    }
+    },
   );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");

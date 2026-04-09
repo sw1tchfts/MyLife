@@ -7,7 +7,9 @@ import type { Status } from "@/generated/prisma/client";
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -27,7 +29,7 @@ export async function GET(request: NextRequest) {
     console.error("Failed to fetch tasks:", error);
     return NextResponse.json(
       { error: "Failed to fetch tasks" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -35,7 +37,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -61,7 +65,7 @@ export async function POST(request: NextRequest) {
     console.error("Failed to create task:", error);
     return NextResponse.json(
       { error: "Failed to create task" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

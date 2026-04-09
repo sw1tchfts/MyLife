@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import TaskList from "@/components/TaskList";
 import type { TaskData } from "@/components/TaskCard";
@@ -18,18 +18,21 @@ export default function HomePage() {
   const [filter, setFilter] = useState<Status | "ALL">("ALL");
   const [loading, setLoading] = useState(true);
 
-  const fetchTasks = useCallback(async () => {
-    setLoading(true);
-    const params = filter === "ALL" ? "" : `?status=${filter}`;
-    const res = await fetch(`/api/tasks${params}`);
-    const data = await res.json();
-    setTasks(data);
-    setLoading(false);
-  }, [filter]);
-
   useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+    let cancelled = false;
+    const params = filter === "ALL" ? "" : `?status=${filter}`;
+    fetch(`/api/tasks${params}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled) {
+          setTasks(data);
+          setLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [filter]);
 
   const handleDelete = async (id: string) => {
     await fetch(`/api/tasks/${id}`, { method: "DELETE" });
