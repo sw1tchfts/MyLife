@@ -90,8 +90,28 @@ src/
 - #7 Dark mode
 - #8 Calendar view
 
+## Decision Log
+Why things are the way they are — don't refactor away from these without asking.
+
+| Decision | Why | Date |
+|---|---|---|
+| Client components + API routes (not Server Components) | Simpler mental model — one pattern for data flow (fetch from client → API → Prisma). Easier to debug. | Project start |
+| No external state management (just useState + fetch) | App is small, single-user. Redux/Zustand would be unnecessary complexity. | Project start |
+| Supabase Auth (not NextAuth/Auth.js) | Already using Supabase for the database — one fewer service to manage. | 2025 |
+| Prisma (not raw SQL or Drizzle) | Type-safe queries, auto-generated types, good migration story. | Project start |
+| Single CLAUDE.md (not split docs) | AI reads CLAUDE.md automatically. Split files require AI to know they exist and go find them. One file = guaranteed context. | 2026-04 |
+
+## Known Constraints
+Things that have caused problems before. Read before making changes.
+
+- **No Prisma migrations from Claude Code** — network restricted. Schema changes must go through Supabase SQL Editor, then update `schema.prisma` to match.
+- **Next.js 16 proxy, not middleware** — AI training data knows `middleware.ts`. This project uses `proxy.ts` with `export function proxy()`. Do NOT create a `middleware.ts` file.
+- **No edge runtime** — Prisma requires Node.js runtime. Never set `runtime = 'edge'` on routes or the proxy.
+- **Supabase connection uses port 6543** (transaction pooler), not the default 5432. Don't change the DATABASE_URL port.
+- **`cookies()` and `params` are async in Next.js 16** — must `await` them. AI frequently forgets this.
+- **Always merge to `main` to deploy** — Vercel only auto-deploys from `main`. Feature branches don't deploy.
+
 ## User Notes
 - Single-user app — no sharing/collaboration features
 - User is new to development — be explicit with instructions
-- Can't run Prisma migrations from Claude Code (network restricted) — use Supabase SQL Editor for schema changes
 - Always merge to `main` and push for Vercel to deploy
