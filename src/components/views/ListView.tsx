@@ -128,12 +128,24 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
                   className={`transition-colors hover:bg-gray-50 dark:hover:bg-gray-700 ${rowBg}`}
                 >
                   <td className="px-4 py-3">
-                    <Link
-                      href={`/tasks/${task.id}/edit`}
-                      className="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600"
-                    >
-                      {task.title}
-                    </Link>
+                    <div className="flex items-center gap-1.5">
+                      <Link
+                        href={`/tasks/${task.id}/edit`}
+                        className="text-sm font-medium text-gray-900 hover:text-blue-600 dark:text-gray-100"
+                      >
+                        {task.title}
+                      </Link>
+                      {task.recurrence && task.recurrence !== "NONE" && (
+                        <span
+                          className="inline-flex items-center rounded bg-purple-100 px-1 py-0.5 text-[10px] font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
+                          title={`Repeats ${task.recurrence.toLowerCase()}`}
+                        >
+                          ↻{" "}
+                          {task.recurrence.charAt(0) +
+                            task.recurrence.slice(1).toLowerCase()}
+                        </span>
+                      )}
+                    </div>
                     {task.description && (
                       <p className="mt-0.5 text-xs text-gray-400 line-clamp-1 dark:text-gray-500">
                         {task.description}

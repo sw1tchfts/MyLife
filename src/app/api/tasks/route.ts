@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
         status: parsed.status ?? "TODO",
         priority: parsed.priority ?? "MEDIUM",
         dueDate: parsed.dueDate ? new Date(parsed.dueDate) : null,
+        recurrence: body.recurrence ?? "NONE",
       },
     });
 

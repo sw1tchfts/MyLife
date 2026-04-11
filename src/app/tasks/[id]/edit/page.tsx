@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import TaskForm from "@/components/TaskForm";
 import SubtaskList from "@/components/SubtaskList";
-import type { Status, Priority } from "@/generated/prisma/client";
+import type { Status, Priority, Recurrence } from "@/generated/prisma/client";
 import type { SubtaskData } from "@/components/TaskCard";
 
 interface TaskResponse {
@@ -14,6 +14,7 @@ interface TaskResponse {
   status: Status;
   priority: Priority;
   dueDate: string | null;
+  recurrence: Recurrence;
   subtasks?: SubtaskData[];
 }
 
@@ -80,6 +81,7 @@ export default function EditTaskPage({
     status: task.status,
     priority: task.priority,
     dueDate: task.dueDate ? task.dueDate.split("T")[0] : "",
+    recurrence: task.recurrence || "NONE",
   };
 
   return (
@@ -98,6 +100,7 @@ export default function EditTaskPage({
               body: JSON.stringify({
                 ...data,
                 dueDate: data.dueDate || null,
+                recurrence: data.recurrence,
               }),
             });
             if (!res.ok) throw new Error("Failed to update task");

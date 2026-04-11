@@ -19,6 +19,13 @@ enum Priority {
   HIGH
 }
 
+enum Recurrence {
+  NONE
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
 model Task {
   id          String     @id @default(cuid())
   title       String
@@ -26,6 +33,7 @@ model Task {
   status      Status     @default(TODO)
   priority    Priority   @default(MEDIUM)
   dueDate     DateTime?
+  recurrence  Recurrence @default(NONE)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   categories  TaskCategory[]

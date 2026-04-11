@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Status, Priority } from "@/generated/prisma/client";
+import type { Status, Priority, Recurrence } from "@/generated/prisma/client";
 
 interface TaskFormData {
   title: string;
@@ -10,6 +10,7 @@ interface TaskFormData {
   status: Status;
   priority: Priority;
   dueDate: string;
+  recurrence: Recurrence;
 }
 
 interface TaskFormProps {
@@ -31,6 +32,7 @@ export default function TaskForm({
       status: "TODO",
       priority: "MEDIUM",
       dueDate: "",
+      recurrence: "NONE",
     },
   );
   const [submitting, setSubmitting] = useState(false);
@@ -96,7 +98,7 @@ export default function TaskForm({
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
         <div>
           <label
             htmlFor="status"
@@ -158,6 +160,31 @@ export default function TaskForm({
             }
             className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
+        </div>
+
+        <div>
+          <label
+            htmlFor="recurrence"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Repeat
+          </label>
+          <select
+            id="recurrence"
+            value={formData.recurrence}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                recurrence: e.target.value as Recurrence,
+              })
+            }
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+          >
+            <option value="NONE">Never</option>
+            <option value="DAILY">Daily</option>
+            <option value="WEEKLY">Weekly</option>
+            <option value="MONTHLY">Monthly</option>
+          </select>
         </div>
       </div>
 

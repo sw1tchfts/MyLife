@@ -14,6 +14,8 @@ export interface SubtaskData {
   sortOrder: number;
 }
 
+export type Recurrence = "NONE" | "DAILY" | "WEEKLY" | "MONTHLY";
+
 export interface TaskData {
   id: string;
   title: string;
@@ -21,6 +23,7 @@ export interface TaskData {
   status: Status;
   priority: Priority;
   dueDate: string | null;
+  recurrence: Recurrence;
   createdAt: string;
   subtasks?: SubtaskData[];
 }

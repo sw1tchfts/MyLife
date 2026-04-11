@@ -48,7 +48,8 @@ src/
     page.tsx                   # Home (view switcher via ?view= param)
     layout.tsx                 # Root layout (sidebar for authed, plain for login)
     api/tasks/route.ts         # GET + POST tasks
-    api/tasks/[id]/route.ts    # GET + PUT + DELETE single task
+    api/tasks/[id]/route.ts    # GET + PUT + DELETE single task (auto-creates next for recurring)
+    api/tasks/[id]/subtasks/route.ts # POST + PUT + DELETE subtasks
     api/categories/route.ts    # GET + POST categories
     api/categories/[id]/route.ts # PUT + DELETE single category
     api/settings/app/route.ts  # GET + PUT app-wide settings
@@ -59,8 +60,12 @@ src/
     settings/page.tsx          # User settings (theme, account, notifications)
   components/
     Sidebar.tsx                # Left navigation sidebar (Notion-style)
-    TaskCard.tsx               # Task card display + getDueStatus helper
-    TaskForm.tsx               # Shared create/edit form
+    ThemeProvider.tsx           # Dark mode context + class toggle
+    KeyboardShortcuts.tsx      # Global keyboard shortcuts (N, 1-5, /)
+    QuickAddModal.tsx          # Quick task creation modal
+    SubtaskList.tsx            # Subtask checklist with progress bar
+    TaskCard.tsx               # Task card display + getDueStatus helper + types
+    TaskForm.tsx               # Shared create/edit form (incl. recurrence)
     TaskList.tsx               # Legacy task list (kept for reference)
     StatusBadge.tsx            # Status pill
     PriorityBadge.tsx          # Priority pill
@@ -80,6 +85,28 @@ src/
 - Views selected via `?view=` query param: `list`, `calendar`, `timeline`, `dashboard`, `focus`
 - Default view: `list`
 - Sidebar only shown for authenticated users; login page gets plain layout
+- Search bar + status/priority filter pills on home page (apply across all views)
+
+## Dark Mode
+
+- Class-based dark mode via Tailwind v4 `@variant dark`
+- ThemeProvider manages `dark` class on `<html>`, persists to localStorage
+- Settings page has light/dark/system toggle
+- All components have `dark:` classes
+
+## Keyboard Shortcuts
+
+- `N` — Open quick-add modal
+- `1`–`5` — Switch views (list/calendar/timeline/dashboard/focus)
+- `/` — Focus search bar
+- `Escape` — Close quick-add modal
+- Shortcuts disabled when typing in inputs
+
+## Recurring Tasks
+
+- Tasks can have recurrence: NONE, DAILY, WEEKLY, MONTHLY
+- When a recurring task is marked DONE, the API auto-creates the next occurrence with an updated due date
+- Recurrence indicator shown as purple badge in list view
 
 ## Authentication
 
@@ -114,12 +141,12 @@ src/
 
 - #1 Authentication (Supabase Auth) — DONE
 - #2 Categories/Tags — DONE
-- #3 Subtasks/Checklists
+- #3 Subtasks/Checklists — DONE
 - #4 Highlight overdue tasks — DONE
-- #5 Search and sort
-- #6 Recurring tasks
-- #7 Dark mode
-- #8 Calendar view
+- #5 Search and sort — DONE
+- #6 Recurring tasks — DONE
+- #7 Dark mode — DONE
+- #8 Calendar view — DONE
 - #9 Admin settings page — DONE
 - #10 User settings page — DONE
 

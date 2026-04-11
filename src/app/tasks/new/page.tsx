@@ -21,6 +21,7 @@ export default function NewTaskPage() {
               body: JSON.stringify({
                 ...data,
                 dueDate: data.dueDate || null,
+                recurrence: data.recurrence,
               }),
             });
             if (!res.ok) throw new Error("Failed to create task");
