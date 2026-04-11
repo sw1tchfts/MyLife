@@ -21,7 +21,10 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const { id } = await params;
-    const task = await prisma.task.findUnique({ where: { id } });
+    const task = await prisma.task.findUnique({
+      where: { id },
+      include: { subtasks: { orderBy: { sortOrder: "asc" } } },
+    });
 
     if (!task) {
       return NextResponse.json({ error: "Task not found" }, { status: 404 });

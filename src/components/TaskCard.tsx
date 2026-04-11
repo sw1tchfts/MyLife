@@ -7,6 +7,13 @@ import PriorityBadge from "./PriorityBadge";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import type { Status, Priority } from "@/generated/prisma/client";
 
+export interface SubtaskData {
+  id: string;
+  title: string;
+  done: boolean;
+  sortOrder: number;
+}
+
 export interface TaskData {
   id: string;
   title: string;
@@ -15,6 +22,7 @@ export interface TaskData {
   priority: Priority;
   dueDate: string | null;
   createdAt: string;
+  subtasks?: SubtaskData[];
 }
 
 interface TaskCardProps {

@@ -135,9 +135,28 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
                       {task.title}
                     </Link>
                     {task.description && (
-                      <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500 line-clamp-1">
+                      <p className="mt-0.5 text-xs text-gray-400 line-clamp-1 dark:text-gray-500">
                         {task.description}
                       </p>
+                    )}
+                    {task.subtasks && task.subtasks.length > 0 && (
+                      <span className="mt-0.5 inline-flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
+                        <svg
+                          className="h-3 w-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                          />
+                        </svg>
+                        {task.subtasks.filter((s) => s.done).length}/
+                        {task.subtasks.length}
+                      </span>
                     )}
                   </td>
                   <td className="px-4 py-3">

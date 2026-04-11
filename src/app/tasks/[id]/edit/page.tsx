@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import TaskForm from "@/components/TaskForm";
+import SubtaskList from "@/components/SubtaskList";
 import type { Status, Priority } from "@/generated/prisma/client";
+import type { SubtaskData } from "@/components/TaskCard";
 
 interface TaskResponse {
   id: string;
@@ -12,6 +14,7 @@ interface TaskResponse {
   status: Status;
   priority: Priority;
   dueDate: string | null;
+  subtasks?: SubtaskData[];
 }
 
 export default function EditTaskPage({
@@ -25,7 +28,7 @@ export default function EditTaskPage({
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  useEffect(() => {
+  const fetchTask = useCallback(() => {
     fetch(`/api/tasks/${id}`)
       .then((res) => {
         if (!res.ok) {
@@ -39,6 +42,10 @@ export default function EditTaskPage({
         setLoading(false);
       });
   }, [id]);
+
+  useEffect(() => {
+    fetchTask();
+  }, [fetchTask]);
 
   if (loading) {
     return (
@@ -80,7 +87,7 @@ export default function EditTaskPage({
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
         Edit Task
       </h1>
-      <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+      <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <TaskForm
           initialData={initialData}
           submitLabel="Save Changes"
@@ -96,6 +103,15 @@ export default function EditTaskPage({
             if (!res.ok) throw new Error("Failed to update task");
             router.push("/");
           }}
+        />
+      </div>
+
+      {/* Subtasks */}
+      <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <SubtaskList
+          taskId={id}
+          subtasks={task.subtasks || []}
+          onUpdate={fetchTask}
         />
       </div>
     </div>
