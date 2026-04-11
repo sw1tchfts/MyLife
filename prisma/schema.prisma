@@ -78,3 +78,51 @@ model UserSettings {
   emailNotifications  Boolean @default(false)
   browserNotifications Boolean @default(false)
 }
+
+// ── Pairwise Ranking System ────────────────────────────
+
+enum ComparisonResult {
+  LEFT
+  RIGHT
+  TIE
+  SKIP
+}
+
+model RankingCategory {
+  id          String   @id @default(cuid())
+  name        String
+  description String   @default("")
+  color       String   @default("#6B7280")
+  createdAt   DateTime @default(now())
+  items       RankingItem[]
+  comparisons Comparison[]
+}
+
+model RankingItem {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @default("")
+  imageUrl    String   @default("")
+  tags        String   @default("")
+  elo         Float    @default(1500)
+  wins        Int      @default(0)
+  losses      Int      @default(0)
+  ties        Int      @default(0)
+  categoryId  String
+  category    RankingCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  comparisonsAsLeft  Comparison[] @relation("LeftItem")
+  comparisonsAsRight Comparison[] @relation("RightItem")
+}
+
+model Comparison {
+  id          String           @id @default(cuid())
+  leftItemId  String
+  rightItemId String
+  result      ComparisonResult
+  leftItem    RankingItem      @relation("LeftItem", fields: [leftItemId], references: [id], onDelete: Cascade)
+  rightItem   RankingItem      @relation("RightItem", fields: [rightItemId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    RankingCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime         @default(now())
+}

@@ -75,6 +75,24 @@ export default function Sidebar({ userEmail }: SidebarProps) {
           })}
         </div>
 
+        {/* Rankings section */}
+        <div className="mb-4">
+          <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
+            Rankings
+          </p>
+          <Link
+            href="/rankings"
+            className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+              pathname.startsWith("/rankings")
+                ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+            }`}
+          >
+            <RankingIcon active={pathname.startsWith("/rankings")} />
+            Pairwise Ranker
+          </Link>
+        </div>
+
         {/* Manage section */}
         <div>
           <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
@@ -235,6 +253,25 @@ function AdminIcon({ active }: { active: boolean }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+      />
+    </svg>
+  );
+}
+
+function RankingIcon({ active }: { active: boolean }) {
+  const cls = active ? "text-blue-600" : "text-gray-400";
+  return (
+    <svg
+      className={`h-4 w-4 ${cls}`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
       />
     </svg>
   );

@@ -44,6 +44,7 @@ prisma.config.ts               # Prisma connection config
 src/
   lib/prisma.ts                # Prisma client singleton
   lib/types.ts                 # Validation + shared types
+  lib/elo.ts                   # Elo rating algorithm for pairwise ranking
   app/
     page.tsx                   # Home (view switcher via ?view= param)
     layout.tsx                 # Root layout (sidebar for authed, plain for login)
@@ -52,8 +53,14 @@ src/
     api/tasks/[id]/subtasks/route.ts # POST + PUT + DELETE subtasks
     api/categories/route.ts    # GET + POST categories
     api/categories/[id]/route.ts # PUT + DELETE single category
+    api/rankings/categories/route.ts     # GET + POST ranking categories
+    api/rankings/categories/[id]/route.ts # GET + PUT + DELETE ranking category
+    api/rankings/items/route.ts          # POST ranking items
+    api/rankings/items/[id]/route.ts     # PUT + DELETE ranking items
+    api/rankings/compare/route.ts        # GET next pair + POST comparison result
     api/settings/app/route.ts  # GET + PUT app-wide settings
     api/settings/user/route.ts # GET + PUT user preferences
+    rankings/page.tsx          # Pairwise ranking system (categories, items, compare, rankings, stats)
     tasks/new/page.tsx         # Create task page
     tasks/[id]/edit/page.tsx   # Edit task page
     admin/page.tsx             # Admin settings (categories, defaults, stats)
@@ -149,6 +156,7 @@ src/
 - #8 Calendar view — DONE
 - #9 Admin settings page — DONE
 - #10 User settings page — DONE
+- #12 Pairwise ranking system — DONE
 
 ## Development Workflow (ALWAYS follow these)
 
