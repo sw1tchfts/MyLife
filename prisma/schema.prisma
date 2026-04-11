@@ -38,6 +38,9 @@ model Task {
   updatedAt   DateTime   @updatedAt
   categories  TaskCategory[]
   subtasks    Subtask[]
+
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
 }
 
 model Subtask {
@@ -48,6 +51,8 @@ model Subtask {
   taskId    String
   task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+
+  @@index([taskId])
 }
 
 model Category {
@@ -113,6 +118,9 @@ model RankingItem {
   createdAt   DateTime @default(now())
   comparisonsAsLeft  Comparison[] @relation("LeftItem")
   comparisonsAsRight Comparison[] @relation("RightItem")
+
+  @@index([categoryId])
+  @@index([elo(sort: Desc)])
 }
 
 model Comparison {
@@ -125,4 +133,8 @@ model Comparison {
   categoryId  String
   category    RankingCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   createdAt   DateTime         @default(now())
+
+  @@index([categoryId])
+  @@index([leftItemId])
+  @@index([rightItemId])
 }

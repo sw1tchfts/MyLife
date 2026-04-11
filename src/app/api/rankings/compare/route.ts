@@ -32,9 +32,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Pick two items with fewest total comparisons, with some randomness.
+    // O(1) query instead of O(n²) in-memory loop.
     const items = await prisma.rankingItem.findMany({
       where: { categoryId },
       orderBy: [{ wins: "asc" }, { losses: "asc" }, { ties: "asc" }],
+      take: 10, // only need the least-compared items
     });
 
     if (items.length < 2) {
@@ -44,57 +47,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Find the pair with fewest head-to-head comparisons
-    const comparisons = await prisma.comparison.findMany({
-      where: { categoryId },
-      select: { leftItemId: true, rightItemId: true },
-    });
+    // Pick two random items from the least-compared pool
+    const poolSize = Math.min(items.length, 6);
+    const pool = items.slice(0, poolSize);
+    const idx1 = Math.floor(Math.random() * pool.length);
+    let idx2 = Math.floor(Math.random() * (pool.length - 1));
+    if (idx2 >= idx1) idx2++;
 
-    // Count comparisons per pair
-    const pairCounts = new Map<string, number>();
-    for (const c of comparisons) {
-      const key = [c.leftItemId, c.rightItemId].sort().join("|");
-      pairCounts.set(key, (pairCounts.get(key) || 0) + 1);
-    }
-
-    // Find pair with minimum comparisons
-    let bestPair: [string, string] | null = null;
-    let minCount = Infinity;
-
-    for (let i = 0; i < items.length; i++) {
-      for (let j = i + 1; j < items.length; j++) {
-        const key = [items[i].id, items[j].id].sort().join("|");
-        const count = pairCounts.get(key) || 0;
-        // Also factor in total comparisons for each item
-        const totalComps =
-          items[i].wins +
-          items[i].losses +
-          items[i].ties +
-          items[j].wins +
-          items[j].losses +
-          items[j].ties;
-        const score = count * 1000 + totalComps;
-        if (score < minCount) {
-          minCount = score;
-          bestPair = [items[i].id, items[j].id];
-        }
-      }
-    }
-
-    if (!bestPair) {
-      return NextResponse.json(
-        { error: "No pairs available" },
-        { status: 400 },
-      );
-    }
-
-    // Randomize left/right
-    if (Math.random() > 0.5) bestPair.reverse();
-
-    const [left, right] = await Promise.all([
-      prisma.rankingItem.findUnique({ where: { id: bestPair[0] } }),
-      prisma.rankingItem.findUnique({ where: { id: bestPair[1] } }),
-    ]);
+    const left = pool[idx1];
+    const right = pool[idx2];
 
     return NextResponse.json({ left, right });
   } catch (error) {

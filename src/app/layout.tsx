@@ -16,10 +16,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Use getSession (reads cookie, no network call) instead of getUser
+  // (which validates with Supabase servers). The proxy already validates auth.
   const supabase = await createClient();
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user ?? null;
 
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
