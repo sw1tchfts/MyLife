@@ -1,0 +1,216 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import StatusBadge from "@/components/StatusBadge";
+import PriorityBadge from "@/components/PriorityBadge";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+import { getDueStatus } from "@/components/TaskCard";
+import type { TaskData } from "@/components/TaskCard";
+
+type SortField = "title" | "status" | "priority" | "dueDate" | "createdAt";
+type SortDir = "asc" | "desc";
+
+const STATUS_ORDER = { TODO: 0, IN_PROGRESS: 1, DONE: 2 };
+const PRIORITY_ORDER = { HIGH: 0, MEDIUM: 1, LOW: 2 };
+
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+interface ListViewProps {
+  tasks: TaskData[];
+  onDelete: (id: string) => void;
+}
+
+export default function ListView({ tasks, onDelete }: ListViewProps) {
+  const [sortField, setSortField] = useState<SortField>("createdAt");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [deleteTarget, setDeleteTarget] = useState<TaskData | null>(null);
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
+
+  const sorted = [...tasks].sort((a, b) => {
+    let cmp = 0;
+    switch (sortField) {
+      case "title":
+        cmp = a.title.localeCompare(b.title);
+        break;
+      case "status":
+        cmp = STATUS_ORDER[a.status] - STATUS_ORDER[b.status];
+        break;
+      case "priority":
+        cmp = PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
+        break;
+      case "dueDate": {
+        const aDate = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+        const bDate = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+        cmp = aDate - bDate;
+        break;
+      }
+      case "createdAt":
+        cmp = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        break;
+    }
+    return sortDir === "asc" ? cmp : -cmp;
+  });
+
+  if (tasks.length === 0) {
+    return (
+      <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center">
+        <p className="text-gray-500">No tasks found</p>
+        <p className="mt-1 text-sm text-gray-400">
+          Create a new task to get started
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              {(
+                [
+                  ["title", "Title"],
+                  ["status", "Status"],
+                  ["priority", "Priority"],
+                  ["dueDate", "Due Date"],
+                  ["createdAt", "Created"],
+                ] as const
+              ).map(([field, label]) => (
+                <th key={field} className="px-4 py-3 text-left">
+                  <button
+                    onClick={() => handleSort(field)}
+                    className="flex items-center gap-1 text-xs font-medium tracking-wide text-gray-500 uppercase hover:text-gray-700"
+                  >
+                    {label}
+                    {sortField === field && (
+                      <span className="text-blue-600">
+                        {sortDir === "asc" ? "↑" : "↓"}
+                      </span>
+                    )}
+                  </button>
+                </th>
+              ))}
+              <th className="w-20 px-4 py-3" />
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {sorted.map((task) => {
+              const due = getDueStatus(task.dueDate);
+              const showDue = task.status !== "DONE" ? due : null;
+              const rowBg =
+                showDue === "overdue"
+                  ? "bg-red-50"
+                  : showDue === "today"
+                    ? "bg-amber-50"
+                    : showDue === "soon"
+                      ? "bg-yellow-50/50"
+                      : "";
+
+              return (
+                <tr
+                  key={task.id}
+                  className={`transition-colors hover:bg-gray-50 ${rowBg}`}
+                >
+                  <td className="px-4 py-3">
+                    <Link
+                      href={`/tasks/${task.id}/edit`}
+                      className="text-sm font-medium text-gray-900 hover:text-blue-600"
+                    >
+                      {task.title}
+                    </Link>
+                    {task.description && (
+                      <p className="mt-0.5 text-xs text-gray-400 line-clamp-1">
+                        {task.description}
+                      </p>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <StatusBadge status={task.status} />
+                  </td>
+                  <td className="px-4 py-3">
+                    <PriorityBadge priority={task.priority} />
+                  </td>
+                  <td className="px-4 py-3">
+                    {task.dueDate ? (
+                      <span
+                        className={`text-sm ${
+                          showDue === "overdue"
+                            ? "font-medium text-red-600"
+                            : showDue === "today"
+                              ? "font-medium text-amber-600"
+                              : showDue === "soon"
+                                ? "text-yellow-600"
+                                : "text-gray-500"
+                        }`}
+                      >
+                        {showDue === "overdue"
+                          ? "Overdue"
+                          : showDue === "today"
+                            ? "Today"
+                            : formatDate(task.dueDate)}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-gray-300">—</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-400">
+                    {formatDate(task.createdAt)}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() => setDeleteTarget(task)}
+                      className="rounded p-1 text-gray-300 hover:bg-red-50 hover:text-red-500"
+                      title="Delete"
+                    >
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {deleteTarget && (
+        <DeleteConfirmDialog
+          isOpen={true}
+          taskTitle={deleteTarget.title}
+          onConfirm={() => {
+            onDelete(deleteTarget.id);
+            setDeleteTarget(null);
+          }}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
+    </>
+  );
+}

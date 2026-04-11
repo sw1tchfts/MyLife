@@ -45,8 +45,8 @@ src/
   lib/prisma.ts                # Prisma client singleton
   lib/types.ts                 # Validation + shared types
   app/
-    page.tsx                   # Home (task list + filters)
-    layout.tsx                 # Root layout
+    page.tsx                   # Home (view switcher via ?view= param)
+    layout.tsx                 # Root layout (sidebar for authed, plain for login)
     api/tasks/route.ts         # GET + POST tasks
     api/tasks/[id]/route.ts    # GET + PUT + DELETE single task
     api/categories/route.ts    # GET + POST categories
@@ -58,13 +58,28 @@ src/
     admin/page.tsx             # Admin settings (categories, defaults, stats)
     settings/page.tsx          # User settings (theme, account, notifications)
   components/
-    TaskCard.tsx               # Task card display
+    Sidebar.tsx                # Left navigation sidebar (Notion-style)
+    TaskCard.tsx               # Task card display + getDueStatus helper
     TaskForm.tsx               # Shared create/edit form
-    TaskList.tsx               # Task list container
+    TaskList.tsx               # Legacy task list (kept for reference)
     StatusBadge.tsx            # Status pill
     PriorityBadge.tsx          # Priority pill
     DeleteConfirmDialog.tsx    # Delete confirmation modal
+    SignOutButton.tsx           # Sign-out button (used by Sidebar)
+    views/
+      ListView.tsx             # Table/list view with sortable columns
+      CalendarView.tsx         # Monthly calendar with tasks on due dates
+      TimelineView.tsx         # Horizontal timeline/Gantt view
+      DashboardView.tsx        # Summary stats and breakdowns
+      FocusView.tsx            # Overdue + due-today/soon focus mode
 ```
+
+## Navigation
+
+- Left sidebar (Notion-style) with view switcher and manage links
+- Views selected via `?view=` query param: `list`, `calendar`, `timeline`, `dashboard`, `focus`
+- Default view: `list`
+- Sidebar only shown for authenticated users; login page gets plain layout
 
 ## Authentication
 
