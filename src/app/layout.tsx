@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import ThemeProvider from "@/components/ThemeProvider";
+import KeyboardShortcuts from "@/components/KeyboardShortcuts";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default async function RootLayout({
               <main className="flex-1 overflow-y-auto bg-gray-50 p-6 dark:bg-gray-900 lg:p-8">
                 {children}
               </main>
+              <KeyboardShortcuts />
             </div>
           ) : (
             <div className="min-h-full bg-gray-50 dark:bg-gray-900">
