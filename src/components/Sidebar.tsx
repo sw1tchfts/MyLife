@@ -38,10 +38,13 @@ export default function Sidebar({ userEmail }: SidebarProps) {
   };
 
   return (
-    <aside className="flex h-screen w-60 shrink-0 flex-col border-r border-gray-200 bg-gray-50">
+    <aside className="flex h-screen w-60 shrink-0 flex-col border-r border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
       {/* App name */}
       <div className="flex h-14 items-center px-4">
-        <Link href="/" className="text-lg font-bold text-gray-900">
+        <Link
+          href="/"
+          className="text-lg font-bold text-gray-900 dark:text-gray-100"
+        >
           MyLife
         </Link>
       </div>
@@ -61,8 +64,8 @@ export default function Sidebar({ userEmail }: SidebarProps) {
                 href={`/?view=${view.key}`}
                 className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
                   active
-                    ? "bg-blue-50 font-medium text-blue-700"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
                 }`}
               >
                 <view.icon active={active} />
@@ -85,8 +88,8 @@ export default function Sidebar({ userEmail }: SidebarProps) {
                 href={item.href}
                 className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
                   active
-                    ? "bg-blue-50 font-medium text-blue-700"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
                 }`}
               >
                 <item.icon active={active} />
@@ -98,7 +101,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
       </nav>
 
       {/* User section */}
-      <div className="border-t border-gray-200 p-3">
+      <div className="border-t border-gray-200 p-3 dark:border-gray-700">
         <p className="truncate text-xs text-gray-500">{userEmail}</p>
         <button
           onClick={handleSignOut}

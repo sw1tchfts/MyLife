@@ -79,13 +79,13 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
       {/* Alerts row */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {stats.overdue > 0 && (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-3">
+          <div className="rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/30">
             <p className="text-2xl font-bold text-red-600">{stats.overdue}</p>
             <p className="text-xs text-red-500">Overdue</p>
           </div>
         )}
         {stats.dueToday > 0 && (
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-900/30">
             <p className="text-2xl font-bold text-amber-600">
               {stats.dueToday}
             </p>
@@ -93,7 +93,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
           </div>
         )}
         {stats.dueSoon > 0 && (
-          <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3">
+          <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 dark:border-yellow-800 dark:bg-yellow-900/30">
             <p className="text-2xl font-bold text-yellow-600">
               {stats.dueSoon}
             </p>
@@ -101,7 +101,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
           </div>
         )}
         {stats.high > 0 && (
-          <div className="rounded-lg border border-red-200 bg-red-50/50 p-3">
+          <div className="rounded-lg border border-red-200 bg-red-50/50 p-3 dark:border-red-800 dark:bg-red-900/30">
             <p className="text-2xl font-bold text-red-600">{stats.high}</p>
             <p className="text-xs text-red-400">High Priority</p>
           </div>
@@ -109,20 +109,22 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
       </div>
 
       {/* Progress bar */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
+      <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-medium text-gray-700">
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Overall Completion
           </p>
-          <p className="text-sm font-bold text-gray-900">{completionPct}%</p>
+          <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+            {completionPct}%
+          </p>
         </div>
-        <div className="mt-2 h-3 overflow-hidden rounded-full bg-gray-100">
+        <div className="mt-2 h-3 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
           <div
             className="h-full rounded-full bg-green-500 transition-all"
             style={{ width: `${completionPct}%` }}
           />
         </div>
-        <div className="mt-2 flex gap-4 text-xs text-gray-400">
+        <div className="mt-2 flex gap-4 text-xs text-gray-400 dark:text-gray-500">
           <span>
             {stats.done} done / {stats.total} total
           </span>
@@ -133,8 +135,8 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
       </div>
 
       {/* Status breakdown bar */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <p className="mb-3 text-sm font-medium text-gray-700">
+      <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+        <p className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
           Status Breakdown
         </p>
         {stats.total > 0 ? (
@@ -164,9 +166,9 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
             )}
           </div>
         ) : (
-          <div className="h-6 rounded-full bg-gray-100" />
+          <div className="h-6 rounded-full bg-gray-100 dark:bg-gray-700" />
         )}
-        <div className="mt-2 flex gap-4 text-xs text-gray-400">
+        <div className="mt-2 flex gap-4 text-xs text-gray-400 dark:text-gray-500">
           <span className="flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-green-500" /> Done (
             {stats.done})
@@ -185,21 +187,25 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
       {/* Two column: recent + upcoming */}
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Recently created */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <p className="mb-3 text-sm font-medium text-gray-700">
+        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+          <p className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
             Recently Created
           </p>
           {recentTasks.length === 0 ? (
-            <p className="text-sm text-gray-400">No tasks yet</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500">
+              No tasks yet
+            </p>
           ) : (
             <div className="space-y-2">
               {recentTasks.map((task) => (
                 <Link
                   key={task.id}
                   href={`/tasks/${task.id}/edit`}
-                  className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-gray-50"
+                  className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
-                  <span className="text-sm text-gray-700">{task.title}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    {task.title}
+                  </span>
                   <StatusBadge status={task.status} />
                 </Link>
               ))}
@@ -208,10 +214,12 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
         </div>
 
         {/* Upcoming due dates */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <p className="mb-3 text-sm font-medium text-gray-700">Upcoming Due</p>
+        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+          <p className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+            Upcoming Due
+          </p>
           {upcomingTasks.length === 0 ? (
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-400 dark:text-gray-500">
               No upcoming tasks with due dates
             </p>
           ) : (
@@ -222,11 +230,11 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
                   <Link
                     key={task.id}
                     href={`/tasks/${task.id}/edit`}
-                    className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-gray-50"
+                    className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     <div className="flex items-center gap-2">
                       <PriorityBadge priority={task.priority} />
-                      <span className="text-sm text-gray-700">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">
                         {task.title}
                       </span>
                     </div>
@@ -236,7 +244,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
                           ? "font-medium text-red-600"
                           : due === "today"
                             ? "font-medium text-amber-600"
-                            : "text-gray-400"
+                            : "text-gray-400 dark:text-gray-500"
                       }`}
                     >
                       {due === "overdue"
@@ -262,16 +270,16 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
 function StatCard({
   label,
   value,
-  color = "text-gray-900",
+  color = "text-gray-900 dark:text-gray-100",
 }: {
   label: string;
   value: number;
   color?: string;
 }) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
       <p className={`text-2xl font-bold ${color}`}>{value}</p>
-      <p className="text-xs text-gray-400">{label}</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500">{label}</p>
     </div>
   );
 }

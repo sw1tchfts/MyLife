@@ -68,9 +68,9 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
 
   if (tasks.length === 0) {
     return (
-      <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center">
-        <p className="text-gray-500">No tasks found</p>
-        <p className="mt-1 text-sm text-gray-400">
+      <div className="rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 py-12 text-center">
+        <p className="text-gray-500 dark:text-gray-400">No tasks found</p>
+        <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
           Create a new task to get started
         </p>
       </div>
@@ -79,9 +79,9 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
 
   return (
     <>
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
               {(
                 [
@@ -95,7 +95,7 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
                 <th key={field} className="px-4 py-3 text-left">
                   <button
                     onClick={() => handleSort(field)}
-                    className="flex items-center gap-1 text-xs font-medium tracking-wide text-gray-500 uppercase hover:text-gray-700"
+                    className="flex items-center gap-1 text-xs font-medium tracking-wide text-gray-500 dark:text-gray-400 uppercase hover:text-gray-700 dark:hover:text-gray-300"
                   >
                     {label}
                     {sortField === field && (
@@ -109,7 +109,7 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
               <th className="w-20 px-4 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
             {sorted.map((task) => {
               const due = getDueStatus(task.dueDate);
               const showDue = task.status !== "DONE" ? due : null;
@@ -125,17 +125,17 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
               return (
                 <tr
                   key={task.id}
-                  className={`transition-colors hover:bg-gray-50 ${rowBg}`}
+                  className={`transition-colors hover:bg-gray-50 dark:hover:bg-gray-700 ${rowBg}`}
                 >
                   <td className="px-4 py-3">
                     <Link
                       href={`/tasks/${task.id}/edit`}
-                      className="text-sm font-medium text-gray-900 hover:text-blue-600"
+                      className="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600"
                     >
                       {task.title}
                     </Link>
                     {task.description && (
-                      <p className="mt-0.5 text-xs text-gray-400 line-clamp-1">
+                      <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500 line-clamp-1">
                         {task.description}
                       </p>
                     )}
@@ -156,7 +156,7 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
                               ? "font-medium text-amber-600"
                               : showDue === "soon"
                                 ? "text-yellow-600"
-                                : "text-gray-500"
+                                : "text-gray-500 dark:text-gray-400"
                         }`}
                       >
                         {showDue === "overdue"
@@ -166,16 +166,18 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
                             : formatDate(task.dueDate)}
                       </span>
                     ) : (
-                      <span className="text-sm text-gray-300">—</span>
+                      <span className="text-sm text-gray-300 dark:text-gray-600">
+                        —
+                      </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-400">
+                  <td className="px-4 py-3 text-sm text-gray-400 dark:text-gray-500">
                     {formatDate(task.createdAt)}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => setDeleteTarget(task)}
-                      className="rounded p-1 text-gray-300 hover:bg-red-50 hover:text-red-500"
+                      className="rounded p-1 text-gray-300 dark:text-gray-600 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500"
                       title="Delete"
                     >
                       <svg

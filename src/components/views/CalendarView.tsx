@@ -88,12 +88,12 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
     <div className="flex flex-col gap-4 lg:flex-row">
       {/* Calendar grid */}
       <div className="flex-1">
-        <div className="rounded-lg border border-gray-200 bg-white">
+        <div className="rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+          <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700">
             <button
               onClick={prev}
-              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-300"
             >
               <svg
                 className="h-5 w-5"
@@ -110,19 +110,19 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
               </svg>
             </button>
             <div className="flex items-center gap-3">
-              <h2 className="text-sm font-semibold text-gray-900">
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                 {MONTHS[month]} {year}
               </h2>
               <button
                 onClick={goToday}
-                className="rounded border border-gray-300 px-2 py-0.5 text-xs text-gray-500 hover:bg-gray-50"
+                className="rounded border border-gray-300 px-2 py-0.5 text-xs text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"
               >
                 Today
               </button>
             </div>
             <button
               onClick={next}
-              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-300"
             >
               <svg
                 className="h-5 w-5"
@@ -141,11 +141,11 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
           </div>
 
           {/* Weekday headers */}
-          <div className="grid grid-cols-7 border-b border-gray-100">
+          <div className="grid grid-cols-7 border-b border-gray-100 dark:border-gray-700">
             {WEEKDAYS.map((d) => (
               <div
                 key={d}
-                className="px-1 py-2 text-center text-xs font-medium text-gray-400"
+                className="px-1 py-2 text-center text-xs font-medium text-gray-400 dark:text-gray-500"
               >
                 {d}
               </div>
@@ -157,7 +157,7 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
             {Array.from({ length: startPad }).map((_, i) => (
               <div
                 key={`pad-${i}`}
-                className="h-24 border-b border-r border-gray-50 bg-gray-50/50"
+                className="h-24 border-b border-r border-gray-50 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-700/50"
               />
             ))}
             {Array.from({ length: totalDays }).map((_, i) => {
@@ -174,9 +174,9 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
                 <button
                   key={day}
                   onClick={() => setSelectedDate(isSelected ? null : key)}
-                  className={`flex h-24 flex-col border-b border-r border-gray-100 p-1 text-left transition-colors hover:bg-blue-50/50 ${
+                  className={`flex h-24 flex-col border-b border-r border-gray-100 p-1 text-left transition-colors hover:bg-blue-50/50 dark:border-gray-700 dark:hover:bg-blue-900/30 ${
                     isSelected
-                      ? "bg-blue-50 ring-1 ring-inset ring-blue-300"
+                      ? "bg-blue-50 ring-1 ring-inset ring-blue-300 dark:bg-blue-900/30 dark:ring-blue-700"
                       : ""
                   }`}
                 >
@@ -184,7 +184,7 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
                     className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs ${
                       isToday
                         ? "bg-blue-600 font-bold text-white"
-                        : "text-gray-700"
+                        : "text-gray-700 dark:text-gray-300"
                     }`}
                   >
                     {day}
@@ -204,7 +204,7 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
                         />
                       ))}
                       {dayTasks.length > 3 && (
-                        <span className="text-[10px] leading-none text-gray-400">
+                        <span className="text-[10px] leading-none text-gray-400 dark:text-gray-500">
                           +{dayTasks.length - 3}
                         </span>
                       )}
@@ -219,8 +219,8 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
 
       {/* Selected day detail */}
       <div className="w-full lg:w-72">
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <h3 className="text-sm font-semibold text-gray-700">
+        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
             {selectedDate
               ? new Date(selectedDate + "T12:00:00").toLocaleDateString(
                   "en-US",
@@ -229,16 +229,18 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
               : "Select a date"}
           </h3>
           {selectedDate && selectedTasks.length === 0 && (
-            <p className="mt-3 text-sm text-gray-400">No tasks due this day</p>
+            <p className="mt-3 text-sm text-gray-400 dark:text-gray-500">
+              No tasks due this day
+            </p>
           )}
           <div className="mt-3 space-y-2">
             {selectedTasks.map((task) => (
               <Link
                 key={task.id}
                 href={`/tasks/${task.id}/edit`}
-                className="block rounded-md border border-gray-100 p-2 transition-colors hover:bg-gray-50"
+                className="block rounded-md border border-gray-100 p-2 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700"
               >
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {task.title}
                 </p>
                 <div className="mt-1 flex gap-1">

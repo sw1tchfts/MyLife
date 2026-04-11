@@ -17,16 +17,18 @@ export default function DeleteConfirmDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h3 className="text-lg font-semibold text-gray-900">Delete Task</h3>
-        <p className="mt-2 text-sm text-gray-600">
+      <div className="mx-4 w-full max-w-md rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          Delete Task
+        </h3>
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Are you sure you want to delete &ldquo;{taskTitle}&rdquo;? This action
           cannot be undone.
         </p>
         <div className="mt-4 flex justify-end gap-3">
           <button
             onClick={onCancel}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             Cancel
           </button>

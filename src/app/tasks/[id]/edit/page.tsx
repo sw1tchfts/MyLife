@@ -41,14 +41,20 @@ export default function EditTaskPage({
   }, [id]);
 
   if (loading) {
-    return <p className="text-center text-gray-500">Loading task...</p>;
+    return (
+      <p className="text-center text-gray-500 dark:text-gray-400">
+        Loading task...
+      </p>
+    );
   }
 
   if (notFound || !task) {
     return (
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Task Not Found</h1>
-        <p className="mt-2 text-gray-500">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Task Not Found
+        </h1>
+        <p className="mt-2 text-gray-500 dark:text-gray-400">
           The task you&apos;re looking for doesn&apos;t exist.
         </p>
         <button
@@ -71,8 +77,10 @@ export default function EditTaskPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900">Edit Task</h1>
-      <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        Edit Task
+      </h1>
+      <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
         <TaskForm
           initialData={initialData}
           submitLabel="Save Changes"

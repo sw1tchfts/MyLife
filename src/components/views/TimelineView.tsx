@@ -92,19 +92,19 @@ export default function TimelineView({ tasks }: TimelineViewProps) {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setOffset((o) => o - RANGE_DAYS[range])}
-            className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50"
+            className="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             ← Back
           </button>
           <button
             onClick={() => setOffset(0)}
-            className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50"
+            className="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             Today
           </button>
           <button
             onClick={() => setOffset((o) => o + RANGE_DAYS[range])}
-            className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50"
+            className="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             Forward →
           </button>
@@ -117,7 +117,7 @@ export default function TimelineView({ tasks }: TimelineViewProps) {
               className={`rounded px-2 py-1 text-xs ${
                 range === r
                   ? "bg-blue-600 text-white"
-                  : "border border-gray-300 text-gray-600 hover:bg-gray-50"
+                  : "border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
               }`}
             >
               {RANGE_LABELS[r]}
@@ -128,7 +128,7 @@ export default function TimelineView({ tasks }: TimelineViewProps) {
 
       {/* Overdue section */}
       {overdueTasks.length > 0 && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-3">
+        <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-3">
           <p className="mb-2 text-xs font-semibold text-red-600 uppercase">
             Overdue ({overdueTasks.length})
           </p>
@@ -137,7 +137,7 @@ export default function TimelineView({ tasks }: TimelineViewProps) {
               <Link
                 key={t.id}
                 href={`/tasks/${t.id}/edit`}
-                className="rounded border border-red-200 bg-white px-2 py-1 text-xs text-red-700 hover:bg-red-50"
+                className="rounded border border-red-200 dark:border-red-800 bg-white dark:bg-gray-800 px-2 py-1 text-xs text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30"
               >
                 {t.title}
               </Link>
@@ -147,24 +147,24 @@ export default function TimelineView({ tasks }: TimelineViewProps) {
       )}
 
       {/* Timeline */}
-      <div className="rounded-lg border border-gray-200 bg-white">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         {/* Date headers */}
-        <div className="relative flex border-b border-gray-200">
+        <div className="relative flex border-b border-gray-200 dark:border-gray-700">
           {days.map((d, i) => {
             const isToday = d.toDateString() === todayStr;
             const isWeekend = d.getDay() === 0 || d.getDay() === 6;
             return (
               <div
                 key={i}
-                className={`flex-1 border-r border-gray-100 px-0.5 py-2 text-center last:border-r-0 ${isWeekend ? "bg-gray-50" : ""}`}
+                className={`flex-1 border-r border-gray-100 dark:border-gray-700 px-0.5 py-2 text-center last:border-r-0 ${isWeekend ? "bg-gray-50 dark:bg-gray-700" : ""}`}
               >
                 <span
-                  className={`block text-[10px] leading-tight ${isToday ? "font-bold text-blue-600" : "text-gray-400"}`}
+                  className={`block text-[10px] leading-tight ${isToday ? "font-bold text-blue-600" : "text-gray-400 dark:text-gray-500"}`}
                 >
                   {d.toLocaleDateString("en-US", { weekday: "short" })}
                 </span>
                 <span
-                  className={`block text-xs ${isToday ? "font-bold text-blue-600" : "text-gray-600"}`}
+                  className={`block text-xs ${isToday ? "font-bold text-blue-600" : "text-gray-600 dark:text-gray-400"}`}
                 >
                   {d.getDate()}
                 </span>
@@ -175,7 +175,7 @@ export default function TimelineView({ tasks }: TimelineViewProps) {
 
         {/* Task rows */}
         {rangeTasks.length === 0 ? (
-          <div className="py-12 text-center text-sm text-gray-400">
+          <div className="py-12 text-center text-sm text-gray-400 dark:text-gray-500">
             No tasks with due dates in this range
           </div>
         ) : (
@@ -197,7 +197,7 @@ export default function TimelineView({ tasks }: TimelineViewProps) {
                   <div key={task.id} className="relative h-8">
                     <Link
                       href={`/tasks/${task.id}/edit`}
-                      className={`absolute flex h-8 items-center rounded border-l-4 bg-white px-2 shadow-sm transition-shadow hover:shadow-md ${PRIORITY_COLORS[task.priority]}`}
+                      className={`absolute flex h-8 items-center rounded border-l-4 bg-white dark:bg-gray-800 px-2 shadow-sm transition-shadow hover:shadow-md ${PRIORITY_COLORS[task.priority]}`}
                       style={{
                         left: `${Math.max(0, pos - 10)}%`,
                         maxWidth: "200px",
@@ -207,7 +207,7 @@ export default function TimelineView({ tasks }: TimelineViewProps) {
                       <span
                         className={`mr-2 h-2 w-2 rounded-full ${STATUS_COLORS[task.status]}`}
                       />
-                      <span className="truncate text-xs text-gray-700">
+                      <span className="truncate text-xs text-gray-700 dark:text-gray-300">
                         {task.title}
                       </span>
                     </Link>
@@ -220,7 +220,7 @@ export default function TimelineView({ tasks }: TimelineViewProps) {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-4 text-xs text-gray-400">
+      <div className="flex flex-wrap gap-4 text-xs text-gray-400 dark:text-gray-500">
         <span className="flex items-center gap-1">
           <span className="h-2 w-2 rounded-full bg-gray-400" /> To Do
         </span>
@@ -230,7 +230,7 @@ export default function TimelineView({ tasks }: TimelineViewProps) {
         <span className="flex items-center gap-1">
           <span className="h-2 w-2 rounded-full bg-green-500" /> Done
         </span>
-        <span className="mx-2 text-gray-300">|</span>
+        <span className="mx-2 text-gray-300 dark:text-gray-600">|</span>
         <span className="flex items-center gap-1">
           <span className="h-3 w-1 rounded bg-red-500" /> High
         </span>

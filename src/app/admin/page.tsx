@@ -114,7 +114,9 @@ export default function AdminPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Admin Settings</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Admin Settings
+        </h1>
         <Link href="/" className="text-sm text-blue-600 hover:text-blue-500">
           Back to Tasks
         </Link>
@@ -136,10 +138,12 @@ export default function AdminPage() {
           ].map((s) => (
             <div
               key={s.label}
-              className={`rounded-lg ${s.color} p-4 text-center`}
+              className={`rounded-lg ${s.color} dark:bg-gray-700 p-4 text-center`}
             >
-              <p className="text-2xl font-bold">{s.value}</p>
-              <p className="text-sm text-gray-600">{s.label}</p>
+              <p className="text-2xl font-bold dark:text-gray-100">{s.value}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {s.label}
+              </p>
             </div>
           ))}
         </div>
@@ -147,14 +151,16 @@ export default function AdminPage() {
 
       {/* Categories */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-900">Categories</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          Categories
+        </h2>
         <div className="mt-4 flex gap-2">
           <input
             type="text"
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
             placeholder="New category name"
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 text-sm"
             onKeyDown={(e) => e.key === "Enter" && addCategory()}
           />
           <div className="flex gap-1">
@@ -162,7 +168,7 @@ export default function AdminPage() {
               <button
                 key={c}
                 onClick={() => setNewCategoryColor(c)}
-                className={`h-9 w-9 rounded-full border-2 ${newCategoryColor === c ? "border-gray-900" : "border-transparent"}`}
+                className={`h-9 w-9 rounded-full border-2 ${newCategoryColor === c ? "border-gray-900 dark:border-gray-100" : "border-transparent"}`}
                 style={{ backgroundColor: c }}
               />
             ))}
@@ -178,7 +184,7 @@ export default function AdminPage() {
           {categories.map((cat) => (
             <li
               key={cat.id}
-              className="flex items-center gap-3 rounded-md border border-gray-200 bg-white px-4 py-3"
+              className="flex items-center gap-3 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3"
             >
               {editingId === cat.id ? (
                 <>
@@ -186,14 +192,14 @@ export default function AdminPage() {
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="flex-1 rounded-md border border-gray-300 px-2 py-1 text-sm"
+                    className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-2 py-1 text-sm"
                   />
                   <div className="flex gap-1">
                     {COLORS.map((c) => (
                       <button
                         key={c}
                         onClick={() => setEditColor(c)}
-                        className={`h-6 w-6 rounded-full border-2 ${editColor === c ? "border-gray-900" : "border-transparent"}`}
+                        className={`h-6 w-6 rounded-full border-2 ${editColor === c ? "border-gray-900 dark:border-gray-100" : "border-transparent"}`}
                         style={{ backgroundColor: c }}
                       />
                     ))}
@@ -206,7 +212,7 @@ export default function AdminPage() {
                   </button>
                   <button
                     onClick={() => setEditingId(null)}
-                    className="text-sm text-gray-500 hover:text-gray-400"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-400 dark:hover:text-gray-300"
                   >
                     Cancel
                   </button>
@@ -217,7 +223,9 @@ export default function AdminPage() {
                     className="h-4 w-4 rounded-full"
                     style={{ backgroundColor: cat.color }}
                   />
-                  <span className="flex-1 text-sm font-medium">{cat.name}</span>
+                  <span className="flex-1 text-sm font-medium dark:text-gray-100">
+                    {cat.name}
+                  </span>
                   <button
                     onClick={() => {
                       setEditingId(cat.id);
@@ -239,19 +247,21 @@ export default function AdminPage() {
             </li>
           ))}
           {categories.length === 0 && (
-            <p className="text-sm text-gray-500">No categories yet.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              No categories yet.
+            </p>
           )}
         </ul>
       </div>
 
       {/* Default Settings */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           Default Task Settings
         </h2>
         <div className="mt-4 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Default Priority
             </label>
             <select
@@ -262,7 +272,7 @@ export default function AdminPage() {
                   defaultPriority: e.target.value,
                 }))
               }
-              className="mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="mt-1 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 text-sm"
             >
               <option value="LOW">Low</option>
               <option value="MEDIUM">Medium</option>
@@ -270,7 +280,7 @@ export default function AdminPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Default Status
             </label>
             <select
@@ -281,7 +291,7 @@ export default function AdminPage() {
                   defaultStatus: e.target.value,
                 }))
               }
-              className="mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="mt-1 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 text-sm"
             >
               <option value="TODO">To Do</option>
               <option value="IN_PROGRESS">In Progress</option>

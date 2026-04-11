@@ -36,10 +36,10 @@ export default function FocusView({ tasks, onStatusChange }: FocusViewProps) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <div className="mb-4 text-5xl">&#10003;</div>
-        <h2 className="text-lg font-semibold text-gray-700">
+        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
           You&apos;re all caught up!
         </h2>
-        <p className="mt-1 text-sm text-gray-400">
+        <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
           No overdue, due today, or upcoming tasks need attention.
         </p>
       </div>
@@ -125,23 +125,27 @@ function FocusSection({
 }) {
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
-      <p className="mb-2 text-xs text-gray-400">{subtitle}</p>
+      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+        {title}
+      </h3>
+      <p className="mb-2 text-xs text-gray-400 dark:text-gray-500">
+        {subtitle}
+      </p>
       <div className="space-y-2">
         {tasks.map((task) => (
           <div
             key={task.id}
-            className={`flex items-center justify-between rounded-lg border border-l-4 border-gray-200 bg-white p-3 ${borderColor}`}
+            className={`flex items-center justify-between rounded-lg border border-l-4 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 ${borderColor}`}
           >
             <div className="min-w-0 flex-1">
               <Link
                 href={`/tasks/${task.id}/edit`}
-                className="text-sm font-medium text-gray-900 hover:text-blue-600"
+                className="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600"
               >
                 {task.title}
               </Link>
               {task.description && (
-                <p className="mt-0.5 text-xs text-gray-400 line-clamp-1">
+                <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500 line-clamp-1">
                   {task.description}
                 </p>
               )}
@@ -152,7 +156,7 @@ function FocusSection({
             </div>
             <button
               onClick={() => onStatusChange(task.id, "DONE")}
-              className="ml-3 shrink-0 rounded-md border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 hover:bg-green-100"
+              className="ml-3 shrink-0 rounded-md border border-green-200 dark:border-green-700 bg-green-50 dark:bg-green-900 px-3 py-1.5 text-xs font-medium text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-800"
             >
               Mark Done
             </button>
