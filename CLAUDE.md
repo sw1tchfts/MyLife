@@ -154,7 +154,7 @@ src/
 
 1. **Before starting a new feature**: Create a GitHub issue for it if one doesn't exist
 2. **After completing a feature**: Update this CLAUDE.md file — add new files to File Structure, update Feature Backlog, document any new patterns or env vars
-3. **Database changes**: Can't run Prisma migrations from Claude Code (network restricted) — provide SQL for user to run in Supabase SQL Editor
+3. **Database changes**: Use Supabase MCP `execute_sql` tool (project ref: `wvscbgcidgmvlitbobtt`) to run DDL/migrations directly. Update Prisma schema to match.
 4. **Deploying**: Merge feature branch to `main` and push to trigger Vercel auto-deploy
 5. **Testing**: Run `npm test` before committing. Add tests for new validation logic or utilities
 6. **Code quality**: Run `npm run lint` and `npm run format:check` before committing
