@@ -98,9 +98,9 @@ src/
 ## Feature Backlog (GitHub Issues)
 
 - #1 Authentication (Supabase Auth) — DONE
-- #2 Categories/Tags
+- #2 Categories/Tags — DONE
 - #3 Subtasks/Checklists
-- #4 Highlight overdue tasks
+- #4 Highlight overdue tasks — DONE
 - #5 Search and sort
 - #6 Recurring tasks
 - #7 Dark mode

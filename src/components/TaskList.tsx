@@ -1,6 +1,6 @@
 "use client";
 
-import TaskCard, { type TaskData } from "./TaskCard";
+import TaskCard, { type TaskData, getDueStatus } from "./TaskCard";
 
 interface TaskListProps {
   tasks: TaskData[];
@@ -19,9 +19,19 @@ export default function TaskList({ tasks, onDelete }: TaskListProps) {
     );
   }
 
+  const duePriority = { overdue: 0, today: 1, soon: 2 } as const;
+
+  const sorted = [...tasks].sort((a, b) => {
+    const aStatus = a.status !== "DONE" ? getDueStatus(a.dueDate) : null;
+    const bStatus = b.status !== "DONE" ? getDueStatus(b.dueDate) : null;
+    const aVal = aStatus ? duePriority[aStatus] : 3;
+    const bVal = bStatus ? duePriority[bStatus] : 3;
+    return aVal - bVal;
+  });
+
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {tasks.map((task) => (
+      {sorted.map((task) => (
         <TaskCard key={task.id} task={task} onDelete={onDelete} />
       ))}
     </div>

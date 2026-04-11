@@ -30,17 +30,38 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function isOverdue(dateStr: string | null): boolean {
-  if (!dateStr) return false;
-  return new Date(dateStr) < new Date(new Date().toDateString());
+export function getDueStatus(
+  dateStr: string | null,
+): "overdue" | "today" | "soon" | null {
+  if (!dateStr) return null;
+  const today = new Date(new Date().toDateString());
+  const due = new Date(new Date(dateStr).toDateString());
+  const diffMs = due.getTime() - today.getTime();
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+  if (diffDays < 0) return "overdue";
+  if (diffDays === 0) return "today";
+  if (diffDays <= 3) return "soon";
+  return null;
 }
 
 export default function TaskCard({ task, onDelete }: TaskCardProps) {
   const [showDelete, setShowDelete] = useState(false);
+  const dueStatus = task.status !== "DONE" ? getDueStatus(task.dueDate) : null;
+
+  const cardBorder =
+    dueStatus === "overdue"
+      ? "border-red-400 bg-red-50"
+      : dueStatus === "today"
+        ? "border-amber-400 bg-amber-50"
+        : dueStatus === "soon"
+          ? "border-yellow-300"
+          : "border-gray-200";
 
   return (
     <>
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+      <div
+        className={`rounded-lg border bg-white p-4 shadow-sm transition-shadow hover:shadow-md ${cardBorder}`}
+      >
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-semibold text-gray-900 line-clamp-1">
             {task.title}
@@ -99,12 +120,20 @@ export default function TaskCard({ task, onDelete }: TaskCardProps) {
           {task.dueDate && (
             <span
               className={`text-xs ${
-                isOverdue(task.dueDate) && task.status !== "DONE"
+                dueStatus === "overdue"
                   ? "font-medium text-red-600"
-                  : "text-gray-500"
+                  : dueStatus === "today"
+                    ? "font-medium text-amber-600"
+                    : dueStatus === "soon"
+                      ? "font-medium text-yellow-600"
+                      : "text-gray-500"
               }`}
             >
-              Due {formatDate(task.dueDate)}
+              {dueStatus === "overdue"
+                ? "Overdue"
+                : dueStatus === "today"
+                  ? "Due today"
+                  : `Due ${formatDate(task.dueDate)}`}
             </span>
           )}
         </div>
