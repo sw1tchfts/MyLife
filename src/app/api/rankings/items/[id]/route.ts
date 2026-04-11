@@ -28,6 +28,14 @@ export async function PUT(
       data.description = body.description;
     if (typeof body.imageUrl === "string") data.imageUrl = body.imageUrl;
     if (typeof body.tags === "string") data.tags = body.tags;
+    if (typeof body.categoryId === "string") {
+      data.categoryId = body.categoryId;
+      // Reset Elo when moving to a new list
+      data.elo = 1500;
+      data.wins = 0;
+      data.losses = 0;
+      data.ties = 0;
+    }
 
     const item = await prisma.rankingItem.update({
       where: { id },

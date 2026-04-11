@@ -6,12 +6,16 @@ import { Suspense } from "react";
 
 /* ── Types ─────────────────────────────────────────── */
 
-interface RankingCategory {
+interface RankingList {
   id: string;
   name: string;
   description: string;
   color: string;
   _count: { items: number; comparisons: number };
+}
+
+interface RankingListDetail extends RankingList {
+  items: RankingItem[];
 }
 
 interface RankingItem {
@@ -27,7 +31,7 @@ interface RankingItem {
   categoryId: string;
 }
 
-type Tab = "categories" | "items" | "compare" | "rankings" | "stats";
+type Tab = "items" | "compare" | "rankings" | "stats";
 
 /* ── Main page wrapper with Suspense ───────────────── */
 
@@ -50,116 +54,164 @@ export default function RankingsPage() {
 function RankingsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const tab = (searchParams.get("tab") as Tab) || "categories";
-  const categoryId = searchParams.get("category") || "";
+  const tab = (searchParams.get("tab") as Tab) || "items";
+  const listId = searchParams.get("list") || "";
 
-  const [categories, setCategories] = useState<RankingCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<
-    (RankingCategory & { items: RankingItem[] }) | null
-  >(null);
+  const [lists, setLists] = useState<RankingList[]>([]);
+  const [selectedList, setSelectedList] = useState<RankingListDetail | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
+  const [showManage, setShowManage] = useState(false);
 
-  const fetchCategories = useCallback(() => {
+  const fetchLists = useCallback(() => {
     fetch("/api/rankings/categories")
       .then((r) => r.json())
       .then((data) => {
-        setCategories(data);
+        setLists(data);
         setLoading(false);
       });
   }, []);
 
-  const fetchCategory = useCallback((id: string) => {
+  const fetchList = useCallback((id: string) => {
     fetch(`/api/rankings/categories/${id}`)
       .then((r) => r.json())
-      .then((data) => setSelectedCategory(data));
+      .then((data) => setSelectedList(data));
   }, []);
 
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    fetchLists();
+  }, [fetchLists]);
 
   useEffect(() => {
-    if (categoryId) fetchCategory(categoryId);
-  }, [categoryId, fetchCategory]);
+    if (!listId) return;
+    fetchList(listId);
+  }, [listId, fetchList]);
 
-  const setTab = (t: Tab) => {
+  const navigate = (t: Tab, lid?: string) => {
     const params = new URLSearchParams();
     params.set("tab", t);
-    if (categoryId) params.set("category", categoryId);
+    const id = lid ?? listId;
+    if (id) params.set("list", id);
     router.push(`/rankings?${params.toString()}`);
   };
 
-  const selectCategory = (id: string, t: Tab = "items") => {
-    router.push(`/rankings?tab=${t}&category=${id}`);
+  const selectList = (id: string) => {
+    navigate(tab, id);
   };
 
-  const TABS: { key: Tab; label: string; needsCategory?: boolean }[] = [
-    { key: "categories", label: "Categories" },
-    { key: "items", label: "Items", needsCategory: true },
-    { key: "compare", label: "Compare", needsCategory: true },
-    { key: "rankings", label: "Rankings", needsCategory: true },
-    { key: "stats", label: "Stats", needsCategory: true },
+  const refreshAll = () => {
+    fetchLists();
+    if (listId) fetchList(listId);
+  };
+
+  const TABS: { key: Tab; label: string }[] = [
+    { key: "items", label: "Items" },
+    { key: "compare", label: "Compare" },
+    { key: "rankings", label: "Rankings" },
+    { key: "stats", label: "Stats" },
   ];
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-bold text-gray-900 dark:text-gray-100">
-        Pairwise Ranker
-      </h1>
-
-      {/* Tab bar */}
-      <div className="mb-6 flex gap-1 border-b border-gray-200 dark:border-gray-700">
-        {TABS.map((t) => {
-          if (t.needsCategory && !categoryId) return null;
-          return (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`border-b-2 px-3 py-2 text-sm font-medium transition-colors ${
-                tab === t.key
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              }`}
-            >
-              {t.label}
-            </button>
-          );
-        })}
-        {categoryId && selectedCategory && (
-          <div className="ml-auto flex items-center text-xs text-gray-400 dark:text-gray-500">
-            List: {selectedCategory.name}
-          </div>
-        )}
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          Pairwise Ranker
+        </h1>
+        <button
+          onClick={() => setShowManage(!showManage)}
+          className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"
+        >
+          {showManage ? "Hide" : "Manage Lists"}
+        </button>
       </div>
 
+      {/* Manage lists panel */}
+      {showManage && (
+        <ManageListsPanel
+          lists={lists}
+          onRefresh={fetchLists}
+          onSelect={(id) => {
+            selectList(id);
+            setShowManage(false);
+          }}
+          currentListId={listId}
+        />
+      )}
+
+      {/* List selector + tabs */}
       {loading ? (
         <p className="text-center text-gray-400">Loading...</p>
+      ) : lists.length === 0 ? (
+        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
+          <p className="text-gray-500 dark:text-gray-400">
+            No ranking lists yet
+          </p>
+          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+            Click &quot;Manage Lists&quot; above to create one
+          </p>
+        </div>
       ) : (
         <>
-          {tab === "categories" && (
-            <CategoriesTab
-              categories={categories}
-              onSelect={selectCategory}
-              onRefresh={fetchCategories}
-            />
-          )}
-          {tab === "items" && categoryId && selectedCategory && (
-            <ItemsTab
-              category={selectedCategory}
-              onRefresh={() => fetchCategory(categoryId)}
-            />
-          )}
-          {tab === "compare" && categoryId && selectedCategory && (
-            <CompareTab
-              categoryId={categoryId}
-              onComparisonDone={() => fetchCategory(categoryId)}
-            />
-          )}
-          {tab === "rankings" && categoryId && selectedCategory && (
-            <RankingsTab category={selectedCategory} />
-          )}
-          {tab === "stats" && categoryId && selectedCategory && (
-            <StatsTab categoryId={categoryId} category={selectedCategory} />
+          {/* List dropdown + tab bar */}
+          <div className="mb-6 flex flex-col gap-3 border-b border-gray-200 pb-3 sm:flex-row sm:items-center dark:border-gray-700">
+            <select
+              value={listId}
+              onChange={(e) => selectList(e.target.value)}
+              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            >
+              <option value="">Select a list...</option>
+              {lists.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.name} ({l._count.items} items)
+                </option>
+              ))}
+            </select>
+
+            {listId && (
+              <div className="flex gap-1">
+                {TABS.map((t) => (
+                  <button
+                    key={t.key}
+                    onClick={() => navigate(t.key)}
+                    className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                      tab === t.key
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Tab content */}
+          {!listId ? (
+            <div className="py-12 text-center text-gray-400 dark:text-gray-500">
+              Select a list above to get started
+            </div>
+          ) : !selectedList ? (
+            <p className="text-center text-gray-400">Loading...</p>
+          ) : (
+            <>
+              {tab === "items" && (
+                <ItemsTab
+                  list={selectedList}
+                  allLists={lists}
+                  onRefresh={refreshAll}
+                />
+              )}
+              {tab === "compare" && (
+                <CompareTab
+                  listId={listId}
+                  onComparisonDone={() => fetchList(listId)}
+                />
+              )}
+              {tab === "rankings" && <RankingsTab list={selectedList} />}
+              {tab === "stats" && <StatsTab list={selectedList} />}
+            </>
           )}
         </>
       )}
@@ -167,16 +219,18 @@ function RankingsContent() {
   );
 }
 
-/* ── Categories Tab ────────────────────────────────── */
+/* ── Manage Lists Panel ────────────────────────────── */
 
-function CategoriesTab({
-  categories,
-  onSelect,
+function ManageListsPanel({
+  lists,
   onRefresh,
+  onSelect,
+  currentListId,
 }: {
-  categories: RankingCategory[];
-  onSelect: (id: string, tab?: Tab) => void;
+  lists: RankingList[];
   onRefresh: () => void;
+  onSelect: (id: string) => void;
+  currentListId: string;
 }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -185,121 +239,96 @@ function CategoriesTab({
   const create = async () => {
     if (!name.trim()) return;
     setCreating(true);
-    await fetch("/api/rankings/categories", {
+    const res = await fetch("/api/rankings/categories", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: name.trim(), description }),
     });
+    const data = await res.json();
     setName("");
     setDescription("");
     setCreating(false);
     onRefresh();
+    onSelect(data.id);
   };
 
-  const deleteCategory = async (id: string) => {
+  const deleteList = async (id: string) => {
     await fetch(`/api/rankings/categories/${id}`, { method: "DELETE" });
     onRefresh();
   };
 
   return (
-    <div className="space-y-6">
-      {/* Create new */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-        <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          New Ranking List
-        </h3>
-        <div className="flex gap-3">
-          <input
-            type="text"
-            placeholder="List name (e.g. Best Movies)"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && create()}
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
-          />
-          <input
-            type="text"
-            placeholder="Description (optional)"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
-          />
-          <button
-            onClick={create}
-            disabled={creating || !name.trim()}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-          >
-            Create
-          </button>
-        </div>
+    <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
+        Manage Ranking Lists
+      </h3>
+
+      {/* Create form */}
+      <div className="flex gap-3">
+        <input
+          type="text"
+          placeholder="List name (e.g. Best Movies)"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && create()}
+          className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+        />
+        <input
+          type="text"
+          placeholder="Description (optional)"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+        />
+        <button
+          onClick={create}
+          disabled={creating || !name.trim()}
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          Create
+        </button>
       </div>
 
-      {/* List */}
-      {categories.length === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-          <p className="text-gray-500 dark:text-gray-400">
-            No ranking lists yet
-          </p>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
-            Create one above to get started
-          </p>
-        </div>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((cat) => (
+      {/* Existing lists */}
+      {lists.length > 0 && (
+        <div className="mt-3 space-y-1">
+          {lists.map((l) => (
             <div
-              key={cat.id}
-              className="group rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+              key={l.id}
+              className={`flex items-center justify-between rounded-md px-3 py-2 ${
+                l.id === currentListId
+                  ? "bg-blue-50 dark:bg-blue-900/20"
+                  : "hover:bg-gray-50 dark:hover:bg-gray-700"
+              }`}
             >
-              <div className="flex items-start justify-between">
-                <button onClick={() => onSelect(cat.id)} className="text-left">
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                    {cat.name}
-                  </h3>
-                  {cat.description && (
-                    <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">
-                      {cat.description}
-                    </p>
-                  )}
-                </button>
-                <button
-                  onClick={() => deleteCategory(cat.id)}
-                  className="rounded p-1 text-gray-300 opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100 dark:text-gray-600"
-                  title="Delete"
+              <button
+                onClick={() => onSelect(l.id)}
+                className="text-left text-sm text-gray-700 dark:text-gray-300"
+              >
+                <span className="font-medium">{l.name}</span>
+                <span className="ml-2 text-xs text-gray-400 dark:text-gray-500">
+                  {l._count.items} items · {l._count.comparisons} comparisons
+                </span>
+              </button>
+              <button
+                onClick={() => deleteList(l.id)}
+                className="rounded p-1 text-gray-300 hover:text-red-500 dark:text-gray-600"
+                title="Delete list"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
                 >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <div className="mt-3 flex gap-3 text-xs text-gray-400 dark:text-gray-500">
-                <span>{cat._count.items} items</span>
-                <span>{cat._count.comparisons} comparisons</span>
-              </div>
-              <div className="mt-3 flex gap-2">
-                <button
-                  onClick={() => onSelect(cat.id, "compare")}
-                  className="rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
-                >
-                  Compare
-                </button>
-                <button
-                  onClick={() => onSelect(cat.id, "rankings")}
-                  className="rounded bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                >
-                  Rankings
-                </button>
-              </div>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
             </div>
           ))}
         </div>
@@ -311,10 +340,12 @@ function CategoriesTab({
 /* ── Items Tab ─────────────────────────────────────── */
 
 function ItemsTab({
-  category,
+  list,
+  allLists,
   onRefresh,
 }: {
-  category: { id: string; items: RankingItem[] };
+  list: RankingListDetail;
+  allLists: RankingList[];
   onRefresh: () => void;
 }) {
   const [title, setTitle] = useState("");
@@ -332,7 +363,7 @@ function ItemsTab({
         title: title.trim(),
         description,
         tags,
-        categoryId: category.id,
+        categoryId: list.id,
       }),
     });
     setTitle("");
@@ -347,12 +378,21 @@ function ItemsTab({
     onRefresh();
   };
 
+  const moveItem = async (itemId: string, newListId: string) => {
+    await fetch(`/api/rankings/items/${itemId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ categoryId: newListId }),
+    });
+    onRefresh();
+  };
+
   return (
     <div className="space-y-4">
       {/* Add item form */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
         <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          Add Item
+          Add Item to &quot;{list.name}&quot;
         </h3>
         <div className="flex flex-wrap gap-3">
           <input
@@ -388,7 +428,7 @@ function ItemsTab({
       </div>
 
       {/* Items list */}
-      {category.items.length === 0 ? (
+      {list.items.length === 0 ? (
         <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
           <p className="text-gray-500 dark:text-gray-400">No items yet</p>
           <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
@@ -412,11 +452,16 @@ function ItemsTab({
                 <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
                   W/L/T
                 </th>
+                {allLists.length > 1 && (
+                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                    List
+                  </th>
+                )}
                 <th className="w-12 px-4 py-3" />
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-              {category.items.map((item) => (
+              {list.items.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -445,12 +490,27 @@ function ItemsTab({
                       </div>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-sm font-mono text-gray-700 dark:text-gray-300">
+                  <td className="px-4 py-3 font-mono text-sm text-gray-700 dark:text-gray-300">
                     {Math.round(item.elo)}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
                     {item.wins}/{item.losses}/{item.ties}
                   </td>
+                  {allLists.length > 1 && (
+                    <td className="px-4 py-3">
+                      <select
+                        value={item.categoryId}
+                        onChange={(e) => moveItem(item.id, e.target.value)}
+                        className="rounded border border-gray-300 px-2 py-1 text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                      >
+                        {allLists.map((l) => (
+                          <option key={l.id} value={l.id}>
+                            {l.name}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                  )}
                   <td className="px-4 py-3">
                     <button
                       onClick={() => deleteItem(item.id)}
@@ -484,10 +544,10 @@ function ItemsTab({
 /* ── Compare Tab ───────────────────────────────────── */
 
 function CompareTab({
-  categoryId,
+  listId,
   onComparisonDone,
 }: {
-  categoryId: string;
+  listId: string;
   onComparisonDone: () => void;
 }) {
   const [left, setLeft] = useState<RankingItem | null>(null);
@@ -499,7 +559,7 @@ function CompareTab({
   const fetchPair = useCallback(() => {
     setLoadingPair(true);
     setError("");
-    fetch(`/api/rankings/compare?categoryId=${categoryId}`)
+    fetch(`/api/rankings/compare?categoryId=${listId}`)
       .then((r) => r.json())
       .then((data) => {
         if (data.error) {
@@ -510,11 +570,11 @@ function CompareTab({
         }
         setLoadingPair(false);
       });
-  }, [categoryId]);
+  }, [listId]);
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/rankings/compare?categoryId=${categoryId}`)
+    fetch(`/api/rankings/compare?categoryId=${listId}`)
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
@@ -529,7 +589,7 @@ function CompareTab({
     return () => {
       cancelled = true;
     };
-  }, [categoryId]);
+  }, [listId]);
 
   const submitChoice = async (result: "LEFT" | "RIGHT" | "TIE" | "SKIP") => {
     if (!left || !right) return;
@@ -539,7 +599,7 @@ function CompareTab({
       body: JSON.stringify({
         leftItemId: left.id,
         rightItemId: right.id,
-        categoryId,
+        categoryId: listId,
         result,
       }),
     });
@@ -662,16 +722,15 @@ function CompareTab({
 /* ── Rankings Tab ──────────────────────────────────── */
 
 function RankingsTab({
-  category,
+  list,
 }: {
-  category: { items: RankingItem[]; _count: { comparisons: number } };
+  list: { items: RankingItem[]; _count: { comparisons: number } };
 }) {
-  const items = [...category.items].sort((a, b) => b.elo - a.elo);
+  const items = [...list.items].sort((a, b) => b.elo - a.elo);
   const maxElo = items.length > 0 ? items[0].elo : 1500;
   const minElo = items.length > 0 ? items[items.length - 1].elo : 1500;
   const eloRange = maxElo - minElo || 1;
 
-  // Assign tiers: top 20% = S, next 20% = A, next 20% = B, next 20% = C, bottom 20% = D
   const getTier = (index: number, total: number) => {
     if (total <= 1) return "S";
     const pct = index / (total - 1);
@@ -714,19 +773,14 @@ function RankingsTab({
             key={item.id}
             className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800"
           >
-            {/* Rank number */}
             <span className="w-8 text-center text-lg font-bold text-gray-300 dark:text-gray-600">
               {i + 1}
             </span>
-
-            {/* Tier badge */}
             <span
               className={`w-8 rounded px-1.5 py-0.5 text-center text-xs font-bold ${tierColors[tier]}`}
             >
               {tier}
             </span>
-
-            {/* Info */}
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -736,7 +790,6 @@ function RankingsTab({
                   {Math.round(item.elo)}
                 </span>
               </div>
-              {/* Elo bar */}
               <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
                 <div
                   className="h-full rounded-full bg-blue-500 transition-all"
@@ -760,13 +813,12 @@ function RankingsTab({
 /* ── Stats Tab ─────────────────────────────────────── */
 
 function StatsTab({
-  category,
+  list,
 }: {
-  categoryId: string;
-  category: { items: RankingItem[]; _count: { comparisons: number } };
+  list: { items: RankingItem[]; _count: { comparisons: number } };
 }) {
-  const items = [...category.items].sort((a, b) => b.elo - a.elo);
-  const totalComparisons = category._count.comparisons;
+  const items = [...list.items].sort((a, b) => b.elo - a.elo);
+  const totalComparisons = list._count.comparisons;
   const totalItems = items.length;
   const maxPossiblePairs = (totalItems * (totalItems - 1)) / 2;
   const avgComparisons =
@@ -779,7 +831,6 @@ function StatsTab({
 
   return (
     <div className="space-y-6">
-      {/* Summary stats */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
           <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -813,7 +864,6 @@ function StatsTab({
         </div>
       </div>
 
-      {/* Per-item stats */}
       <div className="rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
         <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
           <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
