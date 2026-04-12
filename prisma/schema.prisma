@@ -335,3 +335,124 @@ model BodyMetric {
   @@index([date])
   @@index([type])
 }
+
+// ── Gym & Workout Tracking ───────────────────────────
+
+model Exercise {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  muscleGroup      String
+  secondaryMuscles String   @default("")
+  equipment        String   @default("bodyweight")
+  difficulty       String   @default("beginner")
+  instructions     String   @default("")
+  tips             String   @default("")
+  createdAt        DateTime @default(now())
+  routineExercises RoutineDayExercise[]
+  logExercises     WorkoutLogExercise[]
+
+  @@index([muscleGroup])
+  @@index([slug])
+}
+
+model WorkoutRoutine {
+  id          String   @id @default(cuid())
+  name        String
+  description String   @default("")
+  goal        String   @default("hypertrophy")
+  level       String   @default("beginner")
+  daysPerWeek Int      @default(3)
+  isPreset    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  days        WorkoutRoutineDay[]
+  logs        WorkoutLog[]
+
+  @@index([createdAt(sort: Desc)])
+}
+
+model WorkoutRoutineDay {
+  id        String   @id @default(cuid())
+  routineId String
+  name      String
+  dayOrder  Int      @default(0)
+  createdAt DateTime @default(now())
+  routine   WorkoutRoutine       @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  exercises RoutineDayExercise[]
+  logs      WorkoutLog[]
+
+  @@index([routineId])
+}
+
+model RoutineDayExercise {
+  id           String   @id @default(cuid())
+  routineDayId String
+  exerciseId   String
+  sets         Int      @default(3)
+  repsMin      Int      @default(8)
+  repsMax      Int      @default(12)
+  restSeconds  Int      @default(90)
+  sortOrder    Int      @default(0)
+  notes        String   @default("")
+  createdAt    DateTime @default(now())
+  routineDay   WorkoutRoutineDay @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
+  exercise     Exercise          @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@index([routineDayId])
+  @@index([exerciseId])
+}
+
+model WorkoutLog {
+  id              String   @id @default(cuid())
+  routineId       String?
+  routineDayId    String?
+  date            DateTime
+  durationMinutes Int      @default(0)
+  notes           String   @default("")
+  createdAt       DateTime @default(now())
+  routine         WorkoutRoutine?    @relation(fields: [routineId], references: [id], onDelete: SetNull)
+  routineDay      WorkoutRoutineDay? @relation(fields: [routineDayId], references: [id], onDelete: SetNull)
+  exercises       WorkoutLogExercise[]
+
+  @@index([date(sort: Desc)])
+  @@index([routineId])
+}
+
+model WorkoutLogExercise {
+  id         String   @id @default(cuid())
+  logId      String
+  exerciseId String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  log        WorkoutLog @relation(fields: [logId], references: [id], onDelete: Cascade)
+  exercise   Exercise   @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  sets       WorkoutLogSet[]
+
+  @@index([logId])
+  @@index([exerciseId])
+}
+
+model WorkoutLogSet {
+  id            String   @id @default(cuid())
+  logExerciseId String
+  setNumber     Int      @default(1)
+  reps          Int      @default(0)
+  weight        Float    @default(0)
+  unit          String   @default("lbs")
+  completed     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  logExercise   WorkoutLogExercise @relation(fields: [logExerciseId], references: [id], onDelete: Cascade)
+
+  @@index([logExerciseId])
+}
+
+model ProgressPhoto {
+  id        String   @id @default(cuid())
+  date      DateTime
+  photoUrl  String
+  notes     String   @default("")
+  createdAt DateTime @default(now())
+
+  @@index([date(sort: Desc)])
+}

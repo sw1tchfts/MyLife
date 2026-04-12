@@ -151,6 +151,17 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               <DietIcon active={pathname.startsWith("/diet")} />
               Diet & Nutrition
             </Link>
+            <Link
+              href="/gym"
+              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+                pathname.startsWith("/gym")
+                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              }`}
+            >
+              <GymIcon active={pathname.startsWith("/gym")} />
+              Gym
+            </Link>
           </div>
 
           {/* Journal section */}
@@ -387,6 +398,25 @@ function DietIcon({ active }: { active: boolean }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+      />
+    </svg>
+  );
+}
+
+function GymIcon({ active }: { active: boolean }) {
+  const cls = active ? "text-blue-600" : "text-gray-400";
+  return (
+    <svg
+      className={`h-4 w-4 ${cls}`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 12h1m16 0h1m-2-4v8m-14-8v8m3-10v12m8-12v12"
       />
     </svg>
   );

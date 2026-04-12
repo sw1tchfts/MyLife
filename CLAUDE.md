@@ -83,11 +83,17 @@ src/
     api/body-metrics/[id]/route.ts     # DELETE body metric
     api/journal/route.ts               # GET + POST journal entries
     api/journal/[id]/route.ts          # GET + PUT + DELETE single journal entry
+    api/gym/exercises/route.ts         # GET + POST exercises
+    api/gym/routines/route.ts          # GET + POST workout routines
+    api/gym/routines/[id]/route.ts     # GET + DELETE single routine
+    api/gym/logs/route.ts              # GET + POST workout logs
+    api/gym/logs/[id]/route.ts         # DELETE single workout log
     api/settings/app/route.ts  # GET + PUT app-wide settings
     api/settings/user/route.ts # GET + PUT user preferences
     journal/page.tsx           # Journal (write, entries list, calendar view)
     rankings/page.tsx          # Pairwise ranking system (categories, items, compare, rankings, stats)
     diet/page.tsx              # Diet & nutrition (food library, nutrition log, body metrics)
+    gym/page.tsx               # Gym (exercises, routines, log workout, history)
     tasks/new/page.tsx         # Create task page
     tasks/[id]/edit/page.tsx   # Edit task page
     diagrams/page.tsx          # Diagram creator (flowcharts, process, swim lane, ER)
