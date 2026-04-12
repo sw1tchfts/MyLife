@@ -4,13 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Status, Priority, Recurrence } from "@/generated/prisma/client";
 
-interface TaskFormData {
+type TaskType = "TASK" | "MEAL" | "MEDICATION";
+type MealType = "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+
+export interface TaskFormData {
   title: string;
   description: string;
   status: Status;
   priority: Priority;
   dueDate: string;
   recurrence: Recurrence;
+  taskType: TaskType;
+  mealType: MealType | null;
 }
 
 interface TaskFormProps {
@@ -18,6 +23,9 @@ interface TaskFormProps {
   onSubmit: (data: TaskFormData) => Promise<void>;
   submitLabel: string;
 }
+
+const inputCls =
+  "mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100";
 
 export default function TaskForm({
   initialData,
@@ -33,6 +41,8 @@ export default function TaskForm({
       priority: "MEDIUM",
       dueDate: "",
       recurrence: "NONE",
+      taskType: "TASK",
+      mealType: null,
     },
   );
   const [submitting, setSubmitting] = useState(false);
@@ -57,8 +67,72 @@ export default function TaskForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
-        <div className="rounded-md bg-red-50 dark:bg-red-900/30 p-3 text-sm text-red-700 dark:text-red-300">
+        <div className="rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
           {error}
+        </div>
+      )}
+
+      {/* Task type selector */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Type
+        </label>
+        <div className="mt-1 flex gap-2">
+          {(
+            [
+              { value: "TASK", label: "Task", color: "gray" },
+              { value: "MEAL", label: "Meal", color: "green" },
+              { value: "MEDICATION", label: "Medication", color: "blue" },
+            ] as const
+          ).map((t) => (
+            <button
+              key={t.value}
+              type="button"
+              onClick={() =>
+                setFormData({
+                  ...formData,
+                  taskType: t.value,
+                  mealType: t.value === "MEAL" ? "LUNCH" : null,
+                })
+              }
+              className={`rounded-md border px-3 py-1.5 text-sm font-medium ${
+                formData.taskType === t.value
+                  ? t.color === "green"
+                    ? "border-green-600 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                    : t.color === "blue"
+                      ? "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                      : "border-gray-600 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                  : "border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Meal type selector */}
+      {formData.taskType === "MEAL" && (
+        <div>
+          <label
+            htmlFor="mealType"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Meal
+          </label>
+          <select
+            id="mealType"
+            value={formData.mealType || "LUNCH"}
+            onChange={(e) =>
+              setFormData({ ...formData, mealType: e.target.value as MealType })
+            }
+            className={inputCls}
+          >
+            <option value="BREAKFAST">Breakfast</option>
+            <option value="LUNCH">Lunch</option>
+            <option value="DINNER">Dinner</option>
+            <option value="SNACK">Snack</option>
+          </select>
         </div>
       )}
 
@@ -74,8 +148,14 @@ export default function TaskForm({
           type="text"
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          placeholder="What needs to be done?"
+          className={inputCls}
+          placeholder={
+            formData.taskType === "MEAL"
+              ? "e.g. Meal 1: Chicken, Rice"
+              : formData.taskType === "MEDICATION"
+                ? "e.g. Morning vitamins"
+                : "What needs to be done?"
+          }
         />
       </div>
 
@@ -93,7 +173,7 @@ export default function TaskForm({
             setFormData({ ...formData, description: e.target.value })
           }
           rows={3}
-          className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className={inputCls}
           placeholder="Add more details..."
         />
       </div>
@@ -112,7 +192,7 @@ export default function TaskForm({
             onChange={(e) =>
               setFormData({ ...formData, status: e.target.value as Status })
             }
-            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className={inputCls}
           >
             <option value="TODO">To Do</option>
             <option value="IN_PROGRESS">In Progress</option>
@@ -136,7 +216,7 @@ export default function TaskForm({
                 priority: e.target.value as Priority,
               })
             }
-            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className={inputCls}
           >
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
@@ -158,7 +238,7 @@ export default function TaskForm({
             onChange={(e) =>
               setFormData({ ...formData, dueDate: e.target.value })
             }
-            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className={inputCls}
           />
         </div>
 
@@ -178,7 +258,7 @@ export default function TaskForm({
                 recurrence: e.target.value as Recurrence,
               })
             }
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            className={inputCls}
           >
             <option value="NONE">Never</option>
             <option value="DAILY">Daily</option>
@@ -188,11 +268,19 @@ export default function TaskForm({
         </div>
       </div>
 
+      {formData.taskType !== "TASK" && (
+        <p className="text-xs text-gray-400 dark:text-gray-500">
+          {formData.taskType === "MEAL"
+            ? "Save the task first, then add foods from your library on the edit page."
+            : "Save the task first, then add medications on the edit page."}
+        </p>
+      )}
+
       <div className="flex justify-end gap-3 pt-2">
         <button
           type="button"
           onClick={() => router.push("/")}
-          className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
         >
           Cancel
         </button>

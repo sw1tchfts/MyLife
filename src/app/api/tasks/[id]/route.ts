@@ -78,6 +78,36 @@ export async function PUT(
     if (body.taskType !== undefined) data.taskType = body.taskType;
     if (body.mealType !== undefined) data.mealType = body.mealType;
 
+    // Handle food add/remove for meal tasks
+    if (body.addFood) {
+      await prisma.taskFood.create({
+        data: {
+          taskId: id,
+          foodItemId: body.addFood.foodItemId,
+          quantity: body.addFood.quantity || 1,
+        },
+      });
+    }
+    if (body.removeFood) {
+      await prisma.taskFood.delete({ where: { id: body.removeFood } });
+    }
+
+    // Handle medication add/remove
+    if (body.addMedication) {
+      await prisma.taskMedication.create({
+        data: {
+          taskId: id,
+          medicationItemId: body.addMedication.medicationItemId,
+          dosage: body.addMedication.dosage || "",
+        },
+      });
+    }
+    if (body.removeMedication) {
+      await prisma.taskMedication.delete({
+        where: { id: body.removeMedication },
+      });
+    }
+
     const task = await prisma.task.update({
       where: { id },
       data,

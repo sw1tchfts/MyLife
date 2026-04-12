@@ -22,6 +22,8 @@ export default function NewTaskPage() {
                 ...data,
                 dueDate: data.dueDate || null,
                 recurrence: data.recurrence,
+                taskType: data.taskType,
+                mealType: data.mealType,
               }),
             });
             if (!res.ok) throw new Error("Failed to create task");
