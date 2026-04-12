@@ -67,8 +67,11 @@ src/
     api/nutrition/route.ts             # GET nutrition logs (by date range)
     api/body-metrics/route.ts          # GET + POST body metrics
     api/body-metrics/[id]/route.ts     # DELETE body metric
+    api/journal/route.ts               # GET + POST journal entries
+    api/journal/[id]/route.ts          # GET + PUT + DELETE single journal entry
     api/settings/app/route.ts  # GET + PUT app-wide settings
     api/settings/user/route.ts # GET + PUT user preferences
+    journal/page.tsx           # Journal (write, entries list, calendar view)
     rankings/page.tsx          # Pairwise ranking system (categories, items, compare, rankings, stats)
     diet/page.tsx              # Diet & nutrition (food library, nutrition log, body metrics)
     tasks/new/page.tsx         # Create task page
@@ -168,6 +171,7 @@ src/
 - #10 User settings page — DONE
 - #12 Pairwise ranking system — DONE
 - #14 Diet and medication tracking — DONE
+- #15 Journal section — DONE
 
 ## Development Workflow (ALWAYS follow these)
 
