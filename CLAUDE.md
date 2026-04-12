@@ -12,6 +12,8 @@ Personal task tracking web app. Single user (no sharing/collaboration features).
 - **ORM**: Prisma 7 with `@prisma/adapter-pg`
 - **Database**: PostgreSQL via Supabase (transaction pooler, port 6543)
 - **Styling**: Tailwind CSS v4
+- **Testing**: Vitest
+- **Error Tracking**: Sentry (`@sentry/nextjs`)
 - **Hosting**: Vercel (auto-deploys from `main`)
 
 ## Architecture
@@ -40,8 +42,15 @@ Personal task tracking web app. Single user (no sharing/collaboration features).
 
 ```
 prisma/schema.prisma          # Data model
+prisma/seed.ts                 # Database seed script
 prisma.config.ts               # Prisma connection config
+next.config.ts                 # Next.js config (Sentry integration)
+sentry.client.config.ts        # Sentry client-side config
+sentry.server.config.ts        # Sentry server-side config
+sentry.edge.config.ts          # Sentry edge runtime config
+vitest.config.ts               # Vitest test config
 src/
+  test/setup.ts                # Vitest test setup
   lib/prisma.ts                # Prisma client singleton
   lib/types.ts                 # Validation + shared types
   lib/elo.ts                   # Elo rating algorithm for pairwise ranking
@@ -79,6 +88,7 @@ src/
     tasks/new/page.tsx         # Create task page
     tasks/[id]/edit/page.tsx   # Edit task page
     diagrams/page.tsx          # Diagram creator (flowcharts, process, swim lane, ER)
+    auth/reset-password/page.tsx # Password reset page
     admin/page.tsx             # Admin settings (categories, defaults, stats)
     settings/page.tsx          # User settings (theme, account, notifications)
   components/
@@ -142,6 +152,7 @@ src/
 - Session management: `src/proxy.ts` (Next.js 16 renamed middleware to proxy)
 - Login page: `src/app/login/page.tsx`
 - Auth callback: `src/app/auth/callback/route.ts`
+- Password reset: `src/app/auth/reset-password/page.tsx`
 - Sign-out button: `src/components/SignOutButton.tsx`
 - All API routes check auth via `supabase.auth.getUser()`
 - Env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -157,7 +168,7 @@ src/
 
 - Vercel auto-deploys on push to `main`
 - Vercel URL: `my-life-phi-coral.vercel.app`
-- Environment variables in Vercel: `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- Environment variables in Vercel: `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SENTRY_DSN`
 - Framework Preset must be set to "Next.js" in Vercel settings
 - Database tables were created via Supabase SQL Editor (not Prisma migrate)
 - Merge feature branch to `main` and push to trigger deploy
