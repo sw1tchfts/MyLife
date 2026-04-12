@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, Suspense } from "react";
+import { useEffect, useState, useMemo, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { TaskData } from "@/components/TaskCard";
@@ -41,20 +41,24 @@ function HomeContent() {
   const [statusFilter, setStatusFilter] = useState<Status | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<Priority | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
+  const fetchTasks = useCallback(() => {
     fetch("/api/tasks")
       .then((res) => res.json())
       .then((data) => {
-        if (!cancelled) {
-          setTasks(data);
-          setLoading(false);
-        }
+        setTasks(data);
+        setLoading(false);
       });
-    return () => {
-      cancelled = true;
-    };
   }, []);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
+
+  useEffect(() => {
+    const handler = () => fetchTasks();
+    window.addEventListener("tasks-changed", handler);
+    return () => window.removeEventListener("tasks-changed", handler);
+  }, [fetchTasks]);
 
   const filtered = useMemo(() => {
     let result = tasks;

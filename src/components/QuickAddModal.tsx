@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import type { Status, Priority } from "@/generated/prisma/client";
 
 interface QuickAddModalProps {
@@ -10,7 +9,6 @@ interface QuickAddModalProps {
 }
 
 export default function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
-  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState<Priority>("MEDIUM");
@@ -54,9 +52,7 @@ export default function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
     setDueDate("");
     setSubmitting(false);
     onClose();
-    router.refresh();
-    // Reload tasks on the page
-    window.location.reload();
+    window.dispatchEvent(new CustomEvent("tasks-changed"));
   };
 
   if (!isOpen) return null;
