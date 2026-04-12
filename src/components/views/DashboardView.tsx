@@ -184,6 +184,25 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
         </div>
       </div>
 
+      {/* Charts row */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* Priority distribution */}
+        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+          <p className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+            Priority Distribution
+          </p>
+          <PriorityChart tasks={tasks} />
+        </div>
+
+        {/* Tasks created over time */}
+        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+          <p className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+            Tasks Created (Last 14 Days)
+          </p>
+          <ActivityChart tasks={tasks} />
+        </div>
+      </div>
+
       {/* Two column: recent + upcoming */}
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Recently created */}
@@ -280,6 +299,98 @@ function StatCard({
     <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
       <p className={`text-2xl font-bold ${color}`}>{value}</p>
       <p className="text-xs text-gray-400 dark:text-gray-500">{label}</p>
+    </div>
+  );
+}
+
+function PriorityChart({ tasks }: { tasks: TaskData[] }) {
+  const active = tasks.filter((t) => t.status !== "DONE");
+  const high = active.filter((t) => t.priority === "HIGH").length;
+  const medium = active.filter((t) => t.priority === "MEDIUM").length;
+  const low = active.filter((t) => t.priority === "LOW").length;
+  const max = Math.max(high, medium, low, 1);
+
+  const bars = [
+    { label: "High", value: high, color: "bg-red-500" },
+    { label: "Medium", value: medium, color: "bg-amber-500" },
+    { label: "Low", value: low, color: "bg-green-500" },
+  ];
+
+  if (active.length === 0) {
+    return (
+      <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">
+        No active tasks
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {bars.map((bar) => (
+        <div key={bar.label}>
+          <div className="mb-1 flex items-center justify-between text-xs">
+            <span className="text-gray-600 dark:text-gray-400">
+              {bar.label}
+            </span>
+            <span className="font-medium text-gray-900 dark:text-gray-100">
+              {bar.value}
+            </span>
+          </div>
+          <div className="h-4 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+            <div
+              className={`h-full rounded-full ${bar.color} transition-all`}
+              style={{ width: `${(bar.value / max) * 100}%` }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ActivityChart({ tasks }: { tasks: TaskData[] }) {
+  const days = 14;
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+
+  const buckets: { label: string; count: number }[] = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    const count = tasks.filter((t) => t.createdAt.slice(0, 10) === key).length;
+    buckets.push({
+      label: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      count,
+    });
+  }
+
+  const max = Math.max(...buckets.map((b) => b.count), 1);
+
+  return (
+    <div className="flex items-end gap-1" style={{ height: 120 }}>
+      {buckets.map((bucket, i) => (
+        <div
+          key={i}
+          className="group flex flex-1 flex-col items-center justify-end"
+          style={{ height: "100%" }}
+        >
+          <div className="relative w-full">
+            <div
+              className="mx-auto w-full max-w-[24px] rounded-t bg-blue-500 transition-all group-hover:bg-blue-600"
+              style={{
+                height: `${Math.max((bucket.count / max) * 96, bucket.count > 0 ? 8 : 2)}px`,
+              }}
+            />
+            <div className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 rounded bg-gray-800 px-1.5 py-0.5 text-[10px] text-white opacity-0 transition-opacity group-hover:opacity-100 dark:bg-gray-200 dark:text-gray-900">
+              {bucket.count}
+            </div>
+          </div>
+          <span className="mt-1 text-[9px] text-gray-400 dark:text-gray-500">
+            {i % 2 === 0 ? bucket.label.split(" ")[1] : ""}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }

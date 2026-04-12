@@ -185,16 +185,25 @@ export default function SettingsPage() {
             <input
               type="checkbox"
               checked={settings.browserNotifications}
-              onChange={(e) =>
+              onChange={async (e) => {
+                if (e.target.checked && "Notification" in window) {
+                  const perm = await Notification.requestPermission();
+                  if (perm !== "granted") {
+                    setError(
+                      "Browser notifications were blocked. Enable them in your browser settings.",
+                    );
+                    return;
+                  }
+                }
                 setSettings((s) => ({
                   ...s,
                   browserNotifications: e.target.checked,
-                }))
-              }
+                }));
+              }}
               className="h-4 w-4 rounded border-gray-300"
             />
             <span className="text-sm text-gray-700 dark:text-gray-300">
-              Browser notifications for upcoming due dates
+              Browser notifications for overdue and due-today tasks
             </span>
           </label>
         </div>

@@ -25,6 +25,11 @@ export async function GET(request: NextRequest) {
         subtasks: { orderBy: { sortOrder: "asc" } },
         taskFoods: { include: { foodItem: true } },
         taskMeds: { include: { medicationItem: true } },
+        blockedBy: {
+          include: {
+            blocker: { select: { id: true, title: true, status: true } },
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });

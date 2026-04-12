@@ -55,6 +55,12 @@ export interface TaskMedData {
   medicationItem: MedicationItemData;
 }
 
+export interface TaskDependencyData {
+  id: string;
+  blockerId: string;
+  blocker: { id: string; title: string; status: Status };
+}
+
 export interface TaskData {
   id: string;
   title: string;
@@ -69,6 +75,7 @@ export interface TaskData {
   subtasks?: SubtaskData[];
   taskFoods?: TaskFoodData[];
   taskMeds?: TaskMedData[];
+  blockedBy?: TaskDependencyData[];
 }
 
 interface TaskCardProps {

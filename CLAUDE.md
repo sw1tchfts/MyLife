@@ -61,6 +61,8 @@ src/
     api/tasks/route.ts         # GET + POST tasks
     api/tasks/[id]/route.ts    # GET + PUT + DELETE single task (auto-creates next for recurring)
     api/tasks/[id]/subtasks/route.ts # POST + PUT + DELETE subtasks
+    api/tasks/[id]/dependencies/route.ts # GET + POST + DELETE task dependencies
+    api/export/route.ts            # GET data export (CSV/JSON for tasks, journal, metrics)
     api/categories/route.ts    # GET + POST categories
     api/categories/[id]/route.ts # PUT + DELETE single category
     api/rankings/categories/route.ts     # GET + POST ranking categories
@@ -104,6 +106,7 @@ src/
     StatusBadge.tsx            # Status pill
     PriorityBadge.tsx          # Priority pill
     DeleteConfirmDialog.tsx    # Delete confirmation modal
+    TaskNotifications.tsx      # Browser notifications for overdue/due-today tasks
     diagrams/
       DiagramNodes.tsx         # Custom React Flow node types (process, decision, etc.)
     SignOutButton.tsx           # Sign-out button (used by Sidebar)
@@ -111,7 +114,7 @@ src/
       ListView.tsx             # Table/list view with sortable columns
       CalendarView.tsx         # Monthly calendar with tasks on due dates
       TimelineView.tsx         # Horizontal timeline/Gantt view
-      DashboardView.tsx        # Summary stats and breakdowns
+      DashboardView.tsx        # Summary stats, charts, and breakdowns
       FocusView.tsx            # Overdue + due-today/soon focus mode
 ```
 

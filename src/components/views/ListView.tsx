@@ -155,6 +155,20 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
                             task.recurrence.slice(1).toLowerCase()}
                         </span>
                       )}
+                      {task.blockedBy &&
+                        task.blockedBy.some(
+                          (d) => d.blocker.status !== "DONE",
+                        ) && (
+                          <span
+                            className="inline-flex items-center rounded bg-red-100 px-1 py-0.5 text-[10px] font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                            title={`Blocked by: ${task.blockedBy
+                              .filter((d) => d.blocker.status !== "DONE")
+                              .map((d) => d.blocker.title)
+                              .join(", ")}`}
+                          >
+                            Blocked
+                          </span>
+                        )}
                     </div>
                     {task.description && (
                       <p className="mt-0.5 text-xs text-gray-400 line-clamp-1 dark:text-gray-500">
