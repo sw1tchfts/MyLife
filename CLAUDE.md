@@ -65,6 +65,8 @@ src/
     api/medications/route.ts           # GET + POST saved medications
     api/medications/[id]/route.ts      # DELETE saved medication
     api/nutrition/route.ts             # GET nutrition logs (by date range)
+    api/diagrams/route.ts              # GET + POST diagrams
+    api/diagrams/[id]/route.ts         # GET + PUT + DELETE single diagram
     api/body-metrics/route.ts          # GET + POST body metrics
     api/body-metrics/[id]/route.ts     # DELETE body metric
     api/journal/route.ts               # GET + POST journal entries
@@ -76,6 +78,7 @@ src/
     diet/page.tsx              # Diet & nutrition (food library, nutrition log, body metrics)
     tasks/new/page.tsx         # Create task page
     tasks/[id]/edit/page.tsx   # Edit task page
+    diagrams/page.tsx          # Diagram creator (flowcharts, process, swim lane, ER)
     admin/page.tsx             # Admin settings (categories, defaults, stats)
     settings/page.tsx          # User settings (theme, account, notifications)
   components/
@@ -90,6 +93,8 @@ src/
     StatusBadge.tsx            # Status pill
     PriorityBadge.tsx          # Priority pill
     DeleteConfirmDialog.tsx    # Delete confirmation modal
+    diagrams/
+      DiagramNodes.tsx         # Custom React Flow node types (process, decision, etc.)
     SignOutButton.tsx           # Sign-out button (used by Sidebar)
     views/
       ListView.tsx             # Table/list view with sortable columns
@@ -172,6 +177,7 @@ src/
 - #12 Pairwise ranking system — DONE
 - #14 Diet and medication tracking — DONE
 - #15 Journal section — DONE
+- #16 Diagram creator — DONE
 
 ## Development Workflow (ALWAYS follow these)
 
