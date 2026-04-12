@@ -51,6 +51,7 @@ sentry.edge.config.ts          # Sentry edge runtime config
 vitest.config.ts               # Vitest test config
 src/
   test/setup.ts                # Vitest test setup
+  test/api-helpers.ts          # Shared mocks (Supabase auth, Prisma, request builder)
   lib/prisma.ts                # Prisma client singleton
   lib/types.ts                 # Validation + shared types
   lib/elo.ts                   # Elo rating algorithm for pairwise ranking
@@ -197,7 +198,8 @@ src/
 3. **Database changes**: Use Supabase MCP `execute_sql` tool (project ref: `wvscbgcidgmvlitbobtt`) to run DDL/migrations directly. Update Prisma schema to match.
 4. **Deploying**: Merge feature branch to `main` and push to trigger Vercel auto-deploy
 5. **Testing**: Run `npm test` before committing. Add tests for new validation logic or utilities
-6. **Code quality**: Run `npm run lint` and `npm run format:check` before committing
+6. **Code quality**: Run `npm run check` before committing (runs format, lint, typecheck, and tests in one command)
+7. **Pre-commit hooks**: Husky + lint-staged auto-runs Prettier and ESLint on staged files at commit time
 
 ## User Notes
 
