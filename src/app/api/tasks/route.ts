@@ -21,7 +21,11 @@ export async function GET(request: NextRequest) {
 
     const tasks = await prisma.task.findMany({
       where,
-      include: { subtasks: { orderBy: { sortOrder: "asc" } } },
+      include: {
+        subtasks: { orderBy: { sortOrder: "asc" } },
+        taskFoods: { include: { foodItem: true } },
+        taskMeds: { include: { medicationItem: true } },
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -59,6 +63,8 @@ export async function POST(request: NextRequest) {
         priority: parsed.priority ?? "MEDIUM",
         dueDate: parsed.dueDate ? new Date(parsed.dueDate) : null,
         recurrence: body.recurrence ?? "NONE",
+        taskType: body.taskType ?? "TASK",
+        mealType: body.mealType ?? null,
       },
     });
 

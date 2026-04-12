@@ -15,6 +15,45 @@ export interface SubtaskData {
 }
 
 export type Recurrence = "NONE" | "DAILY" | "WEEKLY" | "MONTHLY";
+export type TaskType = "TASK" | "MEAL" | "MEDICATION";
+export type MealType = "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+
+export interface FoodItemData {
+  id: string;
+  name: string;
+  brand: string;
+  servingSize: number;
+  servingUnit: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  sugar: number;
+  sodium: number;
+}
+
+export interface TaskFoodData {
+  id: string;
+  foodItemId: string;
+  quantity: number;
+  foodItem: FoodItemData;
+}
+
+export interface MedicationItemData {
+  id: string;
+  name: string;
+  genericName: string;
+  dosageForm: string;
+  strength: string;
+}
+
+export interface TaskMedData {
+  id: string;
+  medicationItemId: string;
+  dosage: string;
+  medicationItem: MedicationItemData;
+}
 
 export interface TaskData {
   id: string;
@@ -24,8 +63,12 @@ export interface TaskData {
   priority: Priority;
   dueDate: string | null;
   recurrence: Recurrence;
+  taskType: TaskType;
+  mealType: MealType | null;
   createdAt: string;
   subtasks?: SubtaskData[];
+  taskFoods?: TaskFoodData[];
+  taskMeds?: TaskMedData[];
 }
 
 interface TaskCardProps {

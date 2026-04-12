@@ -23,7 +23,11 @@ export async function GET(
     const { id } = await params;
     const task = await prisma.task.findUnique({
       where: { id },
-      include: { subtasks: { orderBy: { sortOrder: "asc" } } },
+      include: {
+        subtasks: { orderBy: { sortOrder: "asc" } },
+        taskFoods: { include: { foodItem: true } },
+        taskMeds: { include: { medicationItem: true } },
+      },
     });
 
     if (!task) {
@@ -71,11 +75,66 @@ export async function PUT(
       data.dueDate = parsed.dueDate ? new Date(parsed.dueDate) : null;
     }
     if (body.recurrence !== undefined) data.recurrence = body.recurrence;
+    if (body.taskType !== undefined) data.taskType = body.taskType;
+    if (body.mealType !== undefined) data.mealType = body.mealType;
 
     const task = await prisma.task.update({
       where: { id },
       data,
     });
+
+    // When a MEAL task is marked DONE, log its nutrition
+    if (
+      parsed.status === "DONE" &&
+      existing.status !== "DONE" &&
+      existing.taskType === "MEAL"
+    ) {
+      const taskFoods = await prisma.taskFood.findMany({
+        where: { taskId: id },
+        include: { foodItem: true },
+      });
+
+      const totals = {
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+        fiber: 0,
+        sugar: 0,
+        sodium: 0,
+        vitaminA: 0,
+        vitaminC: 0,
+        vitaminD: 0,
+        calcium: 0,
+        iron: 0,
+        potassium: 0,
+      };
+
+      for (const tf of taskFoods) {
+        const q = tf.quantity;
+        totals.calories += tf.foodItem.calories * q;
+        totals.protein += tf.foodItem.protein * q;
+        totals.carbs += tf.foodItem.carbs * q;
+        totals.fat += tf.foodItem.fat * q;
+        totals.fiber += tf.foodItem.fiber * q;
+        totals.sugar += tf.foodItem.sugar * q;
+        totals.sodium += tf.foodItem.sodium * q;
+        totals.vitaminA += tf.foodItem.vitaminA * q;
+        totals.vitaminC += tf.foodItem.vitaminC * q;
+        totals.vitaminD += tf.foodItem.vitaminD * q;
+        totals.calcium += tf.foodItem.calcium * q;
+        totals.iron += tf.foodItem.iron * q;
+        totals.potassium += tf.foodItem.potassium * q;
+      }
+
+      await prisma.nutritionLog.create({
+        data: {
+          date: new Date(),
+          taskId: id,
+          ...totals,
+        },
+      });
+    }
 
     // Auto-create next occurrence for recurring tasks marked DONE
     if (
@@ -104,6 +163,8 @@ export async function PUT(
           priority: existing.priority,
           dueDate: nextDue,
           recurrence: existing.recurrence,
+          taskType: existing.taskType,
+          mealType: existing.mealType,
           status: "TODO",
         },
       });

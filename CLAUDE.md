@@ -58,9 +58,19 @@ src/
     api/rankings/items/route.ts          # POST ranking items
     api/rankings/items/[id]/route.ts     # PUT + DELETE ranking items
     api/rankings/compare/route.ts        # GET next pair + POST comparison result
+    api/foods/search/route.ts          # GET search USDA FoodData Central
+    api/foods/route.ts                 # GET + POST saved foods
+    api/foods/[id]/route.ts            # DELETE saved food
+    api/medications/search/route.ts    # GET search OpenFDA drug labels
+    api/medications/route.ts           # GET + POST saved medications
+    api/medications/[id]/route.ts      # DELETE saved medication
+    api/nutrition/route.ts             # GET nutrition logs (by date range)
+    api/body-metrics/route.ts          # GET + POST body metrics
+    api/body-metrics/[id]/route.ts     # DELETE body metric
     api/settings/app/route.ts  # GET + PUT app-wide settings
     api/settings/user/route.ts # GET + PUT user preferences
     rankings/page.tsx          # Pairwise ranking system (categories, items, compare, rankings, stats)
+    diet/page.tsx              # Diet & nutrition (food library, nutrition log, body metrics)
     tasks/new/page.tsx         # Create task page
     tasks/[id]/edit/page.tsx   # Edit task page
     admin/page.tsx             # Admin settings (categories, defaults, stats)
@@ -157,6 +167,7 @@ src/
 - #9 Admin settings page — DONE
 - #10 User settings page — DONE
 - #12 Pairwise ranking system — DONE
+- #14 Diet and medication tracking — DONE
 
 ## Development Workflow (ALWAYS follow these)
 

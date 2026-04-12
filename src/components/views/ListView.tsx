@@ -135,6 +135,16 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
                       >
                         {task.title}
                       </Link>
+                      {task.taskType === "MEAL" && (
+                        <span className="inline-flex items-center rounded bg-green-100 px-1 py-0.5 text-[10px] font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                          Meal
+                        </span>
+                      )}
+                      {task.taskType === "MEDICATION" && (
+                        <span className="inline-flex items-center rounded bg-blue-100 px-1 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                          Med
+                        </span>
+                      )}
                       {task.recurrence && task.recurrence !== "NONE" && (
                         <span
                           className="inline-flex items-center rounded bg-purple-100 px-1 py-0.5 text-[10px] font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
@@ -149,6 +159,36 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
                     {task.description && (
                       <p className="mt-0.5 text-xs text-gray-400 line-clamp-1 dark:text-gray-500">
                         {task.description}
+                      </p>
+                    )}
+                    {task.taskFoods &&
+                      task.taskFoods.length > 0 &&
+                      (() => {
+                        const totalCal = Math.round(
+                          task.taskFoods.reduce(
+                            (s, tf) => s + tf.foodItem.calories * tf.quantity,
+                            0,
+                          ),
+                        );
+                        const totalPro = Math.round(
+                          task.taskFoods.reduce(
+                            (s, tf) => s + tf.foodItem.protein * tf.quantity,
+                            0,
+                          ),
+                        );
+                        return (
+                          <p className="mt-0.5 text-xs text-green-600 dark:text-green-400">
+                            {totalCal} cal · {totalPro}g protein ·{" "}
+                            {task.taskFoods.length} food
+                            {task.taskFoods.length !== 1 ? "s" : ""}
+                          </p>
+                        );
+                      })()}
+                    {task.taskMeds && task.taskMeds.length > 0 && (
+                      <p className="mt-0.5 text-xs text-blue-500 dark:text-blue-400">
+                        {task.taskMeds
+                          .map((tm) => tm.medicationItem.name)
+                          .join(", ")}
                       </p>
                     )}
                     {task.subtasks && task.subtasks.length > 0 && (

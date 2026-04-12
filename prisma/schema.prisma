@@ -26,6 +26,19 @@ enum Recurrence {
   MONTHLY
 }
 
+enum TaskType {
+  TASK
+  MEAL
+  MEDICATION
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
 model Task {
   id          String     @id @default(cuid())
   title       String
@@ -34,13 +47,19 @@ model Task {
   priority    Priority   @default(MEDIUM)
   dueDate     DateTime?
   recurrence  Recurrence @default(NONE)
+  taskType    TaskType   @default(TASK)
+  mealType    MealType?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   categories  TaskCategory[]
   subtasks    Subtask[]
+  taskFoods   TaskFood[]
+  taskMeds    TaskMedication[]
+  nutritionLogs NutritionLog[]
 
   @@index([status])
   @@index([createdAt(sort: Desc)])
+  @@index([taskType])
 }
 
 model Subtask {
@@ -137,4 +156,120 @@ model Comparison {
   @@index([categoryId])
   @@index([leftItemId])
   @@index([rightItemId])
+}
+
+// ── Diet & Nutrition Tracking ─────────────────────────
+
+model FoodItem {
+  id           String   @id @default(cuid())
+  name         String
+  brand        String   @default("")
+  servingSize  Float    @default(100)
+  servingUnit  String   @default("g")
+  // Macros (per serving)
+  calories     Float    @default(0)
+  protein      Float    @default(0)
+  carbs        Float    @default(0)
+  fat          Float    @default(0)
+  fiber        Float    @default(0)
+  sugar        Float    @default(0)
+  sodium       Float    @default(0)
+  // Micros (per serving)
+  vitaminA     Float    @default(0)
+  vitaminC     Float    @default(0)
+  vitaminD     Float    @default(0)
+  calcium      Float    @default(0)
+  iron         Float    @default(0)
+  potassium    Float    @default(0)
+  // Source
+  externalId   String   @default("")
+  source       String   @default("")
+  createdAt    DateTime @default(now())
+  taskFoods    TaskFood[]
+}
+
+model TaskFood {
+  id         String   @id @default(cuid())
+  taskId     String
+  foodItemId String
+  quantity   Float    @default(1)
+  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  foodItem   FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([foodItemId])
+}
+
+model NutritionLog {
+  id        String   @id @default(cuid())
+  date      DateTime
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  calories  Float    @default(0)
+  protein   Float    @default(0)
+  carbs     Float    @default(0)
+  fat       Float    @default(0)
+  fiber     Float    @default(0)
+  sugar     Float    @default(0)
+  sodium    Float    @default(0)
+  vitaminA  Float    @default(0)
+  vitaminC  Float    @default(0)
+  vitaminD  Float    @default(0)
+  calcium   Float    @default(0)
+  iron      Float    @default(0)
+  potassium Float    @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([date])
+  @@index([taskId])
+}
+
+// ── Medication Tracking ───────────────────────────────
+
+model MedicationItem {
+  id           String   @id @default(cuid())
+  name         String
+  genericName  String   @default("")
+  dosageForm   String   @default("")
+  strength     String   @default("")
+  description  String   @default("")
+  externalId   String   @default("")
+  source       String   @default("")
+  createdAt    DateTime @default(now())
+  taskMeds     TaskMedication[]
+}
+
+model TaskMedication {
+  id               String         @id @default(cuid())
+  taskId           String
+  medicationItemId String
+  dosage           String         @default("")
+  task             Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  medicationItem   MedicationItem @relation(fields: [medicationItemId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([medicationItemId])
+}
+
+// ── Body Metrics ──────────────────────────────────────
+
+enum MetricType {
+  WEIGHT
+  BODY_FAT
+  HEIGHT
+  WAIST
+  CHEST
+  BMI
+}
+
+model BodyMetric {
+  id        String     @id @default(cuid())
+  date      DateTime
+  type      MetricType
+  value     Float
+  unit      String     @default("")
+  createdAt DateTime   @default(now())
+
+  @@index([date])
+  @@index([type])
 }
