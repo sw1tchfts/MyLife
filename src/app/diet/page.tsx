@@ -169,7 +169,7 @@ function FoodLibraryTab() {
         calcium: result.calcium,
         iron: result.iron,
         potassium: result.potassium,
-        externalId: result.fdcId,
+        externalId: String(result.fdcId),
         source: "USDA",
       }),
     });
