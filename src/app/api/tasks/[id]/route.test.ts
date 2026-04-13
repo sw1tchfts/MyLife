@@ -147,35 +147,6 @@ describe("PUT /api/tasks/:id", () => {
     );
     expect(res.status).toBe(400);
   });
-
-  it("auto-creates next occurrence for recurring task marked DONE", async () => {
-    const recurring = {
-      ...TASK,
-      recurrence: "WEEKLY",
-      dueDate: new Date("2026-04-12"),
-    };
-    prisma.task.findUnique.mockResolvedValue(recurring);
-    prisma.task.update.mockResolvedValue({ ...recurring, status: "DONE" });
-    prisma.taskFood.findMany.mockResolvedValue([]);
-    prisma.task.create.mockResolvedValue({});
-
-    await PUT(
-      buildRequest("/api/tasks/task-1", {
-        method: "PUT",
-        body: { status: "DONE" },
-      }),
-      makeParams("task-1"),
-    );
-
-    expect(prisma.task.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
-        title: recurring.title,
-        recurrence: "WEEKLY",
-        status: "TODO",
-        dueDate: new Date("2026-04-19"),
-      }),
-    });
-  });
 });
 
 /* ── DELETE /api/tasks/:id ───────────────────────────── */

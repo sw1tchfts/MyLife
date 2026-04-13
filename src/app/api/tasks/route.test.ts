@@ -11,6 +11,9 @@ import {
 
 vi.mock("@/lib/supabase/server", () => mockSupabase());
 vi.mock("@/lib/prisma", () => mockPrisma());
+vi.mock("@/lib/recurrence", () => ({
+  generateInstances: vi.fn().mockResolvedValue(undefined),
+}));
 
 import { GET, POST } from "./route";
 
@@ -49,7 +52,10 @@ describe("GET /api/tasks", () => {
 
     expect(prisma.task.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { status: { in: ["TODO", "IN_PROGRESS"] } },
+        where: {
+          isRecurringParent: false,
+          status: { in: ["TODO", "IN_PROGRESS"] },
+        },
       }),
     );
   });
@@ -119,7 +125,6 @@ describe("POST /api/tasks", () => {
           priority: "HIGH",
           description: "A description",
           dueDate: "2026-05-01",
-          recurrence: "WEEKLY",
         },
       }),
     );
@@ -131,7 +136,35 @@ describe("POST /api/tasks", () => {
         status: "IN_PROGRESS",
         priority: "HIGH",
         description: "A description",
-        recurrence: "WEEKLY",
+      }),
+    });
+  });
+
+  it("creates a recurring task as parent template", async () => {
+    prisma.task.create.mockResolvedValue({ id: "1", title: "Gym" });
+
+    const res = await POST(
+      buildRequest("/api/tasks", {
+        method: "POST",
+        body: {
+          title: "Gym",
+          recurrence: "WEEKLY",
+          recurrenceDays: "mon,wed,fri",
+          recurrenceTime: "07:00",
+          isHabit: true,
+        },
+      }),
+    );
+
+    expect(res.status).toBe(201);
+    expect(prisma.task.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        title: "Gym",
+        isRecurringParent: true,
+        recurrenceDays: "mon,wed,fri",
+        recurrenceTime: "07:00",
+        isHabit: true,
+        dueDate: null,
       }),
     });
   });

@@ -72,6 +72,10 @@ export interface TaskData {
   taskType: TaskType;
   mealType: MealType | null;
   isHabit: boolean;
+  isRecurringParent: boolean;
+  parentTaskId: string | null;
+  recurrenceDays: string;
+  recurrenceTime: string;
   createdAt: string;
   subtasks?: SubtaskData[];
   taskFoods?: TaskFoodData[];

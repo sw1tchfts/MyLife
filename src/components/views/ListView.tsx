@@ -161,6 +161,11 @@ export default function ListView({
                             task.recurrence.slice(1).toLowerCase()}
                         </span>
                       )}
+                      {task.recurrenceTime && (
+                        <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                          {task.recurrenceTime}
+                        </span>
+                      )}
                       {task.blockedBy &&
                         task.blockedBy.some(
                           (d) => d.blocker.status !== "DONE",

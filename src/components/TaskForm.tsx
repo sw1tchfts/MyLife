@@ -16,6 +16,8 @@ export interface TaskFormData {
   taskType: TaskType;
   mealType: MealType | null;
   isHabit: boolean;
+  recurrenceDays: string;
+  recurrenceTime: string;
 }
 
 interface TaskFormProps {
@@ -27,6 +29,16 @@ interface TaskFormProps {
 
 const inputCls =
   "mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100";
+
+const WEEKDAYS = [
+  { key: "mon", label: "Mon" },
+  { key: "tue", label: "Tue" },
+  { key: "wed", label: "Wed" },
+  { key: "thu", label: "Thu" },
+  { key: "fri", label: "Fri" },
+  { key: "sat", label: "Sat" },
+  { key: "sun", label: "Sun" },
+] as const;
 
 export default function TaskForm({
   initialData,
@@ -45,15 +57,47 @@ export default function TaskForm({
       taskType: "TASK",
       mealType: null,
       isHabit: false,
+      recurrenceDays: "",
+      recurrenceTime: "",
     },
   );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
+  const isRecurring = formData.recurrence !== "NONE";
+
+  const selectedDays = new Set(
+    formData.recurrenceDays
+      .split(",")
+      .map((d) => d.trim())
+      .filter(Boolean),
+  );
+
+  const toggleDay = (day: string) => {
+    const next = new Set(selectedDays);
+    if (next.has(day)) next.delete(day);
+    else next.add(day);
+    setFormData({ ...formData, recurrenceDays: Array.from(next).join(",") });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim()) {
       setError("Title is required");
+      return;
+    }
+    if (
+      formData.recurrence === "WEEKLY" &&
+      formData.recurrenceDays.trim() === ""
+    ) {
+      setError("Select at least one day for weekly recurrence");
+      return;
+    }
+    if (
+      formData.recurrence === "MONTHLY" &&
+      formData.recurrenceDays.trim() === ""
+    ) {
+      setError("Enter at least one day of month");
       return;
     }
     setError("");
@@ -180,27 +224,29 @@ export default function TaskForm({
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-        <div>
-          <label
-            htmlFor="status"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Status
-          </label>
-          <select
-            id="status"
-            value={formData.status}
-            onChange={(e) =>
-              setFormData({ ...formData, status: e.target.value as Status })
-            }
-            className={inputCls}
-          >
-            <option value="TODO">To Do</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="DONE">Done</option>
-          </select>
-        </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {!isRecurring && (
+          <div>
+            <label
+              htmlFor="status"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Status
+            </label>
+            <select
+              id="status"
+              value={formData.status}
+              onChange={(e) =>
+                setFormData({ ...formData, status: e.target.value as Status })
+              }
+              className={inputCls}
+            >
+              <option value="TODO">To Do</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="DONE">Done</option>
+            </select>
+          </div>
+        )}
 
         <div>
           <label
@@ -228,24 +274,6 @@ export default function TaskForm({
 
         <div>
           <label
-            htmlFor="dueDate"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Due Date
-          </label>
-          <input
-            id="dueDate"
-            type="date"
-            value={formData.dueDate}
-            onChange={(e) =>
-              setFormData({ ...formData, dueDate: e.target.value })
-            }
-            className={inputCls}
-          />
-        </div>
-
-        <div>
-          <label
             htmlFor="recurrence"
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
@@ -258,6 +286,9 @@ export default function TaskForm({
               setFormData({
                 ...formData,
                 recurrence: e.target.value as Recurrence,
+                recurrenceDays:
+                  e.target.value === "NONE" ? "" : formData.recurrenceDays,
+                isHabit: e.target.value !== "NONE" ? formData.isHabit : false,
               })
             }
             className={inputCls}
@@ -268,10 +299,102 @@ export default function TaskForm({
             <option value="MONTHLY">Monthly</option>
           </select>
         </div>
+
+        {/* Due date — only for non-recurring tasks */}
+        {!isRecurring && (
+          <div>
+            <label
+              htmlFor="dueDate"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Due Date
+            </label>
+            <input
+              id="dueDate"
+              type="date"
+              value={formData.dueDate}
+              onChange={(e) =>
+                setFormData({ ...formData, dueDate: e.target.value })
+              }
+              className={inputCls}
+            />
+          </div>
+        )}
       </div>
 
+      {/* Weekly day picker */}
+      {formData.recurrence === "WEEKLY" && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Days of Week
+          </label>
+          <div className="mt-1 flex gap-1">
+            {WEEKDAYS.map((d) => (
+              <button
+                key={d.key}
+                type="button"
+                onClick={() => toggleDay(d.key)}
+                className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                  selectedDays.has(d.key)
+                    ? "bg-blue-600 text-white"
+                    : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"
+                }`}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Monthly day picker */}
+      {formData.recurrence === "MONTHLY" && (
+        <div>
+          <label
+            htmlFor="monthDays"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Days of Month
+          </label>
+          <input
+            id="monthDays"
+            type="text"
+            value={formData.recurrenceDays}
+            onChange={(e) =>
+              setFormData({ ...formData, recurrenceDays: e.target.value })
+            }
+            className={inputCls}
+            placeholder="e.g. 1,15 for the 1st and 15th"
+          />
+        </div>
+      )}
+
+      {/* Time of day for recurring */}
+      {isRecurring && (
+        <div>
+          <label
+            htmlFor="recurrenceTime"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Time
+          </label>
+          <input
+            id="recurrenceTime"
+            type="time"
+            value={formData.recurrenceTime}
+            onChange={(e) =>
+              setFormData({ ...formData, recurrenceTime: e.target.value })
+            }
+            className={inputCls}
+          />
+          <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+            Optional — when this task should be done each day
+          </p>
+        </div>
+      )}
+
       {/* Habit checkbox — show when recurring */}
-      {formData.recurrence !== "NONE" && (
+      {isRecurring && (
         <label className="flex items-center gap-2">
           <input
             type="checkbox"

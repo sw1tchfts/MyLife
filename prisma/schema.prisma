@@ -49,20 +49,28 @@ model Task {
   recurrence  Recurrence @default(NONE)
   taskType    TaskType   @default(TASK)
   mealType    MealType?
-  isHabit     Boolean    @default(false)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  categories  TaskCategory[]
-  subtasks    Subtask[]
-  taskFoods   TaskFood[]
-  taskMeds    TaskMedication[]
-  nutritionLogs NutritionLog[]
-  blockedBy     TaskDependency[] @relation("BlockedTask")
-  blocking      TaskDependency[] @relation("BlockerTask")
+  isHabit           Boolean    @default(false)
+  isRecurringParent Boolean    @default(false)
+  parentTaskId      String?
+  recurrenceDays    String     @default("")
+  recurrenceTime    String     @default("")
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  parentTask        Task?      @relation("TaskInstances", fields: [parentTaskId], references: [id], onDelete: SetNull)
+  instances         Task[]     @relation("TaskInstances")
+  categories        TaskCategory[]
+  subtasks          Subtask[]
+  taskFoods         TaskFood[]
+  taskMeds          TaskMedication[]
+  nutritionLogs     NutritionLog[]
+  blockedBy         TaskDependency[] @relation("BlockedTask")
+  blocking          TaskDependency[] @relation("BlockerTask")
 
   @@index([status])
   @@index([createdAt(sort: Desc)])
   @@index([taskType])
+  @@index([parentTaskId])
+  @@index([isRecurringParent])
 }
 
 model TaskDependency {

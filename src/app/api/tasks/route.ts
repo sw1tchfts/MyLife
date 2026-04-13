@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { validateCreateInput } from "@/lib/types";
 import { createClient } from "@/lib/supabase/server";
+import { generateInstances } from "@/lib/recurrence";
 import type { Status } from "@/generated/prisma/client";
 
 export async function GET(request: NextRequest) {
@@ -13,11 +14,18 @@ export async function GET(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Auto-generate instances for recurring tasks
+    await generateInstances(14);
+
     const { searchParams } = new URL(request.url);
     const statusFilter = searchParams.getAll("status") as Status[];
+    const includeParents = searchParams.get("includeParents") === "true";
 
-    const where =
-      statusFilter.length > 0 ? { status: { in: statusFilter } } : {};
+    const where: Record<string, unknown> = {};
+    if (statusFilter.length > 0) where.status = { in: statusFilter };
+    // By default, hide parent templates from the task list
+    if (!includeParents) where.isRecurringParent = false;
 
     const tasks = await prisma.task.findMany({
       where,
@@ -60,19 +68,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ errors }, { status: 400 });
     }
 
+    const isRecurring = body.recurrence && body.recurrence !== "NONE";
+
     const task = await prisma.task.create({
       data: {
         title: parsed.title,
         description: parsed.description ?? "",
-        status: parsed.status ?? "TODO",
+        status: isRecurring ? "TODO" : (parsed.status ?? "TODO"),
         priority: parsed.priority ?? "MEDIUM",
-        dueDate: parsed.dueDate ? new Date(parsed.dueDate) : null,
+        dueDate: isRecurring
+          ? null
+          : parsed.dueDate
+            ? new Date(parsed.dueDate)
+            : null,
         recurrence: body.recurrence ?? "NONE",
         taskType: body.taskType ?? "TASK",
         mealType: body.mealType ?? null,
         isHabit: body.isHabit ?? false,
+        isRecurringParent: isRecurring,
+        recurrenceDays: body.recurrenceDays ?? "",
+        recurrenceTime: body.recurrenceTime ?? "",
       },
     });
+
+    // If recurring, immediately generate instances
+    if (isRecurring) {
+      await generateInstances(14);
+    }
 
     return NextResponse.json(task, { status: 201 });
   } catch (error) {

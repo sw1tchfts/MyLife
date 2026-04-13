@@ -12,28 +12,28 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
   const [month, setMonth] = useState(now.getMonth());
   const [year, setYear] = useState(now.getFullYear());
 
-  // Filter to habit tasks (recurring + isHabit flag)
-  const habits = useMemo(
-    () =>
-      tasks.filter((t) => t.isHabit && t.recurrence && t.recurrence !== "NONE"),
-    [tasks],
-  );
-
-  // Get all tasks (including DONE) for the selected month to check completions
-  // Group by title to track habit completions across recurring instances
+  // Group habit instances by parentTaskId (or own id for legacy)
   const habitMap = useMemo(() => {
     const map = new Map<
       string,
-      { title: string; recurrence: string; completions: Set<string> }
+      {
+        title: string;
+        recurrence: string;
+        recurrenceTime: string;
+        completions: Set<string>;
+      }
     >();
 
     for (const t of tasks) {
       if (!t.isHabit || !t.recurrence || t.recurrence === "NONE") continue;
 
-      if (!map.has(t.title)) {
-        map.set(t.title, {
+      const key = t.parentTaskId || t.id;
+
+      if (!map.has(key)) {
+        map.set(key, {
           title: t.title,
           recurrence: t.recurrence,
+          recurrenceTime: t.recurrenceTime || "",
           completions: new Set(),
         });
       }
@@ -42,7 +42,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
         const d = t.dueDate.slice(0, 10);
         const dDate = new Date(d);
         if (dDate.getMonth() === month && dDate.getFullYear() === year) {
-          map.get(t.title)!.completions.add(d);
+          map.get(key)!.completions.add(d);
         }
       }
     }
@@ -139,7 +139,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
     }
   };
 
-  if (habits.length === 0) {
+  if (habitMap.length === 0) {
     return (
       <div className="rounded-lg border-2 border-dashed border-gray-300 py-16 text-center dark:border-gray-600">
         <p className="text-lg font-medium text-gray-500 dark:text-gray-400">
@@ -377,6 +377,11 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {habit.title}
+                    {habit.recurrenceTime && (
+                      <span className="ml-2 text-xs font-normal text-gray-400">
+                        {habit.recurrenceTime}
+                      </span>
+                    )}
                   </p>
                   <p className="text-xs text-gray-400 capitalize">
                     {habit.recurrence.toLowerCase()}

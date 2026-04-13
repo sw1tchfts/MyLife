@@ -78,6 +78,10 @@ export async function PUT(
     if (body.taskType !== undefined) data.taskType = body.taskType;
     if (body.mealType !== undefined) data.mealType = body.mealType;
     if (body.isHabit !== undefined) data.isHabit = body.isHabit;
+    if (body.recurrenceDays !== undefined)
+      data.recurrenceDays = body.recurrenceDays;
+    if (body.recurrenceTime !== undefined)
+      data.recurrenceTime = body.recurrenceTime;
 
     // Handle food add/remove for meal tasks
     if (body.addFood) {
@@ -163,41 +167,6 @@ export async function PUT(
           date: new Date(),
           taskId: id,
           ...totals,
-        },
-      });
-    }
-
-    // Auto-create next occurrence for recurring tasks marked DONE
-    if (
-      parsed.status === "DONE" &&
-      existing.status !== "DONE" &&
-      existing.recurrence !== "NONE" &&
-      existing.dueDate
-    ) {
-      const nextDue = new Date(existing.dueDate);
-      switch (existing.recurrence) {
-        case "DAILY":
-          nextDue.setDate(nextDue.getDate() + 1);
-          break;
-        case "WEEKLY":
-          nextDue.setDate(nextDue.getDate() + 7);
-          break;
-        case "MONTHLY":
-          nextDue.setMonth(nextDue.getMonth() + 1);
-          break;
-      }
-
-      await prisma.task.create({
-        data: {
-          title: existing.title,
-          description: existing.description,
-          priority: existing.priority,
-          dueDate: nextDue,
-          recurrence: existing.recurrence,
-          taskType: existing.taskType,
-          mealType: existing.mealType,
-          isHabit: existing.isHabit,
-          status: "TODO",
         },
       });
     }

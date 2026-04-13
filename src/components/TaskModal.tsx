@@ -30,6 +30,8 @@ interface TaskResponse {
   taskType: TaskType;
   mealType: MealType | null;
   isHabit: boolean;
+  recurrenceDays: string;
+  recurrenceTime: string;
   subtasks?: SubtaskData[];
   taskFoods?: TaskFoodData[];
   taskMeds?: TaskMedData[];
@@ -86,6 +88,8 @@ export default function TaskModal({
           taskType: task.taskType || "TASK",
           mealType: task.mealType || null,
           isHabit: task.isHabit ?? false,
+          recurrenceDays: task.recurrenceDays ?? "",
+          recurrenceTime: task.recurrenceTime ?? "",
         }
       : undefined;
 
