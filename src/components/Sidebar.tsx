@@ -161,6 +161,24 @@ export default function Sidebar({ userEmail }: SidebarProps) {
             </Link>
           </div>
 
+          {/* Finances section */}
+          <div className="mb-4">
+            <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
+              Finances
+            </p>
+            <Link
+              href="/finances"
+              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+                pathname.startsWith("/finances")
+                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              }`}
+            >
+              <FinancesIcon active={pathname.startsWith("/finances")} />
+              Bills & Charges
+            </Link>
+          </div>
+
           {/* Rankings section */}
           <div className="mb-4">
             <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
@@ -372,6 +390,25 @@ function DiagramIcon({ active }: { active: boolean }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM9 7h5M7 10v4m10-4v4M4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
+      />
+    </svg>
+  );
+}
+
+function FinancesIcon({ active }: { active: boolean }) {
+  const cls = active ? "text-blue-600" : "text-gray-400";
+  return (
+    <svg
+      className={`h-4 w-4 ${cls}`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
       />
     </svg>
   );

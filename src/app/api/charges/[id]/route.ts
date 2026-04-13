@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { generateOccurrences } from "../route";
-import type { ChargeFrequency, ChargeCategory } from "@/generated/prisma";
+import type {
+  ChargeFrequency,
+  ChargeCategory,
+} from "@/generated/prisma/client";
 
 async function requireAuth() {
   const supabase = await createClient();
