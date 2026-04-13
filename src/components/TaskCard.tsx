@@ -71,6 +71,7 @@ export interface TaskData {
   recurrence: Recurrence;
   taskType: TaskType;
   mealType: MealType | null;
+  isHabit: boolean;
   createdAt: string;
   subtasks?: SubtaskData[];
   taskFoods?: TaskFoodData[];

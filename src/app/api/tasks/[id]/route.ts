@@ -77,6 +77,7 @@ export async function PUT(
     if (body.recurrence !== undefined) data.recurrence = body.recurrence;
     if (body.taskType !== undefined) data.taskType = body.taskType;
     if (body.mealType !== undefined) data.mealType = body.mealType;
+    if (body.isHabit !== undefined) data.isHabit = body.isHabit;
 
     // Handle food add/remove for meal tasks
     if (body.addFood) {
@@ -195,6 +196,7 @@ export async function PUT(
           recurrence: existing.recurrence,
           taskType: existing.taskType,
           mealType: existing.mealType,
+          isHabit: existing.isHabit,
           status: "TODO",
         },
       });

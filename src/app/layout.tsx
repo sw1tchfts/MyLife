@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import ThemeProvider from "@/components/ThemeProvider";
-import KeyboardShortcuts from "@/components/KeyboardShortcuts";
 import TaskNotifications from "@/components/TaskNotifications";
 import { createClient } from "@/lib/supabase/server";
 
@@ -37,7 +36,6 @@ export default async function RootLayout({
               <main className="flex-1 overflow-y-auto bg-gray-50 p-4 pt-16 dark:bg-gray-900 lg:p-8 lg:pt-8">
                 {children}
               </main>
-              <KeyboardShortcuts />
               <TaskNotifications />
             </div>
           ) : (

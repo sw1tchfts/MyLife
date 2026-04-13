@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
         recurrence: body.recurrence ?? "NONE",
         taskType: body.taskType ?? "TASK",
         mealType: body.mealType ?? null,
+        isHabit: body.isHabit ?? false,
       },
     });
 

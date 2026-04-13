@@ -49,6 +49,7 @@ model Task {
   recurrence  Recurrence @default(NONE)
   taskType    TaskType   @default(TASK)
   mealType    MealType?
+  isHabit     Boolean    @default(false)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   categories  TaskCategory[]

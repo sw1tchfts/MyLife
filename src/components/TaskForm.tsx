@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import type { Status, Priority, Recurrence } from "@/generated/prisma/client";
 
 type TaskType = "TASK" | "MEAL" | "MEDICATION";
@@ -16,12 +15,14 @@ export interface TaskFormData {
   recurrence: Recurrence;
   taskType: TaskType;
   mealType: MealType | null;
+  isHabit: boolean;
 }
 
 interface TaskFormProps {
   initialData?: TaskFormData;
   onSubmit: (data: TaskFormData) => Promise<void>;
   submitLabel: string;
+  onCancel?: () => void;
 }
 
 const inputCls =
@@ -31,8 +32,8 @@ export default function TaskForm({
   initialData,
   onSubmit,
   submitLabel,
+  onCancel,
 }: TaskFormProps) {
-  const router = useRouter();
   const [formData, setFormData] = useState<TaskFormData>(
     initialData ?? {
       title: "",
@@ -43,6 +44,7 @@ export default function TaskForm({
       recurrence: "NONE",
       taskType: "TASK",
       mealType: null,
+      isHabit: false,
     },
   );
   const [submitting, setSubmitting] = useState(false);
@@ -268,6 +270,23 @@ export default function TaskForm({
         </div>
       </div>
 
+      {/* Habit checkbox — show when recurring */}
+      {formData.recurrence !== "NONE" && (
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={formData.isHabit}
+            onChange={(e) =>
+              setFormData({ ...formData, isHabit: e.target.checked })
+            }
+            className="h-4 w-4 rounded border-gray-300"
+          />
+          <span className="text-sm text-gray-700 dark:text-gray-300">
+            Track as habit on dashboard
+          </span>
+        </label>
+      )}
+
       {formData.taskType !== "TASK" && (
         <p className="text-xs text-gray-400 dark:text-gray-500">
           {formData.taskType === "MEAL"
@@ -277,13 +296,15 @@ export default function TaskForm({
       )}
 
       <div className="flex justify-end gap-3 pt-2">
-        <button
-          type="button"
-          onClick={() => router.push("/")}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
-        >
-          Cancel
-        </button>
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+          >
+            Cancel
+          </button>
+        )}
         <button
           type="submit"
           disabled={submitting}

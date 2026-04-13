@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import StatusBadge from "@/components/StatusBadge";
 import PriorityBadge from "@/components/PriorityBadge";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
@@ -25,9 +24,14 @@ function formatDate(dateStr: string): string {
 interface ListViewProps {
   tasks: TaskData[];
   onDelete: (id: string) => void;
+  onTaskClick?: (id: string) => void;
 }
 
-export default function ListView({ tasks, onDelete }: ListViewProps) {
+export default function ListView({
+  tasks,
+  onDelete,
+  onTaskClick,
+}: ListViewProps) {
   const [sortField, setSortField] = useState<SortField>("createdAt");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [deleteTarget, setDeleteTarget] = useState<TaskData | null>(null);
@@ -129,12 +133,14 @@ export default function ListView({ tasks, onDelete }: ListViewProps) {
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1.5">
-                      <Link
-                        href={`/tasks/${task.id}/edit`}
-                        className="text-sm font-medium text-gray-900 hover:text-blue-600 dark:text-gray-100"
+                      <button
+                        onClick={() =>
+                          onTaskClick ? onTaskClick(task.id) : undefined
+                        }
+                        className="text-left text-sm font-medium text-gray-900 hover:text-blue-600 dark:text-gray-100"
                       >
                         {task.title}
-                      </Link>
+                      </button>
                       {task.taskType === "MEAL" && (
                         <span className="inline-flex items-center rounded bg-green-100 px-1 py-0.5 text-[10px] font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
                           Meal
