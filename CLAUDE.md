@@ -88,16 +88,12 @@ src/
     api/gym/routines/[id]/route.ts     # GET + DELETE single routine
     api/gym/logs/route.ts              # GET + POST workout logs
     api/gym/logs/[id]/route.ts         # DELETE single workout log
-    api/charges/route.ts               # GET + POST recurring charges
-    api/charges/[id]/route.ts          # GET + PUT + DELETE single charge
-    api/charges/[id]/occurrences/route.ts # GET + PUT charge occurrences
     api/settings/app/route.ts  # GET + PUT app-wide settings
     api/settings/user/route.ts # GET + PUT user preferences
     journal/page.tsx           # Journal (write, entries list, calendar view)
     rankings/page.tsx          # Pairwise ranking system (categories, items, compare, rankings, stats)
     diet/page.tsx              # Diet & nutrition (food library, nutrition log, body metrics)
     gym/page.tsx               # Gym (exercises, routines, log workout, history)
-    finances/page.tsx          # Finances (recurring charges, bills, payment history)
     tasks/new/page.tsx         # Create task page
     tasks/[id]/edit/page.tsx   # Edit task page
     diagrams/page.tsx          # Diagram creator (flowcharts, process, swim lane, ER)
@@ -157,18 +153,6 @@ src/
 - When a recurring task is marked DONE, the API auto-creates the next occurrence with an updated due date
 - Recurrence indicator shown as purple badge in list view
 
-## Recurring Charges / Bills
-
-- Template + occurrence model: `RecurringCharge` (template) spawns `ChargeOccurrence` (per billing cycle)
-- Frequencies: WEEKLY, BIWEEKLY, MONTHLY, QUARTERLY, YEARLY
-- Categories: SUBSCRIPTION, UTILITY, INSURANCE, RENT, DEBT, OTHER
-- Occurrence statuses: UPCOMING, DUE, PAID, LATE, SKIPPED
-- Occurrences auto-generated 60 days ahead on charge creation
-- Template updates regenerate unpaid future occurrences; paid history preserved
-- Deactivating a charge removes unpaid future occurrences but keeps history
-- Variable-amount charges pre-fill from template but allow per-occurrence editing
-- Finances page at `/finances` with tabs: Overview, Manage Charges, Payment History
-
 ## Authentication
 
 - **Supabase Auth** with email/password sign-in
@@ -215,7 +199,6 @@ src/
 - #14 Diet and medication tracking — DONE
 - #15 Journal section — DONE
 - #16 Diagram creator — DONE
-- #18 Recurring charges / bills tracker — DONE
 
 ## Development Workflow (ALWAYS follow these)
 
