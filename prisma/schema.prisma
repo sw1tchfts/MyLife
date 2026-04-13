@@ -457,3 +457,69 @@ model ProgressPhoto {
 
   @@index([date(sort: Desc)])
 }
+
+// ── Recurring Charges / Bills ────────────────────────
+
+enum ChargeFrequency {
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum ChargeCategory {
+  SUBSCRIPTION
+  UTILITY
+  INSURANCE
+  RENT
+  DEBT
+  OTHER
+}
+
+enum OccurrenceStatus {
+  UPCOMING
+  DUE
+  PAID
+  LATE
+  SKIPPED
+}
+
+model RecurringCharge {
+  id               String          @id @default(cuid())
+  name             String
+  amount           Float           @default(0)
+  isVariableAmount Boolean         @default(false)
+  frequency        ChargeFrequency @default(MONTHLY)
+  billingDay       Int             @default(1)
+  category         ChargeCategory  @default(OTHER)
+  autoPay          Boolean         @default(false)
+  url              String          @default("")
+  notes            String          @default("")
+  startDate        DateTime        @default(now())
+  endDate          DateTime?
+  active           Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  occurrences      ChargeOccurrence[]
+
+  @@index([active])
+  @@index([category])
+  @@index([createdAt(sort: Desc)])
+}
+
+model ChargeOccurrence {
+  id                String           @id @default(cuid())
+  recurringChargeId String
+  dueDate           DateTime
+  amount            Float            @default(0)
+  status            OccurrenceStatus @default(UPCOMING)
+  paidDate          DateTime?
+  notes             String           @default("")
+  createdAt         DateTime         @default(now())
+  recurringCharge   RecurringCharge  @relation(fields: [recurringChargeId], references: [id], onDelete: Cascade)
+
+  @@index([recurringChargeId])
+  @@index([dueDate])
+  @@index([status])
+}
