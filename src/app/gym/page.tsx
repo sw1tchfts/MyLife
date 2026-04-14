@@ -323,9 +323,19 @@ function ExercisesTab() {
 
 /* ── Routines Tab ──────────────────────────────────── */
 
+const WEEKDAYS_GYM = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+const WEEKDAY_LABELS_GYM: Record<string, string> = {
+  mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu",
+  fri: "Fri", sat: "Sat", sun: "Sun",
+};
+
 function RoutinesTab() {
   const [routines, setRoutines] = useState<Routine[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activatingId, setActivatingId] = useState<string | null>(null);
+  const [dayAssignments, setDayAssignments] = useState<Record<string, string>>({});
+  const [activateTime, setActivateTime] = useState("06:00");
+  const [saving, setSaving] = useState(false);
 
   const fetchRoutines = useCallback(() => {
     fetch("/api/gym/routines")
@@ -343,6 +353,47 @@ function RoutinesTab() {
   const deleteRoutine = async (id: string) => {
     await fetch(`/api/gym/routines/${id}`, { method: "DELETE" });
     fetchRoutines();
+  };
+
+  const startActivation = (routine: Routine) => {
+    setActivatingId(routine.id);
+    // Pre-assign days based on dayOrder
+    const defaults: Record<string, string> = {};
+    routine.days.forEach((day, i) => {
+      defaults[day.id] = WEEKDAYS_GYM[i] || WEEKDAYS_GYM[0];
+    });
+    setDayAssignments(defaults);
+  };
+
+  const handleActivate = async (routine: Routine) => {
+    setSaving(true);
+
+    for (const day of routine.days) {
+      const weekday = dayAssignments[day.id];
+      if (!weekday) continue;
+
+      const exerciseList = day.exercises
+        .map((re) => `${re.exercise.name} ${re.sets}×${re.repsMin}${re.repsMax !== re.repsMin ? `-${re.repsMax}` : ""}`)
+        .join(", ");
+
+      await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: `${routine.name}: ${day.name}`,
+          description: exerciseList,
+          taskType: "TASK",
+          recurrence: "WEEKLY",
+          recurrenceDays: weekday,
+          recurrenceTime: activateTime,
+          isHabit: true,
+        }),
+      });
+    }
+
+    setSaving(false);
+    setActivatingId(null);
+    setDayAssignments({});
   };
 
   if (loading)
@@ -381,27 +432,99 @@ function RoutinesTab() {
                   <span>{routine.daysPerWeek} days/week</span>
                 </div>
               </div>
-              <button
-                onClick={() => deleteRoutine(routine.id)}
-                className="rounded p-1 text-gray-300 hover:text-red-500 dark:text-gray-600"
-              >
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
+              <div className="flex gap-1">
+                <button
+                  onClick={() => startActivation(routine)}
+                  className="rounded-md bg-green-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-700"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+                  Activate
+                </button>
+                <button
+                  onClick={() => deleteRoutine(routine.id)}
+                  className="rounded p-1 text-gray-300 hover:text-red-500 dark:text-gray-600"
+                >
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            {routine.days.length > 0 && (
+            {/* Activation panel */}
+            {activatingId === routine.id && (
+              <div className="mt-3 rounded-md border border-green-200 bg-green-50/50 p-3 dark:border-green-800 dark:bg-green-900/20">
+                <p className="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
+                  Assign each day to a weekday:
+                </p>
+                <div className="space-y-2">
+                  {routine.days.map((day) => (
+                    <div key={day.id} className="flex items-center gap-2">
+                      <span className="w-24 text-xs font-medium text-gray-700 dark:text-gray-300">
+                        {day.name}
+                      </span>
+                      <div className="flex gap-1">
+                        {WEEKDAYS_GYM.map((wd) => (
+                          <button
+                            key={wd}
+                            onClick={() =>
+                              setDayAssignments((prev) => ({
+                                ...prev,
+                                [day.id]: wd,
+                              }))
+                            }
+                            className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${
+                              dayAssignments[day.id] === wd
+                                ? "border-green-600 bg-green-600 text-white"
+                                : "border-gray-300 text-gray-500 dark:border-gray-600 dark:text-gray-400"
+                            }`}
+                          >
+                            {WEEKDAY_LABELS_GYM[wd]}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-2 flex items-center gap-3">
+                  <label className="text-xs text-gray-500 dark:text-gray-400">
+                    Time:
+                  </label>
+                  <input
+                    type="time"
+                    value={activateTime}
+                    onChange={(e) => setActivateTime(e.target.value)}
+                    className="rounded border border-gray-300 px-2 py-1 text-xs dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                  />
+                </div>
+                <div className="mt-3 flex justify-end gap-2">
+                  <button
+                    onClick={() => setActivatingId(null)}
+                    className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => handleActivate(routine)}
+                    disabled={saving}
+                    className="rounded-md bg-green-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                  >
+                    {saving ? "Creating tasks..." : "Create Recurring Tasks"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {routine.days.length > 0 && activatingId !== routine.id && (
               <div className="mt-3 space-y-2">
                 {routine.days.map((day) => (
                   <div

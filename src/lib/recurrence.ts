@@ -6,10 +6,15 @@ const DAY_NAMES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 /**
  * Given a recurring parent task, generate missing instances for the next `daysAhead` days.
  * Skips dates that already have an instance (checked via parentTaskId + dueDate).
+ * Copies food and medication associations from parent to instances.
  */
 export async function generateInstances(daysAhead = 14) {
   const parents = await prisma.task.findMany({
     where: { isRecurringParent: true },
+    include: {
+      taskFoods: true,
+      taskMeds: true,
+    },
   });
 
   if (parents.length === 0) return;
@@ -36,6 +41,13 @@ export async function generateInstances(daysAhead = 14) {
     ),
   );
 
+  // Track which parents need food/med copying
+  const parentsNeedingCopy: {
+    parentId: string;
+    foods: { foodItemId: string; quantity: number }[];
+    meds: { medicationItemId: string; dosage: string }[];
+  }[] = [];
+
   const toCreate: Prisma.TaskCreateManyInput[] = [];
 
   for (const parent of parents) {
@@ -45,6 +57,8 @@ export async function generateInstances(daysAhead = 14) {
       today,
       endDate,
     );
+
+    let createdForParent = false;
 
     for (const date of dates) {
       const key = `${parent.id}|${date.toISOString().slice(0, 10)}`;
@@ -69,11 +83,96 @@ export async function generateInstances(daysAhead = 14) {
         parentTaskId: parent.id,
         recurrenceTime: parent.recurrenceTime,
       });
+
+      createdForParent = true;
+    }
+
+    // If we created new instances and the parent has food/med associations, queue for copying
+    if (
+      createdForParent &&
+      (parent.taskFoods.length > 0 || parent.taskMeds.length > 0)
+    ) {
+      parentsNeedingCopy.push({
+        parentId: parent.id,
+        foods: parent.taskFoods.map((f) => ({
+          foodItemId: f.foodItemId,
+          quantity: f.quantity,
+        })),
+        meds: parent.taskMeds.map((m) => ({
+          medicationItemId: m.medicationItemId,
+          dosage: m.dosage,
+        })),
+      });
     }
   }
 
   if (toCreate.length > 0) {
     await prisma.task.createMany({ data: toCreate });
+
+    // Copy food/med associations to newly created instances
+    if (parentsNeedingCopy.length > 0) {
+      await copyAssociationsToNewInstances(parentsNeedingCopy, today, endDate);
+    }
+  }
+}
+
+/**
+ * Copy food and medication associations from parents to their newly created instances
+ * that don't yet have associations.
+ */
+async function copyAssociationsToNewInstances(
+  parents: {
+    parentId: string;
+    foods: { foodItemId: string; quantity: number }[];
+    meds: { medicationItemId: string; dosage: string }[];
+  }[],
+  from: Date,
+  to: Date,
+) {
+  for (const parent of parents) {
+    // Find instances of this parent that don't have any food/med associations yet
+    const instances = await prisma.task.findMany({
+      where: {
+        parentTaskId: parent.parentId,
+        dueDate: { gte: from, lte: to },
+      },
+      include: {
+        taskFoods: { select: { id: true } },
+        taskMeds: { select: { id: true } },
+      },
+    });
+
+    const foodsToCreate: Prisma.TaskFoodCreateManyInput[] = [];
+    const medsToCreate: Prisma.TaskMedicationCreateManyInput[] = [];
+
+    for (const instance of instances) {
+      // Only copy if instance has no associations yet
+      if (instance.taskFoods.length === 0 && parent.foods.length > 0) {
+        for (const food of parent.foods) {
+          foodsToCreate.push({
+            taskId: instance.id,
+            foodItemId: food.foodItemId,
+            quantity: food.quantity,
+          });
+        }
+      }
+      if (instance.taskMeds.length === 0 && parent.meds.length > 0) {
+        for (const med of parent.meds) {
+          medsToCreate.push({
+            taskId: instance.id,
+            medicationItemId: med.medicationItemId,
+            dosage: med.dosage,
+          });
+        }
+      }
+    }
+
+    if (foodsToCreate.length > 0) {
+      await prisma.taskFood.createMany({ data: foodsToCreate });
+    }
+    if (medsToCreate.length > 0) {
+      await prisma.taskMedication.createMany({ data: medsToCreate });
+    }
   }
 }
 
