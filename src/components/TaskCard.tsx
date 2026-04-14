@@ -1,10 +1,9 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo } from "react";
 import Link from "next/link";
 import StatusBadge from "./StatusBadge";
 import PriorityBadge from "./PriorityBadge";
-import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import type { Status, Priority } from "@/generated/prisma/client";
 
 export interface SubtaskData {
@@ -111,7 +110,6 @@ export function getDueStatus(
 }
 
 export default memo(function TaskCard({ task, onDelete }: TaskCardProps) {
-  const [showDelete, setShowDelete] = useState(false);
   const dueStatus = task.status !== "DONE" ? getDueStatus(task.dueDate) : null;
 
   const cardBorder =
@@ -153,7 +151,7 @@ export default memo(function TaskCard({ task, onDelete }: TaskCardProps) {
               </svg>
             </Link>
             <button
-              onClick={() => setShowDelete(true)}
+              onClick={() => onDelete(task.id)}
               className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
               title="Delete task"
             >
@@ -204,16 +202,6 @@ export default memo(function TaskCard({ task, onDelete }: TaskCardProps) {
           )}
         </div>
       </div>
-
-      <DeleteConfirmDialog
-        isOpen={showDelete}
-        taskTitle={task.title}
-        onConfirm={() => {
-          setShowDelete(false);
-          onDelete(task.id);
-        }}
-        onCancel={() => setShowDelete(false)}
-      />
     </>
   );
 });

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { SubtaskData } from "./TaskCard";
+import { useToast } from "@/components/ToastProvider";
 
 interface SubtaskListProps {
   taskId: string;
@@ -14,11 +15,14 @@ export default function SubtaskList({
   subtasks,
   onUpdate,
 }: SubtaskListProps) {
+  const { showToast } = useToast();
   const [newTitle, setNewTitle] = useState("");
   const [adding, setAdding] = useState(false);
+  const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
 
-  const doneCount = subtasks.filter((s) => s.done).length;
-  const total = subtasks.length;
+  const visibleSubtasks = subtasks.filter((s) => !hiddenIds.has(s.id));
+  const doneCount = visibleSubtasks.filter((s) => s.done).length;
+  const total = visibleSubtasks.length;
   const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
 
   const addSubtask = async () => {
@@ -43,11 +47,25 @@ export default function SubtaskList({
     onUpdate();
   };
 
-  const deleteSubtask = async (subtaskId: string) => {
-    await fetch(`/api/tasks/${taskId}/subtasks?subtaskId=${subtaskId}`, {
-      method: "DELETE",
+  const deleteSubtask = (subtaskId: string) => {
+    const deleted = subtasks.find((s) => s.id === subtaskId);
+    if (!deleted) return;
+    setHiddenIds((prev) => new Set(prev).add(subtaskId));
+    showToast({
+      message: `Deleted "${deleted.title}"`,
+      onUndo: () => {
+        setHiddenIds((prev) => {
+          const next = new Set(prev);
+          next.delete(subtaskId);
+          return next;
+        });
+      },
+      onExpire: () => {
+        fetch(`/api/tasks/${taskId}/subtasks?subtaskId=${subtaskId}`, {
+          method: "DELETE",
+        }).then(() => onUpdate());
+      },
     });
-    onUpdate();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -82,7 +100,7 @@ export default function SubtaskList({
 
       {/* Subtask items */}
       <div className="mt-2 space-y-1">
-        {subtasks.map((subtask) => (
+        {visibleSubtasks.map((subtask) => (
           <div
             key={subtask.id}
             className="group flex items-center gap-2 rounded-md px-1 py-1 hover:bg-gray-50 dark:hover:bg-gray-700"

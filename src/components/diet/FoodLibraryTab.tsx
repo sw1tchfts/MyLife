@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useToast } from "@/components/ToastProvider";
 
 interface FoodItem {
   id: string;
@@ -39,6 +40,7 @@ interface SearchResult {
 }
 
 export default function FoodLibraryTab() {
+  const { showToast } = useToast();
   const [foods, setFoods] = useState<FoodItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -97,9 +99,17 @@ export default function FoodLibraryTab() {
     fetchFoods();
   };
 
-  const deleteFood = async (id: string) => {
-    await fetch(`/api/foods/${id}`, { method: "DELETE" });
-    fetchFoods();
+  const deleteFood = (id: string) => {
+    const deleted = foods.find((f) => f.id === id);
+    if (!deleted) return;
+    setFoods((prev) => prev.filter((f) => f.id !== id));
+    showToast({
+      message: `Deleted "${deleted.name}"`,
+      onUndo: () => setFoods((prev) => [...prev, deleted]),
+      onExpire: () => {
+        fetch(`/api/foods/${id}`, { method: "DELETE" });
+      },
+    });
   };
 
   return (

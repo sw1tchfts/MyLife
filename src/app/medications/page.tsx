@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, Suspense } from "react";
+import { useToast } from "@/components/ToastProvider";
 import { useSearchParams, useRouter } from "next/navigation";
 
 interface MedicationItem {
@@ -74,6 +75,7 @@ function MedicationsContent() {
 }
 
 function MedicationsTab() {
+  const { showToast } = useToast();
   const [meds, setMeds] = useState<MedicationItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -120,9 +122,17 @@ function MedicationsTab() {
     fetchMeds();
   };
 
-  const deleteMed = async (id: string) => {
-    await fetch(`/api/medications/${id}`, { method: "DELETE" });
-    fetchMeds();
+  const deleteMed = (id: string) => {
+    const deleted = meds.find((m) => m.id === id);
+    if (!deleted) return;
+    setMeds((prev) => prev.filter((m) => m.id !== id));
+    showToast({
+      message: `Deleted "${deleted.name}"`,
+      onUndo: () => setMeds((prev) => [...prev, deleted]),
+      onExpire: () => {
+        fetch(`/api/medications/${id}`, { method: "DELETE" });
+      },
+    });
   };
 
   return (
@@ -247,8 +257,13 @@ function MedicationsTab() {
 
 const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 const WEEKDAY_LABELS: Record<string, string> = {
-  mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu",
-  fri: "Fri", sat: "Sat", sun: "Sun",
+  mon: "Mon",
+  tue: "Tue",
+  wed: "Wed",
+  thu: "Thu",
+  fri: "Fri",
+  sat: "Sat",
+  sun: "Sun",
 };
 
 interface ScheduleEntry {
@@ -261,6 +276,7 @@ interface ScheduleEntry {
 }
 
 function ScheduleTab() {
+  const { showToast } = useToast();
   const [meds, setMeds] = useState<MedicationItem[]>([]);
   const [schedules, setSchedules] = useState<ScheduleEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -282,8 +298,9 @@ function ScheduleTab() {
       setMeds(medsData);
       setSchedules(
         tasksData.filter(
-          (t: ScheduleEntry & { isRecurringParent: boolean; taskType: string }) =>
-            t.isRecurringParent && t.taskType === "MEDICATION",
+          (
+            t: ScheduleEntry & { isRecurringParent: boolean; taskType: string },
+          ) => t.isRecurringParent && t.taskType === "MEDICATION",
         ),
       );
       setLoading(false);
@@ -338,9 +355,17 @@ function ScheduleTab() {
     fetchData();
   };
 
-  const deleteSchedule = async (id: string) => {
-    await fetch(`/api/tasks/${id}`, { method: "DELETE" });
-    fetchData();
+  const deleteSchedule = (id: string) => {
+    const deleted = schedules.find((s) => s.id === id);
+    if (!deleted) return;
+    setSchedules((prev) => prev.filter((s) => s.id !== id));
+    showToast({
+      message: `Deleted "${deleted.title}"`,
+      onUndo: () => setSchedules((prev) => [...prev, deleted]),
+      onExpire: () => {
+        fetch(`/api/tasks/${id}`, { method: "DELETE" });
+      },
+    });
   };
 
   if (loading) {
@@ -388,7 +413,8 @@ function ScheduleTab() {
               </select>
               {meds.length === 0 && (
                 <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
-                  No medications saved yet. Add medications in the Medications tab first.
+                  No medications saved yet. Add medications in the Medications
+                  tab first.
                 </p>
               )}
             </div>

@@ -126,7 +126,7 @@ src/
     TaskList.tsx               # Legacy task list (kept for reference)
     StatusBadge.tsx            # Status pill (React.memo)
     PriorityBadge.tsx          # Priority pill (React.memo)
-    DeleteConfirmDialog.tsx    # Delete confirmation modal
+    ToastProvider.tsx          # Toast notifications with undo support
     TaskNotifications.tsx      # Browser notifications using lightweight /api/tasks/notifications
     SignOutButton.tsx           # Sign-out button (used by Sidebar)
     diagrams/
@@ -247,7 +247,7 @@ src/
 - #15 Journal section — DONE
 - #16 Diagram creator — DONE
 - #19 Weight tracking & adaptive TDEE Daily Burn — DONE
-- #20 Undo on delete (toast instead of confirmation dialog)
+- #20 Undo on delete (toast instead of confirmation dialog) — DONE
 - #21 Landing page dashboard with today's overview
 - #22 Weekly/monthly reports on dashboard
 - #23 Journal insights and mood scale (1-10 numeric)

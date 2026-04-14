@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useToast } from "@/components/ToastProvider";
 
 interface Category {
   id: string;
@@ -21,6 +22,7 @@ const COLORS = [
 ];
 
 export default function AdminPage() {
+  const { showToast } = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [appSettings, setAppSettings] = useState<Record<string, string>>({});
   const [newCategoryName, setNewCategoryName] = useState("");
@@ -68,9 +70,20 @@ export default function AdminPage() {
     setEditingId(null);
   };
 
-  const deleteCategory = async (id: string) => {
-    await fetch(`/api/categories/${id}`, { method: "DELETE" });
+  const deleteCategory = (id: string) => {
+    const deleted = categories.find((c) => c.id === id);
+    if (!deleted) return;
     setCategories((prev) => prev.filter((c) => c.id !== id));
+    showToast({
+      message: `Deleted "${deleted.name}"`,
+      onUndo: () =>
+        setCategories((prev) =>
+          [...prev, deleted].sort((a, b) => a.name.localeCompare(b.name)),
+        ),
+      onExpire: () => {
+        fetch(`/api/categories/${id}`, { method: "DELETE" });
+      },
+    });
   };
 
   const saveAppSettings = async () => {

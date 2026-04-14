@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo, useCallback, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useToast } from "@/components/ToastProvider";
 import type { TaskData, TaskType } from "@/components/TaskCard";
 import type { Status, Priority } from "@/generated/prisma/client";
 import ListView from "@/components/views/ListView";
@@ -50,6 +51,7 @@ function TasksContent() {
   const router = useRouter();
   const tab = (searchParams.get("tab") as Tab) || "tasks";
 
+  const { showToast } = useToast();
   const [tasks, setTasks] = useState<TaskData[]>([]);
   const [totalTasks, setTotalTasks] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -117,16 +119,31 @@ function TasksContent() {
     return result;
   }, [tasks, search, statusFilter, priorityFilter, typeFilter]);
 
-  const handleDelete = async (id: string) => {
-    await fetch(`/api/tasks/${id}`, { method: "DELETE" });
+  const handleDelete = (id: string) => {
+    const deleted = tasks.find((t) => t.id === id);
+    if (!deleted) return;
     setTasks((prev) => prev.filter((t) => t.id !== id));
+    showToast({
+      message: `Deleted "${deleted.title}"`,
+      onUndo: () => setTasks((prev) => [...prev, deleted]),
+      onExpire: () => {
+        fetch(`/api/tasks/${id}`, { method: "DELETE" });
+      },
+    });
   };
 
-  const handleBulkDelete = async (ids: string[]) => {
-    await Promise.all(
-      ids.map((id) => fetch(`/api/tasks/${id}`, { method: "DELETE" })),
-    );
+  const handleBulkDelete = (ids: string[]) => {
+    const deleted = tasks.filter((t) => ids.includes(t.id));
     setTasks((prev) => prev.filter((t) => !ids.includes(t.id)));
+    showToast({
+      message: `Deleted ${deleted.length} task${deleted.length !== 1 ? "s" : ""}`,
+      onUndo: () => setTasks((prev) => [...prev, ...deleted]),
+      onExpire: () => {
+        Promise.all(
+          ids.map((id) => fetch(`/api/tasks/${id}`, { method: "DELETE" })),
+        );
+      },
+    });
   };
 
   const handleTaskClick = (id: string) => {

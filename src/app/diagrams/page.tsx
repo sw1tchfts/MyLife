@@ -21,6 +21,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { nodeTypes } from "@/components/diagrams/DiagramNodes";
+import { useToast } from "@/components/ToastProvider";
 
 /* ── Types ─────────────────────────────────────────────── */
 
@@ -82,6 +83,7 @@ const PALETTES: Record<DiagramType, PaletteItem[]> = {
 /* ── Inner component (needs useSearchParams) ───────────── */
 
 function DiagramsInner() {
+  const { showToast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get("edit");
@@ -270,13 +272,22 @@ function DiagramsInner() {
 
   /* ── Delete diagram ──────────────────────────────────── */
   const deleteDiagram = useCallback(
-    async (id: string) => {
-      if (!confirm("Delete this diagram?")) return;
-      await fetch(`/api/diagrams/${id}`, { method: "DELETE" });
+    (id: string) => {
+      const deleted = diagrams.find((d) => d.id === id);
+      if (!deleted) return;
+      setDiagrams((prev) => prev.filter((d) => d.id !== id));
       if (editId === id) newDiagram();
-      fetchDiagrams();
+      showToast({
+        message: `Deleted "${deleted.title}"`,
+        onUndo: () => {
+          setDiagrams((prev) => [...prev, deleted]);
+        },
+        onExpire: () => {
+          fetch(`/api/diagrams/${id}`, { method: "DELETE" });
+        },
+      });
     },
-    [editId, newDiagram, fetchDiagrams],
+    [diagrams, editId, newDiagram, showToast],
   );
 
   /* ── Current palette ─────────────────────────────────── */

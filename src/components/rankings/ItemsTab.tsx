@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "@/components/ToastProvider";
 
 interface RankingList {
   id: string;
@@ -36,6 +37,9 @@ export default function ItemsTab({
   allLists: RankingList[];
   onRefresh: () => void;
 }) {
+  const { showToast } = useToast();
+  const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
+  const items = list.items.filter((i) => !hiddenIds.has(i.id));
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
@@ -61,9 +65,22 @@ export default function ItemsTab({
     onRefresh();
   };
 
-  const deleteItem = async (id: string) => {
-    await fetch(`/api/rankings/items/${id}`, { method: "DELETE" });
-    onRefresh();
+  const deleteItem = (id: string) => {
+    const deleted = list.items.find((t) => t.id === id);
+    if (!deleted) return;
+    setHiddenIds((prev) => new Set(prev).add(id));
+    showToast({
+      message: `Deleted "${deleted.title}"`,
+      onUndo: () =>
+        setHiddenIds((prev) => {
+          const next = new Set(prev);
+          next.delete(id);
+          return next;
+        }),
+      onExpire: () => {
+        fetch(`/api/rankings/items/${id}`, { method: "DELETE" });
+      },
+    });
   };
 
   const moveItem = async (itemId: string, newListId: string) => {
@@ -116,7 +133,7 @@ export default function ItemsTab({
       </div>
 
       {/* Items list */}
-      {list.items.length === 0 ? (
+      {items.length === 0 ? (
         <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
           <p className="text-gray-500 dark:text-gray-400">No items yet</p>
           <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
@@ -149,7 +166,7 @@ export default function ItemsTab({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-              {list.items.map((item) => (
+              {items.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-700"

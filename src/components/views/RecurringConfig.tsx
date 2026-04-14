@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+import { useToast } from "@/components/ToastProvider";
 
 interface RecurringTask {
   id: string;
@@ -92,9 +92,9 @@ function ordinal(n: string): string {
 }
 
 export default function RecurringConfig() {
+  const { showToast } = useToast();
   const [tasks, setTasks] = useState<RecurringTask[]>([]);
   const [loading, setLoading] = useState(true);
-  const [deleteTarget, setDeleteTarget] = useState<RecurringTask | null>(null);
   const [editTarget, setEditTarget] = useState<RecurringTask | null>(null);
 
   // Inline create form state
@@ -112,7 +112,10 @@ export default function RecurringConfig() {
       .then((r) => r.json())
       .then((data) => {
         setTasks(
-          data.filter((t: RecurringTask & { isRecurringParent: boolean }) => t.isRecurringParent),
+          data.filter(
+            (t: RecurringTask & { isRecurringParent: boolean }) =>
+              t.isRecurringParent,
+          ),
         );
         setLoading(false);
       });
@@ -122,11 +125,15 @@ export default function RecurringConfig() {
     fetchRecurring();
   }, [fetchRecurring]);
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return;
-    await fetch(`/api/tasks/${deleteTarget.id}`, { method: "DELETE" });
-    setDeleteTarget(null);
-    fetchRecurring();
+  const handleDelete = (task: RecurringTask) => {
+    setTasks((prev) => prev.filter((t) => t.id !== task.id));
+    showToast({
+      message: `Deleted "${task.title}"`,
+      onUndo: () => setTasks((prev) => [...prev, task]),
+      onExpire: () => {
+        fetch(`/api/tasks/${task.id}`, { method: "DELETE" });
+      },
+    });
   };
 
   const handleCreate = async () => {
@@ -545,7 +552,7 @@ export default function RecurringConfig() {
                         </svg>
                       </button>
                       <button
-                        onClick={() => setDeleteTarget(task)}
+                        onClick={() => handleDelete(task)}
                         className="rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/30"
                         title="Delete"
                       >
@@ -570,15 +577,6 @@ export default function RecurringConfig() {
             );
           })}
         </div>
-      )}
-
-      {deleteTarget && (
-        <DeleteConfirmDialog
-          isOpen={true}
-          taskTitle={deleteTarget.title}
-          onConfirm={handleDelete}
-          onCancel={() => setDeleteTarget(null)}
-        />
       )}
     </div>
   );

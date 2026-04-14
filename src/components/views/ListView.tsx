@@ -3,7 +3,6 @@
 import { useState, useMemo } from "react";
 import StatusBadge from "@/components/StatusBadge";
 import PriorityBadge from "@/components/PriorityBadge";
-import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import { getDueStatus } from "@/components/TaskCard";
 import type { TaskData } from "@/components/TaskCard";
 
@@ -60,14 +59,11 @@ export default function ListView({
   onDelete,
   onBulkDelete,
   onTaskClick,
-  onRefresh,
 }: ListViewProps) {
   const [sortField, setSortField] = useState<SortField>("dueDate");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
-  const [deleteTarget, setDeleteTarget] = useState<TaskData | null>(null);
   const [groupByDate, setGroupByDate] = useState(true);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
 
   const regularTasks = tasks;
 
@@ -148,7 +144,6 @@ export default function ListView({
     if (onBulkDelete && selected.size > 0) {
       onBulkDelete([...selected]);
       setSelected(new Set());
-      setBulkDeleteConfirm(false);
     }
   };
 
@@ -215,7 +210,7 @@ export default function ListView({
                 {selected.size} selected
               </span>
               <button
-                onClick={() => setBulkDeleteConfirm(true)}
+                onClick={handleBulkDelete}
                 className="inline-flex items-center gap-1 rounded-md bg-red-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-red-700"
               >
                 <svg
@@ -281,7 +276,7 @@ export default function ListView({
                 }}
                 allSelected={groupTasks.every((t) => selected.has(t.id))}
                 onTaskClick={onTaskClick}
-                onDeleteClick={(t) => setDeleteTarget(t)}
+                onDeleteClick={(t) => onDelete(t.id)}
                 showHeaders={false}
               />
             </div>
@@ -299,56 +294,9 @@ export default function ListView({
           onToggleSelectAll={toggleSelectAll}
           allSelected={sorted.length > 0 && selected.size === sorted.length}
           onTaskClick={onTaskClick}
-          onDeleteClick={(t) => setDeleteTarget(t)}
+          onDeleteClick={(t) => onDelete(t.id)}
           showHeaders={true}
         />
-      )}
-
-      {/* Single delete confirm */}
-      {deleteTarget && (
-        <DeleteConfirmDialog
-          isOpen={true}
-          taskTitle={deleteTarget.title}
-          onConfirm={() => {
-            onDelete(deleteTarget.id);
-            setSelected((prev) => {
-              const next = new Set(prev);
-              next.delete(deleteTarget.id);
-              return next;
-            });
-            setDeleteTarget(null);
-          }}
-          onCancel={() => setDeleteTarget(null)}
-        />
-      )}
-
-      {/* Bulk delete confirm */}
-      {bulkDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Delete {selected.size} Tasks
-            </h3>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              Are you sure you want to delete {selected.size} task
-              {selected.size !== 1 ? "s" : ""}? This cannot be undone.
-            </p>
-            <div className="mt-4 flex justify-end gap-3">
-              <button
-                onClick={() => setBulkDeleteConfirm(false)}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleBulkDelete}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-              >
-                Delete {selected.size} Tasks
-              </button>
-            </div>
-          </div>
-        </div>
       )}
     </>
   );

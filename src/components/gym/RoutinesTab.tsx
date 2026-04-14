@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useToast } from "@/components/ToastProvider";
 
 /* ── Types ─────────────────────────────────────────── */
 
@@ -62,6 +63,7 @@ const WEEKDAY_LABELS_GYM: Record<string, string> = {
 /* ── Routines Tab ──────────────────────────────────── */
 
 export default function RoutinesTab() {
+  const { showToast } = useToast();
   const [routines, setRoutines] = useState<Routine[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
@@ -107,9 +109,17 @@ export default function RoutinesTab() {
     fetchData();
   }, [fetchData]);
 
-  const deleteRoutine = async (id: string) => {
-    await fetch(`/api/gym/routines/${id}`, { method: "DELETE" });
-    fetchData();
+  const deleteRoutine = (id: string) => {
+    const deleted = routines.find((r) => r.id === id);
+    if (!deleted) return;
+    setRoutines((prev) => prev.filter((r) => r.id !== id));
+    showToast({
+      message: `Deleted "${deleted.name}"`,
+      onUndo: () => setRoutines((prev) => [...prev, deleted]),
+      onExpire: () => {
+        fetch(`/api/gym/routines/${id}`, { method: "DELETE" });
+      },
+    });
   };
 
   const startActivation = (routine: Routine) => {

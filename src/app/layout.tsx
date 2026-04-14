@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import ThemeProvider from "@/components/ThemeProvider";
+import ToastProvider from "@/components/ToastProvider";
 import TaskNotifications from "@/components/TaskNotifications";
 import { createClient } from "@/lib/supabase/server";
 
@@ -28,21 +29,23 @@ export default async function RootLayout({
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
       <body className="h-full font-sans">
         <ThemeProvider>
-          {user ? (
-            <div className="flex h-full">
-              <Suspense>
-                <Sidebar userEmail={user.email ?? ""} />
-              </Suspense>
-              <main className="flex-1 overflow-y-auto bg-gray-50 p-4 pt-16 dark:bg-gray-900 lg:p-8 lg:pt-8">
+          <ToastProvider>
+            {user ? (
+              <div className="flex h-full">
+                <Suspense>
+                  <Sidebar userEmail={user.email ?? ""} />
+                </Suspense>
+                <main className="flex-1 overflow-y-auto bg-gray-50 p-4 pt-16 dark:bg-gray-900 lg:p-8 lg:pt-8">
+                  {children}
+                </main>
+                <TaskNotifications />
+              </div>
+            ) : (
+              <div className="min-h-full bg-gray-50 dark:bg-gray-900">
                 {children}
-              </main>
-              <TaskNotifications />
-            </div>
-          ) : (
-            <div className="min-h-full bg-gray-50 dark:bg-gray-900">
-              {children}
-            </div>
-          )}
+              </div>
+            )}
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

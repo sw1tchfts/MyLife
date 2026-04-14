@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { useToast } from "@/components/ToastProvider";
 
 interface JournalEntry {
   id: string;
@@ -30,6 +31,7 @@ function moodLabel(mood: string | null): string {
 }
 
 export default function JournalPage() {
+  const { showToast } = useToast();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -116,9 +118,17 @@ export default function JournalPage() {
     fetchEntries();
   };
 
-  const deleteEntry = async (id: string) => {
-    await fetch(`/api/journal/${id}`, { method: "DELETE" });
-    fetchEntries();
+  const deleteEntry = (id: string) => {
+    const deleted = entries.find((e) => e.id === id);
+    if (!deleted) return;
+    setEntries((prev) => prev.filter((e) => e.id !== id));
+    showToast({
+      message: `Deleted "${deleted.title || "journal entry"}"`,
+      onUndo: () => setEntries((prev) => [...prev, deleted]),
+      onExpire: () => {
+        fetch(`/api/journal/${id}`, { method: "DELETE" });
+      },
+    });
   };
 
   const grouped = useMemo(() => {
