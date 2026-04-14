@@ -5,18 +5,14 @@ import { useSearchParams, useRouter } from "next/navigation";
 import type { TaskData, TaskType } from "@/components/TaskCard";
 import type { Status, Priority } from "@/generated/prisma/client";
 import ListView from "@/components/views/ListView";
-import CalendarView from "@/components/views/CalendarView";
 import DashboardView from "@/components/views/DashboardView";
-import FocusView from "@/components/views/FocusView";
 import TaskModal from "@/components/TaskModal";
 
-type View = "list" | "calendar" | "dashboard" | "focus";
+type View = "list" | "dashboard";
 
 const VIEWS: { key: View; label: string }[] = [
   { key: "list", label: "List" },
-  { key: "calendar", label: "Calendar" },
   { key: "dashboard", label: "Dashboard" },
-  { key: "focus", label: "Focus" },
 ];
 
 const STATUS_FILTERS: { label: string; value: Status }[] = [
@@ -107,18 +103,6 @@ function TasksContent() {
       ids.map((id) => fetch(`/api/tasks/${id}`, { method: "DELETE" })),
     );
     setTasks((prev) => prev.filter((t) => !ids.includes(t.id)));
-  };
-
-  const handleStatusChange = async (
-    id: string,
-    status: "TODO" | "IN_PROGRESS" | "DONE",
-  ) => {
-    await fetch(`/api/tasks/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status } : t)));
   };
 
   const handleTaskClick = (id: string) => {
@@ -268,11 +252,7 @@ function TasksContent() {
               onRefresh={fetchTasks}
             />
           )}
-          {view === "calendar" && <CalendarView tasks={filtered} />}
           {view === "dashboard" && <DashboardView tasks={tasks} />}
-          {view === "focus" && (
-            <FocusView tasks={filtered} onStatusChange={handleStatusChange} />
-          )}
         </>
       )}
 
