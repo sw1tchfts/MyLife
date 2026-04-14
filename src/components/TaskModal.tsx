@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import TaskForm from "./TaskForm";
 import type { TaskFormData } from "./TaskForm";
+import TrackerForm from "./TrackerForm";
 import SubtaskList from "./SubtaskList";
 import type {
   SubtaskData,
@@ -129,7 +130,11 @@ export default function TaskModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {mode === "create" ? "New Task" : "Edit Task"}
+            {mode === "edit" && task?.taskType === "TRACKER"
+              ? "Daily Log"
+              : mode === "create"
+                ? "New Task"
+                : "Edit Task"}
           </h2>
           <button
             onClick={onClose}
@@ -155,6 +160,16 @@ export default function TaskModal({
         <div className="flex-1 overflow-y-auto p-6">
           {loading ? (
             <p className="text-center text-gray-400">Loading...</p>
+          ) : mode === "edit" && task?.taskType === "TRACKER" ? (
+            /* Tracker tasks get the tracker form instead of the normal edit form */
+            <TrackerForm
+              taskId={taskId!}
+              taskStatus={task.status}
+              onComplete={() => {
+                onSaved();
+                onClose();
+              }}
+            />
           ) : (
             <div className="space-y-6">
               <TaskForm

@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import StatusBadge from "@/components/StatusBadge";
 import type { TaskData } from "@/components/TaskCard";
-import TrackerForm from "@/components/TrackerForm";
 
 type TaskGroup = "overdue" | "today" | "upcoming";
 
@@ -95,19 +94,12 @@ export default function TodayPage() {
   const overdue: TaskData[] = [];
   const today: TaskData[] = [];
   const upcoming: TaskData[] = [];
-  let trackerTask: TaskData | null = null;
 
   for (const t of tasks) {
     if (t.status === "DONE") continue;
     if (!t.dueDate) continue;
 
     const due = new Date(t.dueDate);
-
-    // Pull out today's tracker task separately
-    if (t.taskType === "TRACKER" && due >= todayStart && due < todayEnd) {
-      trackerTask = t;
-      continue;
-    }
 
     if (due < todayStart) {
       overdue.push(t);
@@ -196,17 +188,6 @@ export default function TodayPage() {
           All Tasks
         </Link>
       </div>
-
-      {/* Tracker card */}
-      {trackerTask && (
-        <div className="mt-4">
-          <TrackerForm
-            taskId={trackerTask.id}
-            taskStatus={trackerTask.status}
-            onComplete={fetchTasks}
-          />
-        </div>
-      )}
 
       {/* Task groups */}
       <div className="mt-6 space-y-6">

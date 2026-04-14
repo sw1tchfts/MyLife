@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import StatusBadge from "@/components/StatusBadge";
 import PriorityBadge from "@/components/PriorityBadge";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
-import TrackerForm from "@/components/TrackerForm";
 import { getDueStatus } from "@/components/TaskCard";
 import type { TaskData } from "@/components/TaskCard";
 
@@ -70,9 +69,7 @@ export default function ListView({
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
 
-  // Separate tracker tasks from regular tasks
-  const trackerTasks = tasks.filter((t) => t.taskType === "TRACKER");
-  const regularTasks = tasks.filter((t) => t.taskType !== "TRACKER");
+  const regularTasks = tasks;
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -155,19 +152,7 @@ export default function ListView({
     }
   };
 
-  // Find today's tracker task
-  const todayTracker = trackerTasks.find((t) => {
-    if (!t.dueDate) return false;
-    const due = new Date(t.dueDate);
-    const today = new Date();
-    return (
-      due.getFullYear() === today.getFullYear() &&
-      due.getMonth() === today.getMonth() &&
-      due.getDate() === today.getDate()
-    );
-  });
-
-  if (regularTasks.length === 0 && !todayTracker) {
+  if (regularTasks.length === 0) {
     return (
       <div className="rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 py-12 text-center">
         <p className="text-gray-500 dark:text-gray-400">No tasks found</p>
@@ -194,17 +179,6 @@ export default function ListView({
 
   return (
     <>
-      {/* Tracker task renders as a special card above the table */}
-      {todayTracker && (
-        <div className="mb-4">
-          <TrackerForm
-            taskId={todayTracker.id}
-            taskStatus={todayTracker.status}
-            onComplete={() => onRefresh?.()}
-          />
-        </div>
-      )}
-
       {/* Toolbar: group toggle + bulk actions */}
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -495,6 +469,11 @@ function TaskTable({
                     {task.taskType === "MEDICATION" && (
                       <span className="inline-flex items-center rounded bg-blue-100 px-1 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
                         Med
+                      </span>
+                    )}
+                    {task.taskType === "TRACKER" && (
+                      <span className="inline-flex items-center rounded bg-teal-100 px-1 py-0.5 text-[10px] font-medium text-teal-700 dark:bg-teal-900/30 dark:text-teal-400">
+                        Tracker
                       </span>
                     )}
                     {task.recurrence && task.recurrence !== "NONE" && (
