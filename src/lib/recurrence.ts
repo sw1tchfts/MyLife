@@ -62,7 +62,7 @@ export async function generateInstances(daysAhead = 14) {
         priority: parent.priority,
         status: "TODO",
         dueDate: date,
-        recurrence: parent.recurrence,
+        recurrence: "NONE",
         taskType: parent.taskType,
         mealType: parent.mealType,
         isHabit: parent.isHabit,

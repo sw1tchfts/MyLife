@@ -102,6 +102,17 @@ export default function Sidebar({ userEmail }: SidebarProps) {
           {/* Tasks */}
           <div className="mb-4">
             <Link
+              href="/today"
+              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+                pathname === "/today"
+                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              }`}
+            >
+              <TodayIcon active={pathname === "/today"} />
+              Today
+            </Link>
+            <Link
               href="/tasks"
               className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
                 pathname.startsWith("/tasks")
@@ -110,7 +121,18 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               }`}
             >
               <ListIcon active={pathname.startsWith("/tasks")} />
-              Tasks
+              All Tasks
+            </Link>
+            <Link
+              href="/recurring"
+              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+                pathname === "/recurring"
+                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              }`}
+            >
+              <RecurringIcon active={pathname === "/recurring"} />
+              Recurring
             </Link>
           </div>
 
@@ -249,6 +271,44 @@ export default function Sidebar({ userEmail }: SidebarProps) {
 }
 
 /* ── Icons ──────────────────────────────────────────── */
+
+function TodayIcon({ active }: { active: boolean }) {
+  const cls = active ? "text-blue-600" : "text-gray-400";
+  return (
+    <svg
+      className={`h-4 w-4 ${cls}`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+  );
+}
+
+function RecurringIcon({ active }: { active: boolean }) {
+  const cls = active ? "text-blue-600" : "text-gray-400";
+  return (
+    <svg
+      className={`h-4 w-4 ${cls}`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+      />
+    </svg>
+  );
+}
 
 function ListIcon({ active }: { active: boolean }) {
   const cls = active ? "text-blue-600" : "text-gray-400";
