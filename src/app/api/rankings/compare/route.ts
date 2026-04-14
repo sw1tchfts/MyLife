@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
       where: { categoryId },
       orderBy: [{ wins: "asc" }, { losses: "asc" }, { ties: "asc" }],
       take: 10, // only need the least-compared items
+      include: { rankingItemTags: { include: { tag: true } } },
     });
 
     if (items.length < 2) {
@@ -54,10 +55,18 @@ export async function GET(request: NextRequest) {
     let idx2 = Math.floor(Math.random() * (pool.length - 1));
     if (idx2 >= idx1) idx2++;
 
-    const left = pool[idx1];
-    const right = pool[idx2];
+    const flattenItem = ({
+      rankingItemTags,
+      ...item
+    }: (typeof pool)[number]) => ({
+      ...item,
+      tags: rankingItemTags.map((rt) => rt.tag.name),
+    });
 
-    return NextResponse.json({ left, right });
+    return NextResponse.json({
+      left: flattenItem(pool[idx1]),
+      right: flattenItem(pool[idx2]),
+    });
   } catch (error) {
     console.error("Failed to get comparison pair:", error);
     return NextResponse.json({ error: "Failed to get pair" }, { status: 500 });

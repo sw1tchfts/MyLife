@@ -24,7 +24,10 @@ export async function GET(
     const category = await prisma.rankingCategory.findUnique({
       where: { id },
       include: {
-        items: { orderBy: { elo: "desc" } },
+        items: {
+          orderBy: { elo: "desc" },
+          include: { rankingItemTags: { include: { tag: true } } },
+        },
         _count: { select: { comparisons: true } },
       },
     });
@@ -36,7 +39,16 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(category);
+    // Flatten tags on each item
+    const result = {
+      ...category,
+      items: category.items.map(({ rankingItemTags, ...item }) => ({
+        ...item,
+        tags: rankingItemTags.map((rt) => rt.tag.name),
+      })),
+    };
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Failed to fetch ranking category:", error);
     return NextResponse.json(

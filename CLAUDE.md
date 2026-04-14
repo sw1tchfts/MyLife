@@ -37,6 +37,9 @@ Personal task tracking web app. Single user (no sharing/collaboration features).
 - Build script: `npx prisma generate && next build` (Vercel needs prisma generate before build)
 - API routes at `src/app/api/tasks/` (GET, POST) and `src/app/api/tasks/[id]/` (GET, PUT, DELETE)
 - Validation logic in `src/lib/types.ts`
+- **Gym enums**: `MuscleGroup`, `Equipment`, `Difficulty`, `WorkoutGoal`, `WorkoutLevel`, `WeightUnit` — lowercase values (e.g. `chest`, `barbell`, `beginner`) to match UI conventions
+- **Tags system**: `Tag` table with unique name, linked via `JournalEntryTag` and `RankingItemTag` join tables. API accepts/returns `tags: string[]` arrays. Old `tags` text column kept in DB but removed from Prisma schema.
+- **Partial unique indexes**: `FoodItem(externalId, source)` and `MedicationItem(externalId, source)` are unique WHERE `externalId != ''` — enforced at DB level only (not representable in Prisma)
 
 ## File Structure
 

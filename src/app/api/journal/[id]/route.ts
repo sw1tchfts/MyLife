@@ -23,13 +23,20 @@ export async function GET(
 
     const { id } = await params;
 
-    const entry = await prisma.journalEntry.findUnique({ where: { id } });
+    const entry = await prisma.journalEntry.findUnique({
+      where: { id },
+      include: { journalEntryTags: { include: { tag: true } } },
+    });
 
     if (!entry) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    return NextResponse.json(entry);
+    const { journalEntryTags, ...rest } = entry;
+    return NextResponse.json({
+      ...rest,
+      tags: journalEntryTags.map((jt) => jt.tag.name),
+    });
   } catch (error) {
     console.error("Failed to fetch journal entry:", error);
     return NextResponse.json(
@@ -66,15 +73,32 @@ export async function PUT(
     if (parsed!.title !== undefined) data.title = parsed!.title;
     if (parsed!.content !== undefined) data.content = parsed!.content;
     if (parsed!.mood !== undefined) data.mood = parsed!.mood;
-    if (parsed!.tags !== undefined) data.tags = parsed!.tags;
     if (parsed!.date !== undefined) data.date = new Date(parsed!.date);
+
+    // Handle tags: replace all associations
+    if (parsed!.tags !== undefined) {
+      const tagNames = parsed!.tags;
+      data.journalEntryTags = {
+        deleteMany: {},
+        create: tagNames.map((name: string) => ({
+          tag: {
+            connectOrCreate: { where: { name }, create: { name } },
+          },
+        })),
+      };
+    }
 
     const entry = await prisma.journalEntry.update({
       where: { id },
       data,
+      include: { journalEntryTags: { include: { tag: true } } },
     });
 
-    return NextResponse.json(entry);
+    const { journalEntryTags, ...rest } = entry;
+    return NextResponse.json({
+      ...rest,
+      tags: journalEntryTags.map((jt) => jt.tag.name),
+    });
   } catch (error) {
     console.error("Failed to update journal entry:", error);
     return NextResponse.json(

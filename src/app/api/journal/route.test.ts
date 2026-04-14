@@ -31,12 +31,22 @@ describe("GET /api/journal", () => {
   });
 
   it("returns all entries", async () => {
-    const entries = [{ id: "1", title: "Day one", content: "Hello" }];
+    const entries = [
+      {
+        id: "1",
+        title: "Day one",
+        content: "Hello",
+        journalEntryTags: [{ tag: { name: "work" } }],
+      },
+    ];
     prisma.journalEntry.findMany.mockResolvedValue(entries);
 
     const res = await GET(buildRequest("/api/journal"));
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual(entries);
+    const body = await res.json();
+    expect(body).toEqual([
+      { id: "1", title: "Day one", content: "Hello", tags: ["work"] },
+    ]);
   });
 
   it("filters by mood", async () => {
@@ -62,6 +72,13 @@ describe("GET /api/journal", () => {
           OR: expect.arrayContaining([
             { title: { contains: "vacation", mode: "insensitive" } },
             { content: { contains: "vacation", mode: "insensitive" } },
+            {
+              journalEntryTags: {
+                some: {
+                  tag: { name: { contains: "vacation", mode: "insensitive" } },
+                },
+              },
+            },
           ]),
         }),
       }),
@@ -101,7 +118,13 @@ describe("POST /api/journal", () => {
   });
 
   it("creates a journal entry", async () => {
-    const created = { id: "1", title: "", content: "My entry", mood: null };
+    const created = {
+      id: "1",
+      title: "",
+      content: "My entry",
+      mood: null,
+      journalEntryTags: [],
+    };
     prisma.journalEntry.create.mockResolvedValue(created);
 
     const res = await POST(
@@ -112,7 +135,13 @@ describe("POST /api/journal", () => {
     );
 
     expect(res.status).toBe(201);
-    expect(await res.json()).toEqual(created);
+    expect(await res.json()).toEqual({
+      id: "1",
+      title: "",
+      content: "My entry",
+      mood: null,
+      tags: [],
+    });
   });
 
   it("creates with mood and title", async () => {
@@ -121,6 +150,7 @@ describe("POST /api/journal", () => {
       title: "Good day",
       content: "Was great",
       mood: "GREAT",
+      journalEntryTags: [],
     };
     prisma.journalEntry.create.mockResolvedValue(created);
 
@@ -132,13 +162,15 @@ describe("POST /api/journal", () => {
     );
 
     expect(res.status).toBe(201);
-    expect(prisma.journalEntry.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
-        title: "Good day",
-        content: "Was great",
-        mood: "GREAT",
+    expect(prisma.journalEntry.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          title: "Good day",
+          content: "Was great",
+          mood: "GREAT",
+        }),
       }),
-    });
+    );
   });
 
   it("returns 400 for missing content", async () => {

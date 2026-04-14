@@ -34,7 +34,13 @@ export async function GET(request: NextRequest) {
       where.OR = [
         { title: { contains: search, mode: "insensitive" } },
         { content: { contains: search, mode: "insensitive" } },
-        { tags: { contains: search, mode: "insensitive" } },
+        {
+          journalEntryTags: {
+            some: {
+              tag: { name: { contains: search, mode: "insensitive" } },
+            },
+          },
+        },
       ];
     }
 
@@ -47,9 +53,15 @@ export async function GET(request: NextRequest) {
     const entries = await prisma.journalEntry.findMany({
       where,
       orderBy: { date: "desc" },
+      include: { journalEntryTags: { include: { tag: true } } },
     });
 
-    return NextResponse.json(entries);
+    const result = entries.map(({ journalEntryTags, ...rest }) => ({
+      ...rest,
+      tags: journalEntryTags.map((jt) => jt.tag.name),
+    }));
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Failed to fetch journal entries:", error);
     return NextResponse.json(
@@ -77,18 +89,30 @@ export async function POST(request: NextRequest) {
     }
 
     const { parsed } = validation;
+    const tagNames = parsed!.tags ?? [];
 
     const entry = await prisma.journalEntry.create({
       data: {
         title: parsed!.title ?? "",
         content: parsed!.content,
         mood: parsed!.mood ?? null,
-        tags: parsed!.tags ?? "",
         date: parsed!.date ? new Date(parsed!.date) : new Date(),
+        journalEntryTags: {
+          create: tagNames.map((name) => ({
+            tag: {
+              connectOrCreate: { where: { name }, create: { name } },
+            },
+          })),
+        },
       },
+      include: { journalEntryTags: { include: { tag: true } } },
     });
 
-    return NextResponse.json(entry, { status: 201 });
+    const { journalEntryTags, ...rest } = entry;
+    return NextResponse.json(
+      { ...rest, tags: journalEntryTags.map((jt) => jt.tag.name) },
+      { status: 201 },
+    );
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error("Failed to create journal entry:", msg);

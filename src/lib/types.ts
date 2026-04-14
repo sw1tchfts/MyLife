@@ -24,7 +24,7 @@ export interface CreateJournalEntryInput {
   title?: string;
   content: string;
   mood?: Mood | null;
-  tags?: string;
+  tags?: string[];
   date?: string;
 }
 
@@ -32,7 +32,7 @@ export interface UpdateJournalEntryInput {
   title?: string;
   content?: string;
   mood?: Mood | null;
-  tags?: string;
+  tags?: string[];
   date?: string;
 }
 
@@ -70,8 +70,12 @@ export function validateCreateJournalInput(data: unknown): {
     errors.push(`Mood must be one of: ${VALID_MOODS.join(", ")}`);
   }
 
-  if (obj.tags !== undefined && typeof obj.tags !== "string") {
-    errors.push("Tags must be a string");
+  if (
+    obj.tags !== undefined &&
+    (!Array.isArray(obj.tags) ||
+      !obj.tags.every((t: unknown) => typeof t === "string"))
+  ) {
+    errors.push("Tags must be an array of strings");
   }
 
   if (obj.date !== undefined) {
@@ -91,7 +95,9 @@ export function validateCreateJournalInput(data: unknown): {
       title: obj.title ? (obj.title as string).trim() : undefined,
       content: (obj.content as string).trim(),
       mood: obj.mood as Mood | null | undefined,
-      tags: obj.tags as string | undefined,
+      tags: obj.tags
+        ? (obj.tags as string[]).map((t) => t.trim()).filter(Boolean)
+        : undefined,
       date: obj.date as string | undefined,
     },
   };
@@ -127,8 +133,12 @@ export function validateUpdateJournalInput(data: unknown): {
     errors.push(`Mood must be one of: ${VALID_MOODS.join(", ")}`);
   }
 
-  if (obj.tags !== undefined && typeof obj.tags !== "string") {
-    errors.push("Tags must be a string");
+  if (
+    obj.tags !== undefined &&
+    (!Array.isArray(obj.tags) ||
+      !obj.tags.every((t: unknown) => typeof t === "string"))
+  ) {
+    errors.push("Tags must be an array of strings");
   }
 
   if (obj.date !== undefined) {
@@ -148,7 +158,9 @@ export function validateUpdateJournalInput(data: unknown): {
       title: obj.title !== undefined ? (obj.title as string).trim() : undefined,
       content: obj.content ? (obj.content as string).trim() : undefined,
       mood: obj.mood as Mood | null | undefined,
-      tags: obj.tags as string | undefined,
+      tags: obj.tags
+        ? (obj.tags as string[]).map((t) => t.trim()).filter(Boolean)
+        : undefined,
       date: obj.date as string | undefined,
     },
   };

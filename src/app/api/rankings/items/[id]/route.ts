@@ -27,7 +27,6 @@ export async function PUT(
     if (typeof body.description === "string")
       data.description = body.description;
     if (typeof body.imageUrl === "string") data.imageUrl = body.imageUrl;
-    if (typeof body.tags === "string") data.tags = body.tags;
     if (typeof body.categoryId === "string") {
       data.categoryId = body.categoryId;
       // Reset Elo when moving to a new list
@@ -37,12 +36,38 @@ export async function PUT(
       data.ties = 0;
     }
 
+    // Handle tags: accept array or comma-separated string
+    if (body.tags !== undefined) {
+      const tagNames: string[] = Array.isArray(body.tags)
+        ? body.tags.map((t: string) => t.trim()).filter(Boolean)
+        : typeof body.tags === "string"
+          ? body.tags
+              .split(",")
+              .map((t: string) => t.trim())
+              .filter(Boolean)
+          : [];
+
+      data.rankingItemTags = {
+        deleteMany: {},
+        create: tagNames.map((name: string) => ({
+          tag: {
+            connectOrCreate: { where: { name }, create: { name } },
+          },
+        })),
+      };
+    }
+
     const item = await prisma.rankingItem.update({
       where: { id },
       data,
+      include: { rankingItemTags: { include: { tag: true } } },
     });
 
-    return NextResponse.json(item);
+    const { rankingItemTags, ...rest } = item;
+    return NextResponse.json({
+      ...rest,
+      tags: rankingItemTags.map((rt) => rt.tag.name),
+    });
   } catch (error) {
     console.error("Failed to update ranking item:", error);
     return NextResponse.json(

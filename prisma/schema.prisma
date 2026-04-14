@@ -104,6 +104,7 @@ model Category {
   name      String
   color     String   @default("#6B7280")
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   tasks     TaskCategory[]
 }
 
@@ -130,6 +131,36 @@ model UserSettings {
   trackerConfig        Json    @default("{\"metrics\":{\"weight\":true,\"bodyFat\":true,\"waist\":false,\"chest\":false,\"manualCalories\":false},\"units\":{\"weight\":\"lbs\",\"measurements\":\"in\"},\"profile\":{\"height\":null,\"heightUnit\":\"in\",\"age\":null,\"sex\":null,\"activityLevel\":\"moderate\"},\"goal\":{\"type\":\"maintenance\",\"weeklyRateLbs\":0}}")
 }
 
+// ── Tags ─────────────────────────────────────────────
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  journalEntries JournalEntryTag[]
+  rankingItems   RankingItemTag[]
+}
+
+model JournalEntryTag {
+  journalEntryId String
+  tagId          String
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  tag            Tag          @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([journalEntryId, tagId])
+  @@index([tagId])
+}
+
+model RankingItemTag {
+  rankingItemId String
+  tagId         String
+  rankingItem   RankingItem @relation(fields: [rankingItemId], references: [id], onDelete: Cascade)
+  tag           Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([rankingItemId, tagId])
+  @@index([tagId])
+}
+
 // ── Pairwise Ranking System ────────────────────────────
 
 enum ComparisonResult {
@@ -154,7 +185,6 @@ model RankingItem {
   title       String
   description String   @default("")
   imageUrl    String   @default("")
-  tags        String   @default("")
   elo         Float    @default(1500)
   wins        Int      @default(0)
   losses      Int      @default(0)
@@ -164,6 +194,7 @@ model RankingItem {
   createdAt   DateTime @default(now())
   comparisonsAsLeft  Comparison[] @relation("LeftItem")
   comparisonsAsRight Comparison[] @relation("RightItem")
+  rankingItemTags    RankingItemTag[]
 
   @@index([categoryId])
   @@index([elo(sort: Desc)])
@@ -186,6 +217,8 @@ model Comparison {
 }
 
 // ── Diet & Nutrition Tracking ─────────────────────────
+// Note: FoodItem and MedicationItem have partial unique indexes on (externalId, source)
+// WHERE externalId != '' — enforced at the database level, not representable in Prisma.
 
 model FoodItem {
   id           String   @id @default(cuid())
@@ -212,6 +245,7 @@ model FoodItem {
   externalId   String   @default("")
   source       String   @default("")
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   taskFoods    TaskFood[]
 }
 
@@ -246,6 +280,7 @@ model NutritionLog {
   iron      Float    @default(0)
   potassium Float    @default(0)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([date])
   @@index([taskId])
@@ -263,6 +298,7 @@ model MedicationItem {
   externalId   String   @default("")
   source       String   @default("")
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   taskMeds     TaskMedication[]
 }
 
@@ -293,10 +329,10 @@ model JournalEntry {
   title     String   @default("")
   content   String
   mood      Mood?
-  tags      String   @default("")
   date      DateTime @default(now())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  journalEntryTags JournalEntryTag[]
 
   @@index([date(sort: Desc)])
   @@index([mood])
@@ -343,6 +379,7 @@ model BodyMetric {
   value     Float
   unit      String     @default("")
   createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   @@index([date])
   @@index([type])
@@ -350,17 +387,65 @@ model BodyMetric {
 
 // ── Gym & Workout Tracking ───────────────────────────
 
+enum MuscleGroup {
+  chest
+  back
+  shoulders
+  biceps
+  triceps
+  legs
+  core
+  cardio
+  other
+}
+
+enum Equipment {
+  barbell
+  dumbbell
+  cable
+  machine
+  bodyweight
+  kettlebell
+  band
+  other
+}
+
+enum Difficulty {
+  beginner
+  intermediate
+  advanced
+}
+
+enum WorkoutGoal {
+  hypertrophy
+  strength
+  endurance
+  general
+}
+
+enum WorkoutLevel {
+  beginner
+  intermediate
+  advanced
+}
+
+enum WeightUnit {
+  lbs
+  kg
+}
+
 model Exercise {
-  id               String   @id @default(cuid())
+  id               String      @id @default(cuid())
   name             String
-  slug             String   @unique
-  muscleGroup      String
-  secondaryMuscles String   @default("")
-  equipment        String   @default("bodyweight")
-  difficulty       String   @default("beginner")
-  instructions     String   @default("")
-  tips             String   @default("")
-  createdAt        DateTime @default(now())
+  slug             String      @unique
+  muscleGroup      MuscleGroup @default(other)
+  secondaryMuscles String      @default("")
+  equipment        Equipment   @default(bodyweight)
+  difficulty       Difficulty  @default(beginner)
+  instructions     String      @default("")
+  tips             String      @default("")
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
   routineExercises RoutineDayExercise[]
   logExercises     WorkoutLogExercise[]
 
@@ -369,15 +454,15 @@ model Exercise {
 }
 
 model WorkoutRoutine {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   name        String
-  description String   @default("")
-  goal        String   @default("hypertrophy")
-  level       String   @default("beginner")
-  daysPerWeek Int      @default(3)
-  isPreset    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  description String       @default("")
+  goal        WorkoutGoal  @default(hypertrophy)
+  level       WorkoutLevel @default(beginner)
+  daysPerWeek Int          @default(3)
+  isPreset    Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   days        WorkoutRoutineDay[]
   logs        WorkoutLog[]
 
@@ -426,6 +511,7 @@ model WorkoutLog {
   routine         WorkoutRoutine?    @relation(fields: [routineId], references: [id], onDelete: SetNull)
   routineDay      WorkoutRoutineDay? @relation(fields: [routineDayId], references: [id], onDelete: SetNull)
   exercises       WorkoutLogExercise[]
+  progressPhotos  ProgressPhoto[]
 
   @@index([date(sort: Desc)])
   @@index([routineId])
@@ -446,25 +532,28 @@ model WorkoutLogExercise {
 }
 
 model WorkoutLogSet {
-  id            String   @id @default(cuid())
+  id            String     @id @default(cuid())
   logExerciseId String
-  setNumber     Int      @default(1)
-  reps          Int      @default(0)
-  weight        Float    @default(0)
-  unit          String   @default("lbs")
-  completed     Boolean  @default(false)
-  createdAt     DateTime @default(now())
+  setNumber     Int        @default(1)
+  reps          Int        @default(0)
+  weight        Float      @default(0)
+  unit          WeightUnit @default(lbs)
+  completed     Boolean    @default(false)
+  createdAt     DateTime   @default(now())
   logExercise   WorkoutLogExercise @relation(fields: [logExerciseId], references: [id], onDelete: Cascade)
 
   @@index([logExerciseId])
 }
 
 model ProgressPhoto {
-  id        String   @id @default(cuid())
-  date      DateTime
-  photoUrl  String
-  notes     String   @default("")
-  createdAt DateTime @default(now())
+  id           String      @id @default(cuid())
+  date         DateTime
+  photoUrl     String
+  notes        String      @default("")
+  workoutLogId String?
+  workoutLog   WorkoutLog? @relation(fields: [workoutLogId], references: [id], onDelete: SetNull)
+  createdAt    DateTime    @default(now())
 
   @@index([date(sort: Desc)])
+  @@index([workoutLogId])
 }

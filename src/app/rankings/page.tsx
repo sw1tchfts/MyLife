@@ -23,7 +23,7 @@ interface RankingItem {
   title: string;
   description: string;
   imageUrl: string;
-  tags: string;
+  tags: string[];
   elo: number;
   wins: number;
   losses: number;
@@ -362,7 +362,10 @@ function ItemsTab({
       body: JSON.stringify({
         title: title.trim(),
         description,
-        tags,
+        tags: tags
+          .split(",")
+          .map((t: string) => t.trim())
+          .filter(Boolean),
         categoryId: list.id,
       }),
     });
@@ -477,14 +480,14 @@ function ItemsTab({
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    {item.tags && (
+                    {item.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1">
-                        {item.tags.split(",").map((tag, i) => (
+                        {item.tags.map((tag, i) => (
                           <span
                             key={i}
                             className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-400"
                           >
-                            {tag.trim()}
+                            {tag}
                           </span>
                         ))}
                       </div>
@@ -645,14 +648,14 @@ function CompareTab({
               {left.description}
             </p>
           )}
-          {left.tags && (
+          {left.tags.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-1">
-              {left.tags.split(",").map((t, i) => (
+              {left.tags.map((t, i) => (
                 <span
                   key={i}
                   className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500 dark:bg-gray-700 dark:text-gray-400"
                 >
-                  {t.trim()}
+                  {t}
                 </span>
               ))}
             </div>
@@ -682,14 +685,14 @@ function CompareTab({
               {right.description}
             </p>
           )}
-          {right.tags && (
+          {right.tags.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-1">
-              {right.tags.split(",").map((t, i) => (
+              {right.tags.map((t, i) => (
                 <span
                   key={i}
                   className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500 dark:bg-gray-700 dark:text-gray-400"
                 >
-                  {t.trim()}
+                  {t}
                 </span>
               ))}
             </div>

@@ -7,7 +7,7 @@ interface JournalEntry {
   title: string;
   content: string;
   mood: string | null;
-  tags: string;
+  tags: string[];
   date: string;
   createdAt: string;
   updatedAt: string;
@@ -79,7 +79,7 @@ export default function JournalPage() {
     setTitle(entry.title);
     setContent(entry.content);
     setMood(entry.mood);
-    setTags(entry.tags);
+    setTags(entry.tags.join(", "));
     setDate(new Date(entry.date).toISOString().slice(0, 10));
     setShowForm(true);
     setExpandedId(null);
@@ -93,7 +93,10 @@ export default function JournalPage() {
       title: title.trim(),
       content: content.trim(),
       mood: mood || null,
-      tags: tags.trim(),
+      tags: tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
       date: new Date(date + "T12:00:00").toISOString(),
     };
 
@@ -293,12 +296,7 @@ export default function JournalPage() {
                     entry.content.length > 150
                       ? entry.content.slice(0, 150) + "..."
                       : entry.content;
-                  const tagList = entry.tags
-                    ? entry.tags
-                        .split(",")
-                        .map((t) => t.trim())
-                        .filter(Boolean)
-                    : [];
+                  const tagList = entry.tags ?? [];
 
                   return (
                     <div

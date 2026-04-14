@@ -70,13 +70,14 @@ export async function GET(request: NextRequest) {
       case "journal": {
         const entries = await prisma.journalEntry.findMany({
           orderBy: { date: "desc" },
+          include: { journalEntryTags: { include: { tag: true } } },
         });
         data = entries.map((e) => ({
           id: e.id,
           title: e.title,
           content: e.content,
           mood: e.mood ?? "",
-          tags: e.tags,
+          tags: e.journalEntryTags.map((jt) => jt.tag.name).join(", "),
           date: e.date.toISOString(),
           createdAt: e.createdAt.toISOString(),
         }));

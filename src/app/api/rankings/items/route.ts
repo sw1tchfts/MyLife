@@ -29,17 +29,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const tagNames: string[] = Array.isArray(body.tags)
+      ? body.tags.map((t: string) => t.trim()).filter(Boolean)
+      : typeof body.tags === "string" && body.tags.trim()
+        ? body.tags
+            .split(",")
+            .map((t: string) => t.trim())
+            .filter(Boolean)
+        : [];
+
     const item = await prisma.rankingItem.create({
       data: {
         title,
         description: body.description || "",
         imageUrl: body.imageUrl || "",
-        tags: body.tags || "",
         categoryId: body.categoryId,
+        rankingItemTags: {
+          create: tagNames.map((name: string) => ({
+            tag: {
+              connectOrCreate: { where: { name }, create: { name } },
+            },
+          })),
+        },
       },
+      include: { rankingItemTags: { include: { tag: true } } },
     });
 
-    return NextResponse.json(item, { status: 201 });
+    const { rankingItemTags, ...rest } = item;
+    return NextResponse.json(
+      { ...rest, tags: rankingItemTags.map((rt) => rt.tag.name) },
+      { status: 201 },
+    );
   } catch (error) {
     console.error("Failed to create ranking item:", error);
     return NextResponse.json(
