@@ -6,13 +6,17 @@ import type { TaskData, TaskType } from "@/components/TaskCard";
 import type { Status, Priority } from "@/generated/prisma/client";
 import ListView from "@/components/views/ListView";
 import DashboardView from "@/components/views/DashboardView";
+import DailyLogSection from "@/components/views/DailyLogSection";
+import RecurringConfig from "@/components/views/RecurringConfig";
 import TaskModal from "@/components/TaskModal";
 
-type View = "list" | "dashboard";
+type Tab = "dashboard" | "tasks" | "adhoc-config" | "recurring-config";
 
-const VIEWS: { key: View; label: string }[] = [
-  { key: "list", label: "List" },
+const TABS: { key: Tab; label: string }[] = [
   { key: "dashboard", label: "Dashboard" },
+  { key: "tasks", label: "Tasks" },
+  { key: "adhoc-config", label: "Ad-Hoc Config" },
+  { key: "recurring-config", label: "Recurring Config" },
 ];
 
 const STATUS_FILTERS: { label: string; value: Status }[] = [
@@ -37,7 +41,7 @@ const TYPE_FILTERS: { label: string; value: TaskType | "ALL" }[] = [
 function TasksContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const view = (searchParams.get("view") as View) || "list";
+  const tab = (searchParams.get("tab") as Tab) || "tasks";
 
   const [tasks, setTasks] = useState<TaskData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +73,7 @@ function TasksContent() {
     return () => window.removeEventListener("tasks-changed", handler);
   }, [fetchTasks]);
 
-  const setView = (v: View) => router.push(`/tasks?view=${v}`);
+  const setTab = (t: Tab) => router.push(`/tasks?tab=${t}`);
 
   const filtered = useMemo(() => {
     let result = tasks;
@@ -110,7 +114,8 @@ function TasksContent() {
     setModalMode("edit");
   };
 
-  const hasFilters = search || statusFilter || priorityFilter || typeFilter !== "ALL";
+  const hasFilters =
+    search || statusFilter || priorityFilter || typeFilter !== "ALL";
 
   return (
     <div>
@@ -119,131 +124,145 @@ function TasksContent() {
         <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
           Tasks
         </h1>
-        <button
-          onClick={() => setModalMode("create")}
-          className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
-        >
-          + New Task
-        </button>
+        {tab === "tasks" && (
+          <button
+            onClick={() => setModalMode("create")}
+            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+          >
+            + New Task
+          </button>
+        )}
       </div>
 
-      {/* View tabs */}
+      {/* Tabs */}
       <div className="mb-4 flex gap-1 border-b border-gray-200 dark:border-gray-700">
-        {VIEWS.map((v) => (
+        {TABS.map((t) => (
           <button
-            key={v.key}
-            onClick={() => setView(v.key)}
+            key={t.key}
+            onClick={() => setTab(t.key)}
             className={`rounded-t-md px-3 py-2 text-sm font-medium transition-colors ${
-              view === v.key
+              tab === t.key
                 ? "bg-blue-600 text-white"
                 : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
             }`}
           >
-            {v.label}
+            {t.label}
           </button>
         ))}
       </div>
 
-      {/* Search + filters (hide on dashboard) */}
-      {view !== "dashboard" && (
-        <div className="mb-4 space-y-2">
-          <div className="relative">
-            <svg
-              className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search tasks..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
-            />
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-gray-400">Type:</span>
-            {TYPE_FILTERS.map((f) => (
-              <button
-                key={f.value}
-                onClick={() => setTypeFilter(f.value)}
-                className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
-                  typeFilter === f.value
-                    ? "bg-blue-600 text-white"
-                    : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-            <span className="ml-2 text-xs text-gray-400">Status:</span>
-            {STATUS_FILTERS.map((f) => (
-              <button
-                key={f.value}
-                onClick={() =>
-                  setStatusFilter((prev) => (prev === f.value ? null : f.value))
-                }
-                className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
-                  statusFilter === f.value
-                    ? "bg-blue-600 text-white"
-                    : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-            <span className="ml-2 text-xs text-gray-400">Priority:</span>
-            {PRIORITY_FILTERS.map((f) => (
-              <button
-                key={f.value}
-                onClick={() =>
-                  setPriorityFilter((prev) =>
-                    prev === f.value ? null : f.value,
-                  )
-                }
-                className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
-                  priorityFilter === f.value
-                    ? "bg-blue-600 text-white"
-                    : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-            {hasFilters && (
-              <button
-                onClick={() => {
-                  setSearch("");
-                  setStatusFilter(null);
-                  setPriorityFilter(null);
-                  setTypeFilter("ALL");
-                }}
-                className="ml-1 text-xs text-gray-400 hover:text-gray-600"
-              >
-                Clear all
-              </button>
-            )}
+      {/* Tab content */}
+      {tab === "dashboard" && (
+        <div className="space-y-8">
+          <DailyLogSection />
+          <div className="border-t border-gray-200 pt-6 dark:border-gray-700">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+              Task Stats
+            </h2>
+            <DashboardView tasks={tasks} />
           </div>
         </div>
       )}
 
-      {/* View content */}
-      {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <p className="text-gray-400">Loading tasks...</p>
-        </div>
-      ) : (
+      {tab === "tasks" && (
         <>
-          {view === "list" && (
+          {/* Search + filters */}
+          <div className="mb-4 space-y-2">
+            <div className="relative">
+              <svg
+                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search tasks..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-gray-400">Type:</span>
+              {TYPE_FILTERS.map((f) => (
+                <button
+                  key={f.value}
+                  onClick={() => setTypeFilter(f.value)}
+                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
+                    typeFilter === f.value
+                      ? "bg-blue-600 text-white"
+                      : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+              <span className="ml-2 text-xs text-gray-400">Status:</span>
+              {STATUS_FILTERS.map((f) => (
+                <button
+                  key={f.value}
+                  onClick={() =>
+                    setStatusFilter((prev) =>
+                      prev === f.value ? null : f.value,
+                    )
+                  }
+                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
+                    statusFilter === f.value
+                      ? "bg-blue-600 text-white"
+                      : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+              <span className="ml-2 text-xs text-gray-400">Priority:</span>
+              {PRIORITY_FILTERS.map((f) => (
+                <button
+                  key={f.value}
+                  onClick={() =>
+                    setPriorityFilter((prev) =>
+                      prev === f.value ? null : f.value,
+                    )
+                  }
+                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
+                    priorityFilter === f.value
+                      ? "bg-blue-600 text-white"
+                      : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+              {hasFilters && (
+                <button
+                  onClick={() => {
+                    setSearch("");
+                    setStatusFilter(null);
+                    setPriorityFilter(null);
+                    setTypeFilter("ALL");
+                  }}
+                  className="ml-1 text-xs text-gray-400 hover:text-gray-600"
+                >
+                  Clear all
+                </button>
+              )}
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <p className="text-gray-400">Loading tasks...</p>
+            </div>
+          ) : (
             <ListView
               tasks={filtered}
               onDelete={handleDelete}
@@ -252,9 +271,23 @@ function TasksContent() {
               onRefresh={fetchTasks}
             />
           )}
-          {view === "dashboard" && <DashboardView tasks={tasks} />}
         </>
       )}
+
+      {tab === "adhoc-config" && (
+        <div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Create ad-hoc task templates that you can quickly add to your task list.
+          </p>
+          <div className="mt-4 rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
+            <p className="text-gray-500 dark:text-gray-400">
+              Coming soon — task templates for quick creation
+            </p>
+          </div>
+        </div>
+      )}
+
+      {tab === "recurring-config" && <RecurringConfig />}
 
       {/* Task modal */}
       {modalMode && (

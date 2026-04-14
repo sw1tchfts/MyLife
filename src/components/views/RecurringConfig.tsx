@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import Link from "next/link";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 
 interface RecurringTask {
@@ -92,7 +91,7 @@ function ordinal(n: string): string {
   return num + (s[(v - 20) % 10] || s[v] || s[0]);
 }
 
-export default function RecurringPage() {
+export default function RecurringConfig() {
   const [tasks, setTasks] = useState<RecurringTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<RecurringTask | null>(null);
@@ -190,28 +189,15 @@ export default function RecurringPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Recurring Tasks
-          </h1>
-          <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
-            Manage your repeating tasks, meals, and medications
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowCreate(true)}
-            className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
-          >
-            + New Recurring
-          </button>
-          <Link
-            href="/tasks"
-            className="text-sm text-blue-600 hover:text-blue-500"
-          >
-            All Tasks
-          </Link>
-        </div>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Manage your repeating tasks, meals, and medications
+        </p>
+        <button
+          onClick={() => setShowCreate(true)}
+          className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+        >
+          + New Recurring
+        </button>
       </div>
 
       {/* Inline create form */}

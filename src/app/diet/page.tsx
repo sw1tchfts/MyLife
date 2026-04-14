@@ -41,24 +41,7 @@ interface SearchResult {
   potassium: number;
 }
 
-interface NutritionLog {
-  id: string;
-  date: string;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-}
-
-interface BodyMetric {
-  id: string;
-  date: string;
-  type: string;
-  value: number;
-  unit: string;
-}
-
-type Tab = "library" | "nutrition" | "metrics";
+type Tab = "library" | "diet";
 
 /* ── Page wrapper ──────────────────────────────────── */
 
@@ -83,8 +66,7 @@ function DietContent() {
 
   const TABS: { key: Tab; label: string }[] = [
     { key: "library", label: "Food Library" },
-    { key: "nutrition", label: "Nutrition Log" },
-    { key: "metrics", label: "Body Metrics" },
+    { key: "diet", label: "Diet" },
   ];
 
   return (
@@ -110,8 +92,20 @@ function DietContent() {
       </div>
 
       {tab === "library" && <FoodLibraryTab />}
-      {tab === "nutrition" && <NutritionTab />}
-      {tab === "metrics" && <BodyMetricsTab />}
+      {tab === "diet" && (
+        <div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Create your weekly diet routine. Your meals will appear as tasks
+            in the task list, pre-filled with your planned foods. You can
+            accept or modify each meal when logging.
+          </p>
+          <div className="mt-4 rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
+            <p className="text-gray-500 dark:text-gray-400">
+              Coming soon — weekly diet routine builder
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -343,314 +337,3 @@ function FoodLibraryTab() {
   );
 }
 
-/* ── Nutrition Log Tab ─────────────────────────────── */
-
-function NutritionTab() {
-  const [logs, setLogs] = useState<NutritionLog[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const today = new Date();
-    const weekAgo = new Date(today);
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    fetch(
-      `/api/nutrition?from=${weekAgo.toISOString()}&to=${today.toISOString()}`,
-    )
-      .then((r) => r.json())
-      .then((data) => {
-        setLogs(data);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading)
-    return (
-      <p className="text-center text-gray-400">Loading nutrition data...</p>
-    );
-
-  // Group by date
-  const byDate = new Map<string, NutritionLog[]>();
-  for (const log of logs) {
-    const key = new Date(log.date).toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    });
-    if (!byDate.has(key)) byDate.set(key, []);
-    byDate.get(key)!.push(log);
-  }
-
-  const dailyTotals = Array.from(byDate.entries()).map(([date, dayLogs]) => ({
-    date,
-    calories: Math.round(dayLogs.reduce((s, l) => s + l.calories, 0)),
-    protein: Math.round(dayLogs.reduce((s, l) => s + l.protein, 0)),
-    carbs: Math.round(dayLogs.reduce((s, l) => s + l.carbs, 0)),
-    fat: Math.round(dayLogs.reduce((s, l) => s + l.fat, 0)),
-    meals: dayLogs.length,
-  }));
-
-  return (
-    <div className="space-y-6">
-      <p className="text-sm text-gray-500 dark:text-gray-400">
-        Last 7 days — nutrition is logged when you mark a meal task as done.
-      </p>
-
-      {dailyTotals.length === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-          <p className="text-gray-500 dark:text-gray-400">
-            No nutrition data yet
-          </p>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
-            Create meal tasks with foods, then mark them done to log nutrition
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {dailyTotals.map((day) => (
-            <div
-              key={day.date}
-              className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                  {day.date}
-                </h3>
-                <span className="text-xs text-gray-400 dark:text-gray-500">
-                  {day.meals} meal{day.meals !== 1 ? "s" : ""}
-                </span>
-              </div>
-              <div className="mt-2 grid grid-cols-4 gap-4">
-                <div>
-                  <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                    {day.calories}
-                  </p>
-                  <p className="text-xs text-gray-400">Calories</p>
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-blue-600">
-                    {day.protein}g
-                  </p>
-                  <p className="text-xs text-gray-400">Protein</p>
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-amber-600">
-                    {day.carbs}g
-                  </p>
-                  <p className="text-xs text-gray-400">Carbs</p>
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-red-500">{day.fat}g</p>
-                  <p className="text-xs text-gray-400">Fat</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ── Body Metrics Tab ──────────────────────────────── */
-
-function BodyMetricsTab() {
-  const [metrics, setMetrics] = useState<BodyMetric[]>([]);
-  const [metricType, setMetricType] = useState("WEIGHT");
-  const [value, setValue] = useState("");
-  const [unit, setUnit] = useState("lbs");
-  const [adding, setAdding] = useState(false);
-
-  const fetchMetrics = useCallback(() => {
-    fetch("/api/body-metrics")
-      .then((r) => r.json())
-      .then((data) => setMetrics(data));
-  }, []);
-
-  useEffect(() => {
-    fetchMetrics();
-  }, [fetchMetrics]);
-
-  const addMetric = async () => {
-    if (!value) return;
-    setAdding(true);
-    await fetch("/api/body-metrics", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        date: new Date().toISOString(),
-        type: metricType,
-        value: parseFloat(value),
-        unit,
-      }),
-    });
-    setValue("");
-    setAdding(false);
-    fetchMetrics();
-  };
-
-  const deleteMetric = async (id: string) => {
-    await fetch(`/api/body-metrics/${id}`, { method: "DELETE" });
-    fetchMetrics();
-  };
-
-  const METRIC_TYPES = [
-    { value: "WEIGHT", label: "Weight", defaultUnit: "lbs" },
-    { value: "BODY_FAT", label: "Body Fat %", defaultUnit: "%" },
-    { value: "HEIGHT", label: "Height", defaultUnit: "in" },
-    { value: "WAIST", label: "Waist", defaultUnit: "in" },
-    { value: "CHEST", label: "Chest", defaultUnit: "in" },
-    { value: "BMI", label: "BMI", defaultUnit: "" },
-  ];
-
-  // Group metrics by type for display
-  const byType = new Map<string, BodyMetric[]>();
-  for (const m of metrics) {
-    if (!byType.has(m.type)) byType.set(m.type, []);
-    byType.get(m.type)!.push(m);
-  }
-
-  return (
-    <div className="space-y-6">
-      {/* Add metric */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-        <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          Log a Measurement
-        </h3>
-        <div className="flex flex-wrap gap-3">
-          <select
-            value={metricType}
-            onChange={(e) => {
-              setMetricType(e.target.value);
-              const mt = METRIC_TYPES.find((t) => t.value === e.target.value);
-              if (mt) setUnit(mt.defaultUnit);
-            }}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
-          >
-            {METRIC_TYPES.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-          <input
-            type="number"
-            step="0.1"
-            placeholder="Value"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && addMetric()}
-            className="w-32 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
-          />
-          <input
-            type="text"
-            placeholder="Unit"
-            value={unit}
-            onChange={(e) => setUnit(e.target.value)}
-            className="w-20 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
-          />
-          <button
-            onClick={addMetric}
-            disabled={adding || !value}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-          >
-            Log
-          </button>
-        </div>
-      </div>
-
-      {/* Metrics by type */}
-      {byType.size === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-          <p className="text-gray-500 dark:text-gray-400">
-            No measurements yet
-          </p>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
-            Log your weight, body fat, or other measurements above
-          </p>
-        </div>
-      ) : (
-        Array.from(byType.entries()).map(([type, items]) => {
-          const label =
-            METRIC_TYPES.find((t) => t.value === type)?.label || type;
-          const sorted = [...items].sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-          );
-          const latest = sorted[0];
-          const prev = sorted[1];
-          const change =
-            prev && latest ? (latest.value - prev.value).toFixed(1) : null;
-
-          return (
-            <div
-              key={type}
-              className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  {label}
-                </h3>
-                {latest && (
-                  <div className="text-right">
-                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                      {latest.value}
-                    </span>
-                    <span className="ml-1 text-sm text-gray-400">
-                      {latest.unit}
-                    </span>
-                    {change && (
-                      <span
-                        className={`ml-2 text-xs ${parseFloat(change) > 0 ? "text-red-500" : parseFloat(change) < 0 ? "text-green-500" : "text-gray-400"}`}
-                      >
-                        {parseFloat(change) > 0 ? "+" : ""}
-                        {change}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className="mt-2 space-y-1">
-                {sorted.slice(0, 10).map((m) => (
-                  <div
-                    key={m.id}
-                    className="group flex items-center justify-between text-sm"
-                  >
-                    <span className="text-gray-400 dark:text-gray-500">
-                      {new Date(m.date).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-700 dark:text-gray-300">
-                        {m.value} {m.unit}
-                      </span>
-                      <button
-                        onClick={() => deleteMetric(m.id)}
-                        className="rounded p-0.5 text-gray-300 opacity-0 hover:text-red-500 group-hover:opacity-100 dark:text-gray-600"
-                      >
-                        <svg
-                          className="h-3.5 w-3.5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          strokeWidth={2}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })
-      )}
-    </div>
-  );
-}

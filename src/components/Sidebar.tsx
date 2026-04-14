@@ -99,8 +99,11 @@ export default function Sidebar({ userEmail }: SidebarProps) {
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-2 py-2" onClick={closeMobile}>
-          {/* Tasks */}
+          {/* Mission Control */}
           <div className="mb-4">
+            <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
+              Mission Control
+            </p>
             <Link
               href="/tasks"
               className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
@@ -112,35 +115,13 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               <ListIcon active={pathname.startsWith("/tasks")} />
               Tasks
             </Link>
-            <Link
-              href="/recurring"
-              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
-                pathname === "/recurring"
-                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-              }`}
-            >
-              <RecurringIcon active={pathname === "/recurring"} />
-              Recurring
-            </Link>
           </div>
 
-          {/* Health section */}
+          {/* Health */}
           <div className="mb-4">
             <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
               Health
             </p>
-            <Link
-              href="/daily-log"
-              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
-                pathname.startsWith("/daily-log")
-                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-              }`}
-            >
-              <DailyLogIcon active={pathname.startsWith("/daily-log")} />
-              Daily Log
-            </Link>
             <Link
               href="/diet"
               className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
@@ -163,12 +144,23 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               <GymIcon active={pathname.startsWith("/gym")} />
               Gym
             </Link>
+            <Link
+              href="/medications"
+              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+                pathname.startsWith("/medications")
+                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              }`}
+            >
+              <MedIcon active={pathname.startsWith("/medications")} />
+              Medications
+            </Link>
           </div>
 
-          {/* Journal section */}
+          {/* Other Applications */}
           <div className="mb-4">
             <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
-              Journal
+              Other Applications
             </p>
             <Link
               href="/journal"
@@ -181,13 +173,6 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               <JournalIcon active={pathname.startsWith("/journal")} />
               Journal
             </Link>
-          </div>
-
-          {/* Rankings section */}
-          <div className="mb-4">
-            <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
-              Rankings
-            </p>
             <Link
               href="/rankings"
               className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
@@ -199,13 +184,6 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               <RankingIcon active={pathname.startsWith("/rankings")} />
               Pairwise Ranker
             </Link>
-          </div>
-
-          {/* Diagrams section */}
-          <div className="mb-4">
-            <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
-              Diagrams
-            </p>
             <Link
               href="/diagrams"
               className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
@@ -219,7 +197,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
             </Link>
           </div>
 
-          {/* Manage section */}
+          {/* Manage */}
           <div>
             <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
               Manage
@@ -260,25 +238,6 @@ export default function Sidebar({ userEmail }: SidebarProps) {
 }
 
 /* ── Icons ──────────────────────────────────────────── */
-
-function RecurringIcon({ active }: { active: boolean }) {
-  const cls = active ? "text-blue-600" : "text-gray-400";
-  return (
-    <svg
-      className={`h-4 w-4 ${cls}`}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      strokeWidth={2}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-      />
-    </svg>
-  );
-}
 
 function ListIcon({ active }: { active: boolean }) {
   const cls = active ? "text-blue-600" : "text-gray-400";
@@ -323,7 +282,7 @@ function AdminIcon({ active }: { active: boolean }) {
   );
 }
 
-function DailyLogIcon({ active }: { active: boolean }) {
+function MedIcon({ active }: { active: boolean }) {
   const cls = active ? "text-blue-600" : "text-gray-400";
   return (
     <svg
@@ -336,7 +295,7 @@ function DailyLogIcon({ active }: { active: boolean }) {
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
       />
     </svg>
   );

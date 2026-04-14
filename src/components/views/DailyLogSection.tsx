@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 
 interface TDEEData {
   estimatedTDEE: number;
@@ -57,7 +56,7 @@ const CONFIDENCE_CONFIG = {
   },
 };
 
-export default function DailyLogPage() {
+export default function DailyLogSection() {
   const [data, setData] = useState<TrackerResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -114,15 +113,6 @@ export default function DailyLogPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          Daily Log Dashboard
-        </h1>
-        <Link href="/tasks" className="text-sm text-blue-600 hover:text-blue-500">
-          Back to Tasks
-        </Link>
-      </div>
-
       {/* TDEE Hero Card */}
       <div className="mt-6 rounded-xl border border-teal-200 bg-gradient-to-br from-teal-50 to-cyan-50 p-6 dark:border-teal-800 dark:from-teal-900/30 dark:to-cyan-900/20">
         <div className="flex flex-wrap items-start justify-between gap-4">
