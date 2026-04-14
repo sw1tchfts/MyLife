@@ -247,7 +247,17 @@ src/
 - #15 Journal section — DONE
 - #16 Diagram creator — DONE
 - #19 Weight tracking & adaptive TDEE Daily Burn — DONE
-- #20 App performance improvements — DONE
+- #20 Undo on delete (toast instead of confirmation dialog)
+- #21 Landing page dashboard with today's overview
+- #22 Weekly/monthly reports on dashboard
+- #23 Journal insights and mood scale (1-10 numeric)
+- #24 Optimistic UI updates
+- #25 Error boundaries for all routes
+- #26 PWA support (installable on mobile)
+- #27 Pull-to-refresh on mobile
+- #28 Swipe actions on task cards (mobile)
+- #29 Task templates (Ad-Hoc Config)
+- #30 Gym workout logging from tasks + auto-sync to gym logs
 
 ## Development Workflow (ALWAYS follow these)
 
@@ -265,3 +275,4 @@ src/
 - User is new to development — be explicit with instructions
 - Always merge to `main` and push for Vercel to deploy
 - **Active development mode**: After committing to the feature branch, always merge to `main` and push immediately (unless told otherwise). This keeps Vercel deploys flowing continuously.
+- **No keyboard shortcuts**: Do NOT add global keyboard shortcuts to the app. The user does not want them.
