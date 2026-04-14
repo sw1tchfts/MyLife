@@ -9,6 +9,10 @@ interface MedicationItem {
   genericName: string;
   dosageForm: string;
   strength: string;
+  concentration: string;
+  dosage: string;
+  halfLife: string;
+  halfLifeHours: number | null;
   description: string;
 }
 
@@ -19,9 +23,11 @@ interface SearchResult {
   strength: string;
   description: string;
   externalId: string;
+  halfLife: string;
+  halfLifeHours: number | null;
 }
 
-type Tab = "medications" | "schedule";
+type Tab = "medications" | "schedule" | "pharmacokinetics";
 
 export default function MedicationsPage() {
   return (
@@ -43,6 +49,7 @@ function MedicationsContent() {
   const TABS: { key: Tab; label: string }[] = [
     { key: "medications", label: "Medications" },
     { key: "schedule", label: "Medication Schedule" },
+    { key: "pharmacokinetics", label: "Pharmacokinetics" },
   ];
 
   return (
@@ -69,6 +76,7 @@ function MedicationsContent() {
 
       {tab === "medications" && <MedicationsTab />}
       {tab === "schedule" && <ScheduleTab />}
+      {tab === "pharmacokinetics" && <PharmacokineticsTab />}
     </div>
   );
 }
@@ -111,6 +119,8 @@ function MedicationsTab() {
         genericName: result.genericName,
         dosageForm: result.dosageForm,
         strength: result.strength,
+        halfLife: result.halfLife,
+        halfLifeHours: result.halfLifeHours,
         description: result.description,
         externalId: result.externalId,
         source: "OpenFDA",
@@ -201,40 +211,12 @@ function MedicationsTab() {
         ) : (
           <div className="space-y-2">
             {meds.map((m) => (
-              <div
+              <MedicationCard
                 key={m.id}
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800"
-              >
-                <div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {m.name}
-                  </p>
-                  {m.genericName && (
-                    <p className="text-xs text-gray-400">{m.genericName}</p>
-                  )}
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {[m.dosageForm, m.strength].filter(Boolean).join(" · ")}
-                  </p>
-                </div>
-                <button
-                  onClick={() => deleteMed(m.id)}
-                  className="rounded p-1 text-gray-300 hover:text-red-500 dark:text-gray-600"
-                >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
+                med={m}
+                onUpdate={fetchMeds}
+                onDelete={() => deleteMed(m.id)}
+              />
             ))}
           </div>
         )}
@@ -243,12 +225,489 @@ function MedicationsTab() {
   );
 }
 
+/* ── Medication Card (expandable edit) ────────────── */
+
+function MedicationCard({
+  med,
+  onUpdate,
+  onDelete,
+}: {
+  med: MedicationItem;
+  onUpdate: () => void;
+  onDelete: () => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    name: med.name,
+    genericName: med.genericName,
+    dosageForm: med.dosageForm,
+    strength: med.strength,
+    concentration: med.concentration,
+    dosage: med.dosage,
+    halfLife: med.halfLife,
+    halfLifeHours: med.halfLifeHours,
+    description: med.description,
+  });
+
+  const handleSave = async () => {
+    setSaving(true);
+    await fetch(`/api/medications/${med.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...form,
+        halfLifeHours: form.halfLifeHours || null,
+      }),
+    });
+    setSaving(false);
+    setEditing(false);
+    onUpdate();
+  };
+
+  const field = (
+    label: string,
+    key: keyof typeof form,
+    placeholder: string,
+    opts?: { type?: string },
+  ) => (
+    <div>
+      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+        {label}
+      </label>
+      {editing ? (
+        <input
+          type={opts?.type ?? "text"}
+          value={form[key] ?? ""}
+          onChange={(e) =>
+            setForm((f) => ({
+              ...f,
+              [key]:
+                opts?.type === "number"
+                  ? e.target.value
+                    ? parseFloat(e.target.value)
+                    : null
+                  : e.target.value,
+            }))
+          }
+          placeholder={placeholder}
+          className="mt-1 w-full rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+        />
+      ) : (
+        <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
+          {(form[key] as string | number | null) || (
+            <span className="text-gray-300 dark:text-gray-600">--</span>
+          )}
+        </p>
+      )}
+    </div>
+  );
+
+  const detailPills = [
+    med.dosageForm,
+    med.strength,
+    med.concentration,
+    med.dosage,
+  ].filter(Boolean);
+
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+      {/* Header row */}
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="flex w-full items-center justify-between p-3 text-left"
+      >
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            {med.name}
+          </p>
+          {med.genericName && (
+            <p className="text-xs text-gray-400">{med.genericName}</p>
+          )}
+          {detailPills.length > 0 && (
+            <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+              {detailPills.join(" · ")}
+            </p>
+          )}
+        </div>
+        <svg
+          className={`ml-2 h-4 w-4 shrink-0 text-gray-400 transition-transform ${expanded ? "rotate-180" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+
+      {/* Expanded detail */}
+      {expanded && (
+        <div className="border-t border-gray-100 px-3 pb-3 pt-3 dark:border-gray-700">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {field("Brand Name", "name", "Brand name")}
+            {field("Generic Name", "genericName", "Generic name")}
+            {field("Form", "dosageForm", "e.g. Tablet, Capsule, Injectable")}
+            {field("Strength", "strength", "e.g. 500mg, 10mg/5mL")}
+            {field("Concentration", "concentration", "e.g. 200mg/mL")}
+            {field("Dosage", "dosage", "e.g. 1 tablet twice daily")}
+            {field("Half-Life", "halfLife", "e.g. 8 hours, 3 days")}
+            {field(
+              "Half-Life (hours)",
+              "halfLifeHours",
+              "Numeric, for graphing",
+              {
+                type: "number",
+              },
+            )}
+          </div>
+          <div className="sm:col-span-2 lg:col-span-3">
+            <label className="mt-3 block text-xs font-medium text-gray-500 dark:text-gray-400">
+              Description
+            </label>
+            {editing ? (
+              <textarea
+                value={form.description}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, description: e.target.value }))
+                }
+                rows={2}
+                className="mt-1 w-full rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              />
+            ) : (
+              <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                {form.description || (
+                  <span className="text-gray-300 dark:text-gray-600">--</span>
+                )}
+              </p>
+            )}
+          </div>
+
+          {/* Action buttons */}
+          <div className="mt-4 flex items-center gap-2">
+            {editing ? (
+              <>
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : "Save"}
+                </button>
+                <button
+                  onClick={() => {
+                    setForm({
+                      name: med.name,
+                      genericName: med.genericName,
+                      dosageForm: med.dosageForm,
+                      strength: med.strength,
+                      concentration: med.concentration,
+                      dosage: med.dosage,
+                      halfLife: med.halfLife,
+                      halfLifeHours: med.halfLifeHours,
+                      description: med.description,
+                    });
+                    setEditing(false);
+                  }}
+                  className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setEditing(true)}
+                className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                Edit
+              </button>
+            )}
+            <button
+              onClick={onDelete}
+              className="ml-auto rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Pharmacokinetics Tab ────────────────────────── */
+
+function PharmacokineticsTab() {
+  const [meds, setMeds] = useState<MedicationItem[]>([]);
+  const [selectedMedId, setSelectedMedId] = useState("");
+  const [doseAmountMg, setDoseAmountMg] = useState("100");
+  const [intervalHours, setIntervalHours] = useState("24");
+  const [durationDays, setDurationDays] = useState("7");
+  const [unit, setUnit] = useState<"hours" | "days">("days");
+
+  useEffect(() => {
+    fetch("/api/medications")
+      .then((r) => r.json())
+      .then((data: MedicationItem[]) => setMeds(data));
+  }, []);
+
+  const selectedMed = meds.find((m) => m.id === selectedMedId);
+  const halfLifeH = selectedMed?.halfLifeHours;
+  const dose = parseFloat(doseAmountMg) || 0;
+  const interval = parseFloat(intervalHours) || 24;
+  const durationH = (parseFloat(durationDays) || 7) * 24;
+
+  // Build concentration curve via superposition
+  const points: { t: number; c: number }[] = [];
+  if (halfLifeH && halfLifeH > 0 && dose > 0) {
+    const ke = Math.LN2 / halfLifeH;
+    const steps = 500;
+    const dt = durationH / steps;
+    for (let i = 0; i <= steps; i++) {
+      const t = i * dt;
+      let c = 0;
+      // Sum contribution of every dose administered before time t
+      for (let doseTime = 0; doseTime <= t; doseTime += interval) {
+        c += dose * Math.exp(-ke * (t - doseTime));
+      }
+      points.push({ t, c });
+    }
+  }
+
+  const maxC = points.length > 0 ? Math.max(...points.map((p) => p.c)) : 0;
+  const chartW = 700;
+  const chartH = 260;
+  const padL = 55;
+  const padR = 20;
+  const padT = 15;
+  const padB = 35;
+  const plotW = chartW - padL - padR;
+  const plotH = chartH - padT - padB;
+
+  const toX = (t: number) => padL + (t / durationH) * plotW;
+  const toY = (c: number) => padT + plotH - (maxC > 0 ? (c / maxC) * plotH : 0);
+
+  const pathD =
+    points.length > 0
+      ? points
+          .map(
+            (p, i) =>
+              `${i === 0 ? "M" : "L"}${toX(p.t).toFixed(1)},${toY(p.c).toFixed(1)}`,
+          )
+          .join(" ")
+      : "";
+
+  // Y-axis ticks
+  const yTicks = maxC > 0 ? [0, 0.25, 0.5, 0.75, 1].map((f) => f * maxC) : [];
+  // X-axis ticks (5-6 ticks)
+  const xTickCount = 6;
+  const xTicks = Array.from(
+    { length: xTickCount + 1 },
+    (_, i) => (durationH / xTickCount) * i,
+  );
+
+  const formatTime = (h: number) =>
+    unit === "days" ? `${(h / 24).toFixed(1)}d` : `${h.toFixed(0)}h`;
+
+  return (
+    <div className="space-y-6">
+      <p className="text-sm text-gray-500 dark:text-gray-400">
+        Visualize estimated blood concentration over time based on dosing
+        schedule and half-life. This is a simplified one-compartment model for
+        educational purposes only — not medical advice.
+      </p>
+
+      {/* Config */}
+      <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="sm:col-span-2 lg:col-span-4">
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              Medication
+            </label>
+            <select
+              value={selectedMedId}
+              onChange={(e) => setSelectedMedId(e.target.value)}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            >
+              <option value="">Select a medication...</option>
+              {meds
+                .filter((m) => m.halfLifeHours)
+                .map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name}
+                    {m.halfLife ? ` (t½ ${m.halfLife})` : ""}
+                  </option>
+                ))}
+            </select>
+            {meds.filter((m) => m.halfLifeHours).length === 0 && (
+              <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                No medications with half-life data. Edit a medication in the
+                Medications tab and enter a half-life value.
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              Dose Amount (mg)
+            </label>
+            <input
+              type="number"
+              value={doseAmountMg}
+              onChange={(e) => setDoseAmountMg(e.target.value)}
+              min="0"
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              Dosing Interval (hours)
+            </label>
+            <input
+              type="number"
+              value={intervalHours}
+              onChange={(e) => setIntervalHours(e.target.value)}
+              min="1"
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              Duration (days)
+            </label>
+            <input
+              type="number"
+              value={durationDays}
+              onChange={(e) => setDurationDays(e.target.value)}
+              min="1"
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              X-Axis Unit
+            </label>
+            <select
+              value={unit}
+              onChange={(e) => setUnit(e.target.value as "hours" | "days")}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            >
+              <option value="days">Days</option>
+              <option value="hours">Hours</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Chart */}
+      {points.length > 0 ? (
+        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+          <h3 className="mb-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
+            Blood Concentration (mg)
+          </h3>
+          {selectedMed && (
+            <p className="mb-3 text-xs text-gray-400">
+              {selectedMed.name} — t½{" "}
+              {selectedMed.halfLife || `${selectedMed.halfLifeHours}h`}
+              {" · "}
+              {dose}mg every {interval}h for {durationDays} days
+            </p>
+          )}
+          <svg
+            viewBox={`0 0 ${chartW} ${chartH}`}
+            className="h-64 w-full"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            {/* Grid lines + Y labels */}
+            {yTicks.map((v, i) => (
+              <g key={`y-${i}`}>
+                <line
+                  x1={padL}
+                  x2={chartW - padR}
+                  y1={toY(v)}
+                  y2={toY(v)}
+                  stroke="currentColor"
+                  className="text-gray-200 dark:text-gray-700"
+                  strokeWidth={0.5}
+                />
+                <text
+                  x={padL - 6}
+                  y={toY(v) + 3}
+                  textAnchor="end"
+                  className="fill-gray-400 text-[9px]"
+                >
+                  {v < 10 ? v.toFixed(1) : v.toFixed(0)}
+                </text>
+              </g>
+            ))}
+            {/* X labels */}
+            {xTicks.map((h, i) => (
+              <text
+                key={`x-${i}`}
+                x={toX(h)}
+                y={chartH - 5}
+                textAnchor="middle"
+                className="fill-gray-400 text-[9px]"
+              >
+                {formatTime(h)}
+              </text>
+            ))}
+            {/* Axes */}
+            <line
+              x1={padL}
+              x2={padL}
+              y1={padT}
+              y2={padT + plotH}
+              stroke="currentColor"
+              className="text-gray-300 dark:text-gray-600"
+              strokeWidth={1}
+            />
+            <line
+              x1={padL}
+              x2={chartW - padR}
+              y1={padT + plotH}
+              y2={padT + plotH}
+              stroke="currentColor"
+              className="text-gray-300 dark:text-gray-600"
+              strokeWidth={1}
+            />
+            {/* Curve */}
+            <path d={pathD} fill="none" stroke="#3b82f6" strokeWidth={1.5} />
+          </svg>
+        </div>
+      ) : selectedMedId ? (
+        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
+          <p className="text-gray-500 dark:text-gray-400">
+            Enter a dose amount to see the concentration graph
+          </p>
+        </div>
+      ) : (
+        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
+          <p className="text-gray-500 dark:text-gray-400">
+            Select a medication with half-life data to see the concentration
+            graph
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── Schedule Tab ─────────────────────────────────── */
 
 const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 const WEEKDAY_LABELS: Record<string, string> = {
-  mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu",
-  fri: "Fri", sat: "Sat", sun: "Sun",
+  mon: "Mon",
+  tue: "Tue",
+  wed: "Wed",
+  thu: "Thu",
+  fri: "Fri",
+  sat: "Sat",
+  sun: "Sun",
 };
 
 interface ScheduleEntry {
@@ -282,8 +741,9 @@ function ScheduleTab() {
       setMeds(medsData);
       setSchedules(
         tasksData.filter(
-          (t: ScheduleEntry & { isRecurringParent: boolean; taskType: string }) =>
-            t.isRecurringParent && t.taskType === "MEDICATION",
+          (
+            t: ScheduleEntry & { isRecurringParent: boolean; taskType: string },
+          ) => t.isRecurringParent && t.taskType === "MEDICATION",
         ),
       );
       setLoading(false);
@@ -388,7 +848,8 @@ function ScheduleTab() {
               </select>
               {meds.length === 0 && (
                 <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
-                  No medications saved yet. Add medications in the Medications tab first.
+                  No medications saved yet. Add medications in the Medications
+                  tab first.
                 </p>
               )}
             </div>

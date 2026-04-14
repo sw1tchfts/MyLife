@@ -16,9 +16,12 @@ interface OpenFDAResult {
     generic_name?: string[];
     dosage_form?: string[];
     product_type?: string[];
+    route?: string[];
   };
   purpose?: string[];
   indications_and_usage?: string[];
+  clinical_pharmacology?: string[];
+  description?: string[];
 }
 
 export async function GET(request: NextRequest) {
@@ -51,12 +54,33 @@ export async function GET(request: NextRequest) {
       const results = (data.results ?? []).map((result: OpenFDAResult) => {
         const description =
           result.purpose?.[0] || result.indications_and_usage?.[0] || "";
+
+        // Try to extract half-life from clinical pharmacology text
+        let halfLife = "";
+        let halfLifeHours: number | null = null;
+        const pharmacology =
+          result.clinical_pharmacology?.[0] || result.description?.[0] || "";
+        const halfLifeMatch = pharmacology.match(
+          /half[- ]?life[^.]*?(?:is |of |approximately |about |~\s*)?(\d+\.?\d*)\s*(minutes?|hours?|days?|weeks?)/i,
+        );
+        if (halfLifeMatch) {
+          const value = parseFloat(halfLifeMatch[1]);
+          const unit = halfLifeMatch[2].toLowerCase();
+          halfLife = `${value} ${unit}`;
+          if (unit.startsWith("minute")) halfLifeHours = value / 60;
+          else if (unit.startsWith("hour")) halfLifeHours = value;
+          else if (unit.startsWith("day")) halfLifeHours = value * 24;
+          else if (unit.startsWith("week")) halfLifeHours = value * 168;
+        }
+
         return {
           id: result.openfda?.spl_id?.[0] ?? "",
           name: result.openfda?.brand_name?.[0] ?? "",
           genericName: result.openfda?.generic_name?.[0] ?? "",
           dosageForm: result.openfda?.dosage_form?.[0] ?? "",
           strength: result.openfda?.product_type?.[0] ?? "",
+          halfLife,
+          halfLifeHours,
           description:
             description.length > 200
               ? description.substring(0, 200)

@@ -254,16 +254,20 @@ model NutritionLog {
 // ── Medication Tracking ───────────────────────────────
 
 model MedicationItem {
-  id           String   @id @default(cuid())
-  name         String
-  genericName  String   @default("")
-  dosageForm   String   @default("")
-  strength     String   @default("")
-  description  String   @default("")
-  externalId   String   @default("")
-  source       String   @default("")
-  createdAt    DateTime @default(now())
-  taskMeds     TaskMedication[]
+  id             String   @id @default(cuid())
+  name           String
+  genericName    String   @default("")
+  dosageForm     String   @default("")
+  strength       String   @default("")
+  concentration  String   @default("")
+  dosage         String   @default("")
+  halfLife       String   @default("")
+  halfLifeHours  Float?
+  description    String   @default("")
+  externalId     String   @default("")
+  source         String   @default("")
+  createdAt      DateTime @default(now())
+  taskMeds       TaskMedication[]
 }
 
 model TaskMedication {
