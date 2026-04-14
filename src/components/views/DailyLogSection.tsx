@@ -73,9 +73,7 @@ export default function DailyLogSection() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-gray-400 dark:text-gray-500">
-          Loading daily log...
-        </p>
+        <p className="text-gray-400 dark:text-gray-500">Loading daily log...</p>
       </div>
     );
   }
@@ -122,9 +120,7 @@ export default function DailyLogSection() {
             </p>
             <p className="mt-1 text-4xl font-bold text-gray-900 dark:text-gray-100">
               {tdee.estimatedTDEE.toLocaleString()}{" "}
-              <span className="text-lg font-normal text-gray-500">
-                cal/day
-              </span>
+              <span className="text-lg font-normal text-gray-500">cal/day</span>
             </p>
             <div className="mt-2 flex items-center gap-2">
               <span
@@ -191,7 +187,10 @@ export default function DailyLogSection() {
             </div>
           ) : (
             <div className="mt-4">
-              <svg viewBox={`0 0 ${weightEntries.length * 20} 120`} className="h-32 w-full">
+              <svg
+                viewBox={`0 0 ${weightEntries.length * 20} 120`}
+                className="h-32 w-full"
+              >
                 {/* TDEE trend line reference */}
                 {tdee.trendWeight !== null && (
                   <line
@@ -231,8 +230,7 @@ export default function DailyLogSection() {
               <div className="mt-1 flex justify-between text-[10px] text-gray-400 dark:text-gray-500">
                 <span>{weightEntries[0]?.date}</span>
                 <span>
-                  Range: {minW.toFixed(1)} – {maxW.toFixed(1)}{" "}
-                  {tdee.weightUnit}
+                  Range: {minW.toFixed(1)} – {maxW.toFixed(1)} {tdee.weightUnit}
                 </span>
                 <span>{weightEntries[weightEntries.length - 1]?.date}</span>
               </div>
@@ -254,7 +252,10 @@ export default function DailyLogSection() {
             </div>
           ) : (
             <div className="mt-4">
-              <svg viewBox={`0 0 ${calorieEntries.length * 16} 120`} className="h-32 w-full">
+              <svg
+                viewBox={`0 0 ${calorieEntries.length * 16} 120`}
+                className="h-32 w-full"
+              >
                 {/* TDEE reference line */}
                 <line
                   x1="0"

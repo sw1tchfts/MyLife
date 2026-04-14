@@ -112,7 +112,10 @@ export default function RecurringConfig() {
       .then((r) => r.json())
       .then((data) => {
         setTasks(
-          data.filter((t: RecurringTask & { isRecurringParent: boolean }) => t.isRecurringParent),
+          data.filter(
+            (t: RecurringTask & { isRecurringParent: boolean }) =>
+              t.isRecurringParent,
+          ),
         );
         setLoading(false);
       });

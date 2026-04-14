@@ -277,7 +277,8 @@ function TasksContent() {
       {tab === "adhoc-config" && (
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Create ad-hoc task templates that you can quickly add to your task list.
+            Create ad-hoc task templates that you can quickly add to your task
+            list.
           </p>
           <div className="mt-4 rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
             <p className="text-gray-500 dark:text-gray-400">

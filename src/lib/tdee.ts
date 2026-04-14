@@ -70,7 +70,10 @@ const ROLLING_WINDOW = 6;
 
 // ── Mifflin-St Jeor seed ────────────────────────────────
 
-export function calculateBMR(profile: TrackerProfile, weightLbs: number): number | null {
+export function calculateBMR(
+  profile: TrackerProfile,
+  weightLbs: number,
+): number | null {
   if (!profile.height || !profile.age || !profile.sex) return null;
 
   // Convert to metric
@@ -102,9 +105,7 @@ export function calculateSeedTDEE(
 
 // ── EMA weight smoothing ─────────────────────────────────
 
-export function smoothWeights(
-  entries: DailyEntry[],
-): (number | null)[] {
+export function smoothWeights(entries: DailyEntry[]): (number | null)[] {
   const smoothed: (number | null)[] = [];
   let prev: number | null = null;
 
@@ -143,9 +144,7 @@ function groupByWeek(
     // Start a new week on Monday
     if (current.entries.length > 0) {
       const prevD = new Date(current.entries[current.entries.length - 1].date);
-      const daysDiff = Math.round(
-        (d.getTime() - prevD.getTime()) / 86400000,
-      );
+      const daysDiff = Math.round((d.getTime() - prevD.getTime()) / 86400000);
       if (d.getDay() === 1 && daysDiff >= 1 && current.entries.length >= 1) {
         weeks.push(current);
         current = { entries: [], smoothedWeights: [] };
@@ -213,12 +212,15 @@ export function calculateAdaptiveTDEE(
 
   // Get starting weight for seed TDEE
   const firstWeight = internalEntries.find((e) => e.weight !== null)?.weight;
-  const seedTDEE = firstWeight
-    ? calculateSeedTDEE(profile, firstWeight)
-    : 2200; // absolute fallback
+  const seedTDEE = firstWeight ? calculateSeedTDEE(profile, firstWeight) : 2200; // absolute fallback
 
   if (weeks.length === 0) {
-    const target = goalCalorieTarget(seedTDEE, goal, firstWeight ?? null, weightUnit);
+    const target = goalCalorieTarget(
+      seedTDEE,
+      goal,
+      firstWeight ?? null,
+      weightUnit,
+    );
     return {
       estimatedTDEE: seedTDEE,
       trendWeight: firstWeight
@@ -241,9 +243,7 @@ export function calculateAdaptiveTDEE(
   for (let i = 0; i < weeks.length; i++) {
     const week = weeks[i];
     const avgSmoothedWeight = weekAvg(week.smoothedWeights);
-    const avgCalories = weekAvg(
-      week.entries.map((e) => e.caloriesIn),
-    );
+    const avgCalories = weekAvg(week.entries.map((e) => e.caloriesIn));
 
     if (avgSmoothedWeight === null || avgCalories === null) {
       // Not enough data this week, carry forward previous TDEE
@@ -314,9 +314,7 @@ export function calculateAdaptiveTDEE(
 
   // Recent weekly weight change (from last week summary)
   const lastWeek =
-    weekSummaries.length > 0
-      ? weekSummaries[weekSummaries.length - 1]
-      : null;
+    weekSummaries.length > 0 ? weekSummaries[weekSummaries.length - 1] : null;
 
   // Recent daily surplus/deficit
   const recentCalories = lastWeek?.avgCalories ?? null;
@@ -333,9 +331,10 @@ export function calculateAdaptiveTDEE(
 
   return {
     estimatedTDEE: blendedTDEE,
-    trendWeight: lastSmoothed !== null
-      ? convertWeightBack(lastSmoothed, weightUnit)
-      : null,
+    trendWeight:
+      lastSmoothed !== null
+        ? convertWeightBack(lastSmoothed, weightUnit)
+        : null,
     confidence,
     weeksOfData,
     calorieTarget: target,
@@ -396,7 +395,9 @@ function goalCalorieTarget(
 // ── Helpers ──────��───────────────────────────────────────
 
 function convertWeightBack(lbs: number, unit: "lbs" | "kg"): number {
-  return unit === "kg" ? Math.round(lbs / 2.20462 * 10) / 10 : Math.round(lbs * 10) / 10;
+  return unit === "kg"
+    ? Math.round((lbs / 2.20462) * 10) / 10
+    : Math.round(lbs * 10) / 10;
 }
 
 /**

@@ -265,8 +265,8 @@ export default function SettingsPage() {
           Daily Tracker
         </h2>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Configure the daily &quot;Log Your Data&quot; task that appears in your
-          task list.
+          Configure the daily &quot;Log Your Data&quot; task that appears in
+          your task list.
         </p>
 
         {/* Master toggle */}
@@ -298,7 +298,10 @@ export default function SettingsPage() {
                     ["bodyFat", "Body fat %"],
                     ["waist", "Waist circumference"],
                     ["chest", "Chest circumference"],
-                    ["manualCalories", "Manual calorie entry (instead of meal tasks)"],
+                    [
+                      "manualCalories",
+                      "Manual calorie entry (instead of meal tasks)",
+                    ],
                   ] as const
                 ).map(([key, label]) => (
                   <label key={key} className="flex items-center gap-3">
@@ -438,8 +441,7 @@ export default function SettingsPage() {
                                 ...s.trackerConfig,
                                 profile: {
                                   ...s.trackerConfig.profile,
-                                  height:
-                                    feet * 12 + Math.round(currentInches),
+                                  height: feet * 12 + Math.round(currentInches),
                                 },
                               },
                             }));
@@ -534,9 +536,7 @@ export default function SettingsPage() {
                           ...s.trackerConfig,
                           profile: {
                             ...s.trackerConfig.profile,
-                            age: e.target.value
-                              ? Number(e.target.value)
-                              : null,
+                            age: e.target.value ? Number(e.target.value) : null,
                           },
                         },
                       }))

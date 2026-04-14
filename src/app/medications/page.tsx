@@ -247,8 +247,13 @@ function MedicationsTab() {
 
 const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 const WEEKDAY_LABELS: Record<string, string> = {
-  mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu",
-  fri: "Fri", sat: "Sat", sun: "Sun",
+  mon: "Mon",
+  tue: "Tue",
+  wed: "Wed",
+  thu: "Thu",
+  fri: "Fri",
+  sat: "Sat",
+  sun: "Sun",
 };
 
 interface ScheduleEntry {
@@ -282,8 +287,9 @@ function ScheduleTab() {
       setMeds(medsData);
       setSchedules(
         tasksData.filter(
-          (t: ScheduleEntry & { isRecurringParent: boolean; taskType: string }) =>
-            t.isRecurringParent && t.taskType === "MEDICATION",
+          (
+            t: ScheduleEntry & { isRecurringParent: boolean; taskType: string },
+          ) => t.isRecurringParent && t.taskType === "MEDICATION",
         ),
       );
       setLoading(false);
@@ -388,7 +394,8 @@ function ScheduleTab() {
               </select>
               {meds.length === 0 && (
                 <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
-                  No medications saved yet. Add medications in the Medications tab first.
+                  No medications saved yet. Add medications in the Medications
+                  tab first.
                 </p>
               )}
             </div>

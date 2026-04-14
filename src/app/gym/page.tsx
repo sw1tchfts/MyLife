@@ -325,8 +325,13 @@ function ExercisesTab() {
 
 const WEEKDAYS_GYM = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 const WEEKDAY_LABELS_GYM: Record<string, string> = {
-  mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu",
-  fri: "Fri", sat: "Sat", sun: "Sun",
+  mon: "Mon",
+  tue: "Tue",
+  wed: "Wed",
+  thu: "Thu",
+  fri: "Fri",
+  sat: "Sat",
+  sun: "Sun",
 };
 
 function RoutinesTab() {
@@ -334,7 +339,9 @@ function RoutinesTab() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
   const [activatingId, setActivatingId] = useState<string | null>(null);
-  const [dayAssignments, setDayAssignments] = useState<Record<string, string>>({});
+  const [dayAssignments, setDayAssignments] = useState<Record<string, string>>(
+    {},
+  );
   const [activateTime, setActivateTime] = useState("06:00");
   const [saving, setSaving] = useState(false);
 
@@ -345,7 +352,15 @@ function RoutinesTab() {
   const [goal, setGoal] = useState("hypertrophy");
   const [level, setLevel] = useState("beginner");
   const [days, setDays] = useState<
-    { name: string; exercises: { exerciseId: string; sets: number; repsMin: number; repsMax: number }[] }[]
+    {
+      name: string;
+      exercises: {
+        exerciseId: string;
+        sets: number;
+        repsMin: number;
+        repsMax: number;
+      }[];
+    }[]
   >([]);
   const [newDayName, setNewDayName] = useState("");
 
@@ -387,7 +402,10 @@ function RoutinesTab() {
       if (!weekday) continue;
 
       const exerciseList = day.exercises
-        .map((re) => `${re.exercise.name} ${re.sets}×${re.repsMin}${re.repsMax !== re.repsMin ? `-${re.repsMax}` : ""}`)
+        .map(
+          (re) =>
+            `${re.exercise.name} ${re.sets}×${re.repsMin}${re.repsMax !== re.repsMin ? `-${re.repsMax}` : ""}`,
+        )
         .join(", ");
 
       await fetch("/api/tasks", {
@@ -424,7 +442,13 @@ function RoutinesTab() {
     setDays((prev) =>
       prev.map((d, i) =>
         i === dayIdx
-          ? { ...d, exercises: [...d.exercises, { exerciseId, sets: 3, repsMin: 8, repsMax: 12 }] }
+          ? {
+              ...d,
+              exercises: [
+                ...d.exercises,
+                { exerciseId, sets: 3, repsMin: 8, repsMax: 12 },
+              ],
+            }
           : d,
       ),
     );
@@ -522,16 +546,38 @@ function RoutinesTab() {
           </h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">Name</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Push Pull Legs" className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100" />
+              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+                Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Push Pull Legs"
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">Description</label>
-              <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Optional description" className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100" />
+              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+                Description
+              </label>
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Optional description"
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">Goal</label>
-              <select value={goal} onChange={(e) => setGoal(e.target.value)} className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100">
+              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+                Goal
+              </label>
+              <select
+                value={goal}
+                onChange={(e) => setGoal(e.target.value)}
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              >
                 <option value="hypertrophy">Hypertrophy</option>
                 <option value="strength">Strength</option>
                 <option value="endurance">Endurance</option>
@@ -539,8 +585,14 @@ function RoutinesTab() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">Level</label>
-              <select value={level} onChange={(e) => setLevel(e.target.value)} className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100">
+              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+                Level
+              </label>
+              <select
+                value={level}
+                onChange={(e) => setLevel(e.target.value)}
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              >
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
                 <option value="advanced">Advanced</option>
@@ -555,25 +607,94 @@ function RoutinesTab() {
             </label>
             <div className="mt-2 space-y-3">
               {days.map((day, dayIdx) => (
-                <div key={dayIdx} className="rounded-md border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
+                <div
+                  key={dayIdx}
+                  className="rounded-md border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800"
+                >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{day.name}</span>
-                    <button onClick={() => removeDay(dayIdx)} className="text-xs text-gray-400 hover:text-red-500">Remove</button>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {day.name}
+                    </span>
+                    <button
+                      onClick={() => removeDay(dayIdx)}
+                      className="text-xs text-gray-400 hover:text-red-500"
+                    >
+                      Remove
+                    </button>
                   </div>
                   {/* Exercises in this day */}
                   {day.exercises.length > 0 && (
                     <div className="mt-2 space-y-1">
                       {day.exercises.map((ex, exIdx) => {
-                        const exerciseInfo = exercises.find((e) => e.id === ex.exerciseId);
+                        const exerciseInfo = exercises.find(
+                          (e) => e.id === ex.exerciseId,
+                        );
                         return (
-                          <div key={exIdx} className="flex items-center gap-2 rounded bg-gray-50 px-2 py-1 text-xs dark:bg-gray-700">
-                            <span className="flex-1 text-gray-700 dark:text-gray-300">{exerciseInfo?.name || "Unknown"}</span>
-                            <input type="number" min="1" max="10" value={ex.sets} onChange={(e) => updateExercise(dayIdx, exIdx, "sets", Number(e.target.value))} className="w-12 rounded border border-gray-300 px-1 py-0.5 text-center text-xs dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100" title="Sets" />
+                          <div
+                            key={exIdx}
+                            className="flex items-center gap-2 rounded bg-gray-50 px-2 py-1 text-xs dark:bg-gray-700"
+                          >
+                            <span className="flex-1 text-gray-700 dark:text-gray-300">
+                              {exerciseInfo?.name || "Unknown"}
+                            </span>
+                            <input
+                              type="number"
+                              min="1"
+                              max="10"
+                              value={ex.sets}
+                              onChange={(e) =>
+                                updateExercise(
+                                  dayIdx,
+                                  exIdx,
+                                  "sets",
+                                  Number(e.target.value),
+                                )
+                              }
+                              className="w-12 rounded border border-gray-300 px-1 py-0.5 text-center text-xs dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                              title="Sets"
+                            />
                             <span className="text-gray-400">×</span>
-                            <input type="number" min="1" max="50" value={ex.repsMin} onChange={(e) => updateExercise(dayIdx, exIdx, "repsMin", Number(e.target.value))} className="w-12 rounded border border-gray-300 px-1 py-0.5 text-center text-xs dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100" title="Min reps" />
+                            <input
+                              type="number"
+                              min="1"
+                              max="50"
+                              value={ex.repsMin}
+                              onChange={(e) =>
+                                updateExercise(
+                                  dayIdx,
+                                  exIdx,
+                                  "repsMin",
+                                  Number(e.target.value),
+                                )
+                              }
+                              className="w-12 rounded border border-gray-300 px-1 py-0.5 text-center text-xs dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                              title="Min reps"
+                            />
                             <span className="text-gray-400">-</span>
-                            <input type="number" min="1" max="50" value={ex.repsMax} onChange={(e) => updateExercise(dayIdx, exIdx, "repsMax", Number(e.target.value))} className="w-12 rounded border border-gray-300 px-1 py-0.5 text-center text-xs dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100" title="Max reps" />
-                            <button onClick={() => removeExerciseFromDay(dayIdx, exIdx)} className="text-gray-400 hover:text-red-500">&times;</button>
+                            <input
+                              type="number"
+                              min="1"
+                              max="50"
+                              value={ex.repsMax}
+                              onChange={(e) =>
+                                updateExercise(
+                                  dayIdx,
+                                  exIdx,
+                                  "repsMax",
+                                  Number(e.target.value),
+                                )
+                              }
+                              className="w-12 rounded border border-gray-300 px-1 py-0.5 text-center text-xs dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                              title="Max reps"
+                            />
+                            <button
+                              onClick={() =>
+                                removeExerciseFromDay(dayIdx, exIdx)
+                              }
+                              className="text-gray-400 hover:text-red-500"
+                            >
+                              &times;
+                            </button>
                           </div>
                         );
                       })}
@@ -593,7 +714,9 @@ function RoutinesTab() {
                     >
                       <option value="">+ Add exercise...</option>
                       {exercises.map((ex) => (
-                        <option key={ex.id} value={ex.id}>{ex.name} ({ex.muscleGroup})</option>
+                        <option key={ex.id} value={ex.id}>
+                          {ex.name} ({ex.muscleGroup})
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -602,14 +725,42 @@ function RoutinesTab() {
             </div>
             {/* Add day */}
             <div className="mt-2 flex gap-2">
-              <input type="text" value={newDayName} onChange={(e) => setNewDayName(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addDay()} placeholder="Day name (e.g. Push Day)" className="flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100" />
-              <button onClick={addDay} disabled={!newDayName.trim()} className="rounded-md bg-gray-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-gray-700 disabled:opacity-50 dark:bg-gray-600">Add Day</button>
+              <input
+                type="text"
+                value={newDayName}
+                onChange={(e) => setNewDayName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && addDay()}
+                placeholder="Day name (e.g. Push Day)"
+                className="flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              />
+              <button
+                onClick={addDay}
+                disabled={!newDayName.trim()}
+                className="rounded-md bg-gray-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-gray-700 disabled:opacity-50 dark:bg-gray-600"
+              >
+                Add Day
+              </button>
             </div>
           </div>
 
           <div className="mt-4 flex justify-end gap-2">
-            <button onClick={() => { setShowCreate(false); setDays([]); setName(""); }} className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300">Cancel</button>
-            <button onClick={handleCreateRoutine} disabled={saving || !name.trim() || days.length === 0} className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">{saving ? "Creating..." : "Create Routine"}</button>
+            <button
+              onClick={() => {
+                setShowCreate(false);
+                setDays([]);
+                setName("");
+              }}
+              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCreateRoutine}
+              disabled={saving || !name.trim() || days.length === 0}
+              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            >
+              {saving ? "Creating..." : "Create Routine"}
+            </button>
           </div>
         </div>
       )}
@@ -770,4 +921,3 @@ function RoutinesTab() {
     </div>
   );
 }
-
