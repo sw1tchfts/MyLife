@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import type { TaskData } from "@/components/TaskCard";
+import type { TaskData, TaskType } from "@/components/TaskCard";
 import type { Status, Priority } from "@/generated/prisma/client";
 import ListView from "@/components/views/ListView";
 import CalendarView from "@/components/views/CalendarView";
@@ -31,6 +31,13 @@ const PRIORITY_FILTERS: { label: string; value: Priority }[] = [
   { label: "Low", value: "LOW" },
 ];
 
+const TYPE_FILTERS: { label: string; value: TaskType | "ALL" }[] = [
+  { label: "All", value: "ALL" },
+  { label: "Tasks", value: "TASK" },
+  { label: "Meals", value: "MEAL" },
+  { label: "Meds", value: "MEDICATION" },
+];
+
 function TasksContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -41,6 +48,7 @@ function TasksContent() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<Status | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<Priority | null>(null);
+  const [typeFilter, setTypeFilter] = useState<TaskType | "ALL">("ALL");
 
   // Modal state
   const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
@@ -83,12 +91,22 @@ function TasksContent() {
     if (priorityFilter) {
       result = result.filter((t) => t.priority === priorityFilter);
     }
+    if (typeFilter !== "ALL") {
+      result = result.filter((t) => t.taskType === typeFilter);
+    }
     return result;
-  }, [tasks, search, statusFilter, priorityFilter]);
+  }, [tasks, search, statusFilter, priorityFilter, typeFilter]);
 
   const handleDelete = async (id: string) => {
     await fetch(`/api/tasks/${id}`, { method: "DELETE" });
     setTasks((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const handleBulkDelete = async (ids: string[]) => {
+    await Promise.all(
+      ids.map((id) => fetch(`/api/tasks/${id}`, { method: "DELETE" })),
+    );
+    setTasks((prev) => prev.filter((t) => !ids.includes(t.id)));
   };
 
   const handleStatusChange = async (
@@ -108,7 +126,7 @@ function TasksContent() {
     setModalMode("edit");
   };
 
-  const hasFilters = search || statusFilter || priorityFilter;
+  const hasFilters = search || statusFilter || priorityFilter || typeFilter !== "ALL";
 
   return (
     <div>
@@ -169,7 +187,21 @@ function TasksContent() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-gray-400">Status:</span>
+            <span className="text-xs text-gray-400">Type:</span>
+            {TYPE_FILTERS.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => setTypeFilter(f.value)}
+                className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
+                  typeFilter === f.value
+                    ? "bg-blue-600 text-white"
+                    : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+            <span className="ml-2 text-xs text-gray-400">Status:</span>
             {STATUS_FILTERS.map((f) => (
               <button
                 key={f.value}
@@ -209,6 +241,7 @@ function TasksContent() {
                   setSearch("");
                   setStatusFilter(null);
                   setPriorityFilter(null);
+                  setTypeFilter("ALL");
                 }}
                 className="ml-1 text-xs text-gray-400 hover:text-gray-600"
               >
@@ -230,6 +263,7 @@ function TasksContent() {
             <ListView
               tasks={filtered}
               onDelete={handleDelete}
+              onBulkDelete={handleBulkDelete}
               onTaskClick={handleTaskClick}
               onRefresh={fetchTasks}
             />
