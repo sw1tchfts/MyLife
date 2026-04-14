@@ -241,3 +241,4 @@ src/
 - Single-user app — no sharing/collaboration features
 - User is new to development — be explicit with instructions
 - Always merge to `main` and push for Vercel to deploy
+- **Active development mode**: After committing to the feature branch, always merge to `main` and push immediately (unless told otherwise). This keeps Vercel deploys flowing continuously.
