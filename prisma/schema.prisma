@@ -385,14 +385,15 @@ model WorkoutRoutine {
 }
 
 model WorkoutRoutineDay {
-  id        String   @id @default(cuid())
-  routineId String
-  name      String
-  dayOrder  Int      @default(0)
-  createdAt DateTime @default(now())
-  routine   WorkoutRoutine       @relation(fields: [routineId], references: [id], onDelete: Cascade)
-  exercises RoutineDayExercise[]
-  logs      WorkoutLog[]
+  id           String   @id @default(cuid())
+  routineId    String
+  name         String
+  dayOrder     Int      @default(0)
+  scheduledDay String?
+  createdAt    DateTime @default(now())
+  routine      WorkoutRoutine       @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  exercises    RoutineDayExercise[]
+  logs         WorkoutLog[]
 
   @@index([routineId])
 }
@@ -419,6 +420,8 @@ model WorkoutLog {
   id              String   @id @default(cuid())
   routineId       String?
   routineDayId    String?
+  routineName     String   @default("")
+  routineDayName  String   @default("")
   date            DateTime
   durationMinutes Int      @default(0)
   notes           String   @default("")

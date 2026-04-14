@@ -20,7 +20,7 @@ const LOG_INCLUDE = {
       sets: { orderBy: { setNumber: "asc" as const } },
     },
   },
-};
+} as const;
 
 // GET /api/gym/logs — list workout logs (most recent first)
 export async function GET(request: NextRequest) {
@@ -59,6 +59,25 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
+    // Look up routine/day names for snapshot fields
+    let routineName = body.routineName || "";
+    let routineDayName = body.routineDayName || "";
+
+    if (body.routineId && !routineName) {
+      const routine = await prisma.workoutRoutine.findUnique({
+        where: { id: body.routineId },
+        select: { name: true },
+      });
+      if (routine) routineName = routine.name;
+    }
+    if (body.routineDayId && !routineDayName) {
+      const day = await prisma.workoutRoutineDay.findUnique({
+        where: { id: body.routineDayId },
+        select: { name: true },
+      });
+      if (day) routineDayName = day.name;
+    }
+
     const log = await prisma.workoutLog.create({
       data: {
         date: new Date(body.date || new Date()),
@@ -66,6 +85,8 @@ export async function POST(request: NextRequest) {
         notes: body.notes || "",
         routineId: body.routineId || null,
         routineDayId: body.routineDayId || null,
+        routineName,
+        routineDayName,
         exercises: body.exercises
           ? {
               create: body.exercises.map(
