@@ -178,6 +178,14 @@ src/
   - Goal (maintenance/cut/bulk + weekly rate)
 - **Daily Log Dashboard** (`/daily-log`): read-only summary page with TDEE estimate, weight trend chart, calorie intake vs TDEE chart, nutrition summary, medication log
 
+## Gym & Workout Logs
+
+- **Routine creation**: Each `WorkoutRoutineDay` has an optional `scheduledDay` field (mon/tue/wed/thu/fri/sat/sun) so weekdays can be assigned during routine building
+- **Activation**: Creates recurring tasks from routine days; pre-populates weekday assignments from saved `scheduledDay` values
+- **Workout log persistence**: `WorkoutLog.routineId` and `routineDayId` use `onDelete: SetNull` — deleting a routine preserves all logged workouts
+- **Snapshot fields**: `WorkoutLog` stores `routineName` and `routineDayName` at log creation time, so log history retains context even after routine deletion
+- The logs API auto-looks up routine/day names when `routineId`/`routineDayId` are provided
+
 ## Authentication
 
 - **Supabase Auth** with email/password sign-in
