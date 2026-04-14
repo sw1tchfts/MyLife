@@ -16,7 +16,17 @@ const ROUTINE_INCLUDE = {
     include: {
       exercises: {
         orderBy: { sortOrder: "asc" as const },
-        include: { exercise: true },
+        include: {
+          exercise: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              muscleGroup: true,
+              equipment: true,
+            },
+          },
+        },
       },
     },
   },

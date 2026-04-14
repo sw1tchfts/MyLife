@@ -9,14 +9,6 @@ interface Category {
   color: string;
 }
 
-interface Stats {
-  total: number;
-  todo: number;
-  inProgress: number;
-  done: number;
-  overdue: number;
-}
-
 const COLORS = [
   "#EF4444",
   "#F97316",
@@ -30,7 +22,6 @@ const COLORS = [
 
 export default function AdminPage() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [stats, setStats] = useState<Stats | null>(null);
   const [appSettings, setAppSettings] = useState<Record<string, string>>({});
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newCategoryColor, setNewCategoryColor] = useState("#3B82F6");
@@ -46,25 +37,6 @@ export default function AdminPage() {
     fetch("/api/settings/app")
       .then((r) => r.json())
       .then(setAppSettings);
-    fetch("/api/tasks")
-      .then((r) => r.json())
-      .then((tasks) => {
-        const now = new Date();
-        setStats({
-          total: tasks.length,
-          todo: tasks.filter((t: { status: string }) => t.status === "TODO")
-            .length,
-          inProgress: tasks.filter(
-            (t: { status: string }) => t.status === "IN_PROGRESS",
-          ).length,
-          done: tasks.filter((t: { status: string }) => t.status === "DONE")
-            .length,
-          overdue: tasks.filter(
-            (t: { status: string; dueDate: string | null }) =>
-              t.dueDate && new Date(t.dueDate) < now && t.status !== "DONE",
-          ).length,
-        });
-      });
   }, []);
 
   const addCategory = async () => {
@@ -121,33 +93,6 @@ export default function AdminPage() {
           Back to Tasks
         </Link>
       </div>
-
-      {/* Stats */}
-      {stats && (
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-5">
-          {[
-            { label: "Total", value: stats.total, color: "bg-gray-100" },
-            { label: "To Do", value: stats.todo, color: "bg-blue-100" },
-            {
-              label: "In Progress",
-              value: stats.inProgress,
-              color: "bg-yellow-100",
-            },
-            { label: "Done", value: stats.done, color: "bg-green-100" },
-            { label: "Overdue", value: stats.overdue, color: "bg-red-100" },
-          ].map((s) => (
-            <div
-              key={s.label}
-              className={`rounded-lg ${s.color} dark:bg-gray-700 p-4 text-center`}
-            >
-              <p className="text-2xl font-bold dark:text-gray-100">{s.value}</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {s.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Categories */}
       <div className="mt-8">

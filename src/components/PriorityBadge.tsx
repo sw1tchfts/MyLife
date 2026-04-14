@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import type { Priority } from "@/generated/prisma/client";
 
 const PRIORITY_CONFIG: Record<Priority, { label: string; className: string }> =
@@ -20,7 +21,11 @@ const PRIORITY_CONFIG: Record<Priority, { label: string; className: string }> =
     },
   };
 
-export default function PriorityBadge({ priority }: { priority: Priority }) {
+export default memo(function PriorityBadge({
+  priority,
+}: {
+  priority: Priority;
+}) {
   const config = PRIORITY_CONFIG[priority];
   return (
     <span
@@ -29,4 +34,4 @@ export default function PriorityBadge({ priority }: { priority: Priority }) {
       {config.label}
     </span>
   );
-}
+});

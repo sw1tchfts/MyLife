@@ -3,6 +3,38 @@
 import { useMemo, useState } from "react";
 import type { TaskData } from "@/components/TaskCard";
 
+function calcStreak(completions: Set<string>): {
+  current: number;
+  longest: number;
+} {
+  if (completions.size === 0) return { current: 0, longest: 0 };
+  const sorted = Array.from(completions).sort();
+  let longest = 1;
+  let streak = 1;
+
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = new Date(sorted[i - 1]);
+    const curr = new Date(sorted[i]);
+    const diff = (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24);
+    if (diff === 1) {
+      streak++;
+      if (streak > longest) longest = streak;
+    } else {
+      streak = 1;
+    }
+  }
+
+  // Check if current streak is still active (last completion is today or yesterday)
+  const lastDate = new Date(sorted[sorted.length - 1]);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diffDays =
+    (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24);
+  const current = diffDays <= 1 ? streak : 0;
+
+  return { current, longest };
+}
+
 interface DashboardViewProps {
   tasks: TaskData[];
 }
@@ -50,76 +82,53 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
     return Array.from(map.values());
   }, [tasks, month, year]);
 
-  // Days in month
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const monthName = new Date(year, month).toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
+  // Derived values memoized to avoid recalculating on every re-render
+  const {
+    daysInMonth,
+    monthName,
+    dayLabels,
+    totalCompleted,
+    overallPct,
+    weeks,
+  } = useMemo(() => {
+    const dim = new Date(year, month + 1, 0).getDate();
+    const mn = new Date(year, month).toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    });
 
-  // Day labels
-  const dayLabels: string[] = [];
-  for (let d = 1; d <= daysInMonth; d++) {
-    const date = new Date(year, month, d);
-    dayLabels.push(date.toLocaleDateString("en-US", { weekday: "narrow" }));
-  }
-
-  // Stats
-  const totalPossible = habitMap.reduce((sum, h) => {
-    if (h.recurrence === "DAILY") return sum + daysInMonth;
-    if (h.recurrence === "WEEKLY") return sum + Math.ceil(daysInMonth / 7);
-    if (h.recurrence === "MONTHLY") return sum + 1;
-    return sum;
-  }, 0);
-  const totalCompleted = habitMap.reduce(
-    (sum, h) => sum + h.completions.size,
-    0,
-  );
-  const overallPct =
-    totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0;
-
-  // Streak calculator
-  function calcStreak(completions: Set<string>): {
-    current: number;
-    longest: number;
-  } {
-    if (completions.size === 0) return { current: 0, longest: 0 };
-    const sorted = Array.from(completions).sort();
-    let longest = 1;
-    let current = 1;
-    let streak = 1;
-
-    for (let i = 1; i < sorted.length; i++) {
-      const prev = new Date(sorted[i - 1]);
-      const curr = new Date(sorted[i]);
-      const diff = (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24);
-      if (diff === 1) {
-        streak++;
-        if (streak > longest) longest = streak;
-      } else {
-        streak = 1;
-      }
+    const dl: string[] = [];
+    for (let d = 1; d <= dim; d++) {
+      const date = new Date(year, month, d);
+      dl.push(date.toLocaleDateString("en-US", { weekday: "narrow" }));
     }
 
-    // Check if current streak is still active (last completion is today or yesterday)
-    const lastDate = new Date(sorted[sorted.length - 1]);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const diffDays =
-      (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24);
-    current = diffDays <= 1 ? streak : 0;
+    const tp = habitMap.reduce((sum, h) => {
+      if (h.recurrence === "DAILY") return sum + dim;
+      if (h.recurrence === "WEEKLY") return sum + Math.ceil(dim / 7);
+      if (h.recurrence === "MONTHLY") return sum + 1;
+      return sum;
+    }, 0);
+    const tc = habitMap.reduce((sum, h) => sum + h.completions.size, 0);
+    const op = tp > 0 ? Math.round((tc / tp) * 100) : 0;
 
-    return { current, longest };
-  }
+    const wk: { label: string; start: number; end: number }[] = [];
+    for (let d = 1; d <= dim; ) {
+      const start = d;
+      const end = Math.min(d + 6, dim);
+      wk.push({ label: `Week ${wk.length + 1}`, start, end });
+      d = end + 1;
+    }
 
-  // Week boundaries for weekly progress
-  const weeks: { label: string; start: number; end: number }[] = [];
-  for (let d = 1; d <= daysInMonth; ) {
-    const start = d;
-    const end = Math.min(d + 6, daysInMonth);
-    weeks.push({ label: `Week ${weeks.length + 1}`, start, end });
-    d = end + 1;
-  }
+    return {
+      daysInMonth: dim,
+      monthName: mn,
+      dayLabels: dl,
+      totalCompleted: tc,
+      overallPct: op,
+      weeks: wk,
+    };
+  }, [habitMap, month, year]);
 
   // Nav
   const prevMonth = () => {

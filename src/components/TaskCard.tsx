@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import Link from "next/link";
 import StatusBadge from "./StatusBadge";
 import PriorityBadge from "./PriorityBadge";
@@ -110,7 +110,7 @@ export function getDueStatus(
   return null;
 }
 
-export default function TaskCard({ task, onDelete }: TaskCardProps) {
+export default memo(function TaskCard({ task, onDelete }: TaskCardProps) {
   const [showDelete, setShowDelete] = useState(false);
   const dueStatus = task.status !== "DONE" ? getDueStatus(task.dueDate) : null;
 
@@ -216,4 +216,4 @@ export default function TaskCard({ task, onDelete }: TaskCardProps) {
       />
     </>
   );
-}
+});

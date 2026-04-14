@@ -30,7 +30,17 @@ export async function GET(
           include: {
             exercises: {
               orderBy: { sortOrder: "asc" },
-              include: { exercise: true },
+              include: {
+                exercise: {
+                  select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                    muscleGroup: true,
+                    equipment: true,
+                  },
+                },
+              },
             },
           },
         },

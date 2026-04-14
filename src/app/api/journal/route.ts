@@ -44,6 +44,28 @@ export async function GET(request: NextRequest) {
       if (to) (where.date as Record<string, unknown>).lte = new Date(to);
     }
 
+    const limitParam = searchParams.get("limit");
+    const pageParam = searchParams.get("page");
+
+    // Paginate if limit is provided; otherwise return all (backward compatible)
+    if (limitParam) {
+      const limit = Math.min(parseInt(limitParam) || 50, 200);
+      const page = Math.max(parseInt(pageParam ?? "1") || 1, 1);
+      const skip = (page - 1) * limit;
+
+      const [entries, total] = await Promise.all([
+        prisma.journalEntry.findMany({
+          where,
+          orderBy: { date: "desc" },
+          take: limit,
+          skip,
+        }),
+        prisma.journalEntry.count({ where }),
+      ]);
+
+      return NextResponse.json({ entries, total, page, limit });
+    }
+
     const entries = await prisma.journalEntry.findMany({
       where,
       orderBy: { date: "desc" },

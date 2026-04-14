@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import type { Status } from "@/generated/prisma/client";
 
 const STATUS_CONFIG: Record<Status, { label: string; className: string }> = {
@@ -18,7 +19,7 @@ const STATUS_CONFIG: Record<Status, { label: string; className: string }> = {
   },
 };
 
-export default function StatusBadge({ status }: { status: Status }) {
+export default memo(function StatusBadge({ status }: { status: Status }) {
   const config = STATUS_CONFIG[status];
   return (
     <span
@@ -27,4 +28,4 @@ export default function StatusBadge({ status }: { status: Status }) {
       {config.label}
     </span>
   );
-}
+});
