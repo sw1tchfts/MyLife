@@ -33,6 +33,7 @@ interface RoutineDay {
   id: string;
   name: string;
   dayOrder: number;
+  scheduledDay: string | null;
   exercises: RoutineExercise[];
 }
 
@@ -66,6 +67,8 @@ interface WorkoutLog {
   date: string;
   durationMinutes: number;
   notes: string;
+  routineName: string;
+  routineDayName: string;
   routine?: { id: string; name: string } | null;
   routineDay?: { id: string; name: string } | null;
   exercises: LogExercise[];
@@ -345,7 +348,7 @@ function RoutinesTab() {
   const [goal, setGoal] = useState("hypertrophy");
   const [level, setLevel] = useState("beginner");
   const [days, setDays] = useState<
-    { name: string; exercises: { exerciseId: string; sets: number; repsMin: number; repsMax: number }[] }[]
+    { name: string; scheduledDay: string; exercises: { exerciseId: string; sets: number; repsMin: number; repsMax: number }[] }[]
   >([]);
   const [newDayName, setNewDayName] = useState("");
 
@@ -371,10 +374,10 @@ function RoutinesTab() {
 
   const startActivation = (routine: Routine) => {
     setActivatingId(routine.id);
-    // Pre-assign days based on dayOrder
+    // Pre-assign days from saved scheduledDay, fall back to sequential
     const defaults: Record<string, string> = {};
     routine.days.forEach((day, i) => {
-      defaults[day.id] = WEEKDAYS_GYM[i] || WEEKDAYS_GYM[0];
+      defaults[day.id] = day.scheduledDay || WEEKDAYS_GYM[i] || WEEKDAYS_GYM[0];
     });
     setDayAssignments(defaults);
   };
@@ -412,7 +415,7 @@ function RoutinesTab() {
 
   const addDay = () => {
     if (!newDayName.trim()) return;
-    setDays((prev) => [...prev, { name: newDayName.trim(), exercises: [] }]);
+    setDays((prev) => [...prev, { name: newDayName.trim(), scheduledDay: "", exercises: [] }]);
     setNewDayName("");
   };
 
@@ -476,6 +479,7 @@ function RoutinesTab() {
         days: days.map((d, i) => ({
           name: d.name,
           dayOrder: i,
+          scheduledDay: d.scheduledDay || null,
           exercises: d.exercises.map((ex, j) => ({
             exerciseId: ex.exerciseId,
             sets: ex.sets,
@@ -559,6 +563,30 @@ function RoutinesTab() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{day.name}</span>
                     <button onClick={() => removeDay(dayIdx)} className="text-xs text-gray-400 hover:text-red-500">Remove</button>
+                  </div>
+                  {/* Weekday selector */}
+                  <div className="mt-1.5 flex items-center gap-1.5">
+                    <span className="text-[10px] text-gray-400 dark:text-gray-500">Day:</span>
+                    {WEEKDAYS_GYM.map((wd) => (
+                      <button
+                        key={wd}
+                        type="button"
+                        onClick={() =>
+                          setDays((prev) =>
+                            prev.map((d, i) =>
+                              i === dayIdx ? { ...d, scheduledDay: d.scheduledDay === wd ? "" : wd } : d,
+                            ),
+                          )
+                        }
+                        className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${
+                          day.scheduledDay === wd
+                            ? "border-blue-600 bg-blue-600 text-white"
+                            : "border-gray-300 text-gray-500 hover:border-gray-400 dark:border-gray-600 dark:text-gray-400"
+                        }`}
+                      >
+                        {WEEKDAY_LABELS_GYM[wd]}
+                      </button>
+                    ))}
                   </div>
                   {/* Exercises in this day */}
                   {day.exercises.length > 0 && (
@@ -746,6 +774,11 @@ function RoutinesTab() {
                   >
                     <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
                       {day.name}
+                      {day.scheduledDay && (
+                        <span className="ml-1.5 rounded bg-blue-100 px-1 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                          {WEEKDAY_LABELS_GYM[day.scheduledDay]}
+                        </span>
+                      )}
                     </p>
                     {day.exercises.length > 0 && (
                       <div className="mt-1 space-y-0.5">

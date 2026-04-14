@@ -72,6 +72,7 @@ export async function POST(request: NextRequest) {
                   day: {
                     name: string;
                     dayOrder: number;
+                    scheduledDay?: string;
                     exercises?: {
                       exerciseId: string;
                       sets?: number;
@@ -86,6 +87,7 @@ export async function POST(request: NextRequest) {
                 ) => ({
                   name: day.name,
                   dayOrder: day.dayOrder ?? i,
+                  scheduledDay: day.scheduledDay || null,
                   exercises: day.exercises
                     ? {
                         create: day.exercises.map((ex, j) => ({
