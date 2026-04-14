@@ -16,6 +16,7 @@ vi.mock("@/lib/recurrence", () => ({
 }));
 
 import { GET, POST } from "./route";
+import { generateInstances } from "@/lib/recurrence";
 
 const prisma = getPrisma();
 
@@ -45,6 +46,13 @@ describe("GET /api/tasks", () => {
     expect(await res.json()).toEqual(tasks);
   });
 
+  it("does not call generateInstances on GET", async () => {
+    prisma.task.findMany.mockResolvedValue([]);
+
+    await GET(buildRequest("/api/tasks"));
+    expect(generateInstances).not.toHaveBeenCalled();
+  });
+
   it("filters by status query param", async () => {
     prisma.task.findMany.mockResolvedValue([]);
 
@@ -58,6 +66,17 @@ describe("GET /api/tasks", () => {
         },
       }),
     );
+  });
+
+  it("returns paginated tasks when limit is provided", async () => {
+    const tasks = [{ id: "1", title: "Task 1", status: "TODO" }];
+    prisma.task.findMany.mockResolvedValue(tasks);
+    prisma.task.count.mockResolvedValue(25);
+
+    const res = await GET(buildRequest("/api/tasks?limit=10&page=1"));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toEqual({ tasks, total: 25, page: 1, limit: 10 });
   });
 
   it("returns 500 on database error", async () => {

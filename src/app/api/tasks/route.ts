@@ -15,53 +15,70 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Auto-create tracker parent task if tracker is enabled and none exists
-    const settings = await prisma.userSettings.findUnique({
-      where: { userId: user.id },
-    });
-    if (settings?.trackerEnabled !== false) {
-      const existingTracker = await prisma.task.findFirst({
-        where: { taskType: "TRACKER", isRecurringParent: true },
-      });
-      if (!existingTracker) {
-        await prisma.task.create({
-          data: {
-            title: "Daily Log",
-            description: "Log your daily metrics",
-            status: "TODO",
-            priority: "MEDIUM",
-            recurrence: "DAILY",
-            taskType: "TRACKER",
-            isRecurringParent: true,
-          },
-        });
-      }
-    }
-
-    // Auto-generate instances for recurring tasks
-    await generateInstances(14);
-
     const { searchParams } = new URL(request.url);
     const statusFilter = searchParams.getAll("status") as Status[];
     const includeParents = searchParams.get("includeParents") === "true";
+    const limitParam = searchParams.get("limit");
+    const pageParam = searchParams.get("page");
 
     const where: Record<string, unknown> = {};
     if (statusFilter.length > 0) where.status = { in: statusFilter };
     // By default, hide parent templates from the task list
     if (!includeParents) where.isRecurringParent = false;
 
-    const tasks = await prisma.task.findMany({
-      where,
-      include: {
-        subtasks: { orderBy: { sortOrder: "asc" } },
-        taskFoods: { include: { foodItem: true } },
-        taskMeds: { include: { medicationItem: true } },
-        blockedBy: {
-          include: {
-            blocker: { select: { id: true, title: true, status: true } },
+    const include = {
+      subtasks: { orderBy: { sortOrder: "asc" as const } },
+      taskFoods: {
+        include: {
+          foodItem: {
+            select: {
+              id: true,
+              name: true,
+              calories: true,
+              protein: true,
+              servingSize: true,
+              servingUnit: true,
+            },
           },
         },
       },
+      taskMeds: {
+        include: {
+          medicationItem: {
+            select: { id: true, name: true, dosageForm: true },
+          },
+        },
+      },
+      blockedBy: {
+        include: {
+          blocker: { select: { id: true, title: true, status: true } },
+        },
+      },
+    };
+
+    // Paginate if limit is provided; otherwise return all (backward compatible)
+    if (limitParam) {
+      const limit = Math.min(parseInt(limitParam) || 50, 200);
+      const page = Math.max(parseInt(pageParam ?? "1") || 1, 1);
+      const skip = (page - 1) * limit;
+
+      const [tasks, total] = await Promise.all([
+        prisma.task.findMany({
+          where,
+          include,
+          orderBy: { createdAt: "desc" },
+          take: limit,
+          skip,
+        }),
+        prisma.task.count({ where }),
+      ]);
+
+      return NextResponse.json({ tasks, total, page, limit });
+    }
+
+    const tasks = await prisma.task.findMany({
+      where,
+      include,
       orderBy: { createdAt: "desc" },
     });
 

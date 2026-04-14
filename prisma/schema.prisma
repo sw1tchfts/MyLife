@@ -72,6 +72,9 @@ model Task {
   @@index([taskType])
   @@index([parentTaskId])
   @@index([isRecurringParent])
+  @@index([dueDate])
+  @@index([updatedAt])
+  @@index([taskType, status])
 }
 
 model TaskDependency {

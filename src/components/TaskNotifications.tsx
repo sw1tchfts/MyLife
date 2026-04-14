@@ -2,30 +2,8 @@
 
 import { useEffect, useRef, useCallback } from "react";
 
-interface Task {
-  id: string;
-  title: string;
-  status: string;
-  dueDate: string | null;
-}
-
-function getOverdueTasks(tasks: Task[]): Task[] {
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  return tasks.filter(
-    (t) => t.status !== "DONE" && t.dueDate && new Date(t.dueDate) < now,
-  );
-}
-
-function getDueTodayTasks(tasks: Task[]): Task[] {
-  const today = new Date().toISOString().slice(0, 10);
-  return tasks.filter(
-    (t) => t.status !== "DONE" && t.dueDate && t.dueDate.slice(0, 10) === today,
-  );
-}
-
 export default function TaskNotifications() {
-  const notifiedRef = useRef(new Set<string>());
+  const notifiedRef = useRef(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const checkAndNotify = useCallback(async () => {
@@ -37,33 +15,29 @@ export default function TaskNotifications() {
     }
 
     try {
-      const res = await fetch("/api/tasks");
+      const res = await fetch("/api/tasks/notifications");
       if (!res.ok) return;
-      const tasks: Task[] = await res.json();
+      const { overdue, dueToday } = (await res.json()) as {
+        overdue: number;
+        dueToday: number;
+      };
 
-      const overdue = getOverdueTasks(tasks);
-      const dueToday = getDueTodayTasks(tasks);
+      if (!notifiedRef.current) {
+        notifiedRef.current = true;
 
-      for (const task of overdue) {
-        const key = `overdue-${task.id}`;
-        if (!notifiedRef.current.has(key)) {
-          notifiedRef.current.add(key);
-          new Notification("Overdue Task", {
-            body: task.title,
+        if (overdue > 0) {
+          new Notification("Overdue Tasks", {
+            body: `You have ${overdue} overdue task${overdue !== 1 ? "s" : ""}`,
             icon: "/favicon.ico",
-            tag: key,
+            tag: "overdue-summary",
           });
         }
-      }
 
-      for (const task of dueToday) {
-        const key = `today-${task.id}`;
-        if (!notifiedRef.current.has(key)) {
-          notifiedRef.current.add(key);
+        if (dueToday > 0) {
           new Notification("Due Today", {
-            body: task.title,
+            body: `You have ${dueToday} task${dueToday !== 1 ? "s" : ""} due today`,
             icon: "/favicon.ico",
-            tag: key,
+            tag: "today-summary",
           });
         }
       }

@@ -129,24 +129,33 @@ async function copyAssociationsToNewInstances(
   from: Date,
   to: Date,
 ) {
+  // Single batched query for ALL parents' instances (avoids N+1)
+  const allInstances = await prisma.task.findMany({
+    where: {
+      parentTaskId: { in: parents.map((p) => p.parentId) },
+      dueDate: { gte: from, lte: to },
+    },
+    include: {
+      taskFoods: { select: { id: true } },
+      taskMeds: { select: { id: true } },
+    },
+  });
+
+  // Group by parentTaskId
+  const instancesByParent = new Map<string, typeof allInstances>();
+  for (const instance of allInstances) {
+    const key = instance.parentTaskId!;
+    const list = instancesByParent.get(key) ?? [];
+    list.push(instance);
+    instancesByParent.set(key, list);
+  }
+
+  const foodsToCreate: Prisma.TaskFoodCreateManyInput[] = [];
+  const medsToCreate: Prisma.TaskMedicationCreateManyInput[] = [];
+
   for (const parent of parents) {
-    // Find instances of this parent that don't have any food/med associations yet
-    const instances = await prisma.task.findMany({
-      where: {
-        parentTaskId: parent.parentId,
-        dueDate: { gte: from, lte: to },
-      },
-      include: {
-        taskFoods: { select: { id: true } },
-        taskMeds: { select: { id: true } },
-      },
-    });
-
-    const foodsToCreate: Prisma.TaskFoodCreateManyInput[] = [];
-    const medsToCreate: Prisma.TaskMedicationCreateManyInput[] = [];
-
+    const instances = instancesByParent.get(parent.parentId) ?? [];
     for (const instance of instances) {
-      // Only copy if instance has no associations yet
       if (instance.taskFoods.length === 0 && parent.foods.length > 0) {
         for (const food of parent.foods) {
           foodsToCreate.push({
@@ -166,14 +175,17 @@ async function copyAssociationsToNewInstances(
         }
       }
     }
-
-    if (foodsToCreate.length > 0) {
-      await prisma.taskFood.createMany({ data: foodsToCreate });
-    }
-    if (medsToCreate.length > 0) {
-      await prisma.taskMedication.createMany({ data: medsToCreate });
-    }
   }
+
+  // Two bulk inserts instead of 2N
+  const writes: Promise<unknown>[] = [];
+  if (foodsToCreate.length > 0) {
+    writes.push(prisma.taskFood.createMany({ data: foodsToCreate }));
+  }
+  if (medsToCreate.length > 0) {
+    writes.push(prisma.taskMedication.createMany({ data: medsToCreate }));
+  }
+  await Promise.all(writes);
 }
 
 /**

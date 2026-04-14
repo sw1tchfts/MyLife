@@ -1,14 +1,21 @@
 "use client";
 
 import { useEffect, useState, useMemo, useCallback, Suspense } from "react";
+import dynamic from "next/dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
 import type { TaskData, TaskType } from "@/components/TaskCard";
 import type { Status, Priority } from "@/generated/prisma/client";
 import ListView from "@/components/views/ListView";
-import DashboardView from "@/components/views/DashboardView";
-import DailyLogSection from "@/components/views/DailyLogSection";
-import RecurringConfig from "@/components/views/RecurringConfig";
 import TaskModal from "@/components/TaskModal";
+
+// Lazy-load tab components that aren't shown by default
+const DashboardView = dynamic(() => import("@/components/views/DashboardView"));
+const DailyLogSection = dynamic(
+  () => import("@/components/views/DailyLogSection"),
+);
+const RecurringConfig = dynamic(
+  () => import("@/components/views/RecurringConfig"),
+);
 
 type Tab = "dashboard" | "tasks" | "adhoc-config" | "recurring-config";
 
@@ -44,33 +51,46 @@ function TasksContent() {
   const tab = (searchParams.get("tab") as Tab) || "tasks";
 
   const [tasks, setTasks] = useState<TaskData[]>([]);
+  const [totalTasks, setTotalTasks] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<Status | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<Priority | null>(null);
   const [typeFilter, setTypeFilter] = useState<TaskType | "ALL">("ALL");
 
+  const TASKS_PER_PAGE = 50;
+
   // Modal state
   const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
   const [editTaskId, setEditTaskId] = useState<string | null>(null);
 
-  const fetchTasks = useCallback(() => {
-    fetch("/api/tasks")
+  const fetchTasks = useCallback((page = 1, append = false) => {
+    if (append) setLoadingMore(true);
+    fetch(`/api/tasks?limit=${TASKS_PER_PAGE}&page=${page}`)
       .then((res) => res.json())
       .then((data) => {
-        setTasks(data);
+        const { tasks: newTasks, total, page: p } = data;
+        setTasks((prev) => (append ? [...prev, ...newTasks] : newTasks));
+        setTotalTasks(total);
+        setCurrentPage(p);
         setLoading(false);
+        setLoadingMore(false);
       });
   }, []);
 
-  useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+  const loadMore = useCallback(() => {
+    fetchTasks(currentPage + 1, true);
+  }, [fetchTasks, currentPage]);
 
   useEffect(() => {
-    const handler = () => fetchTasks();
-    window.addEventListener("tasks-changed", handler);
-    return () => window.removeEventListener("tasks-changed", handler);
+    // Generate recurring instances once on initial load (fire-and-forget),
+    // then fetch the task list. This avoids running expensive recurrence
+    // logic on every GET /api/tasks call.
+    fetch("/api/tasks/generate-instances", { method: "POST" }).finally(() => {
+      fetchTasks();
+    });
   }, [fetchTasks]);
 
   const setTab = (t: Tab) => router.push(`/tasks?tab=${t}`);
@@ -267,13 +287,28 @@ function TasksContent() {
               <p className="text-gray-400">Loading tasks...</p>
             </div>
           ) : (
-            <ListView
-              tasks={filtered}
-              onDelete={handleDelete}
-              onBulkDelete={handleBulkDelete}
-              onTaskClick={handleTaskClick}
-              onRefresh={fetchTasks}
-            />
+            <>
+              <ListView
+                tasks={filtered}
+                onDelete={handleDelete}
+                onBulkDelete={handleBulkDelete}
+                onTaskClick={handleTaskClick}
+                onRefresh={() => fetchTasks()}
+              />
+              {tasks.length < totalTasks && (
+                <div className="mt-4 flex justify-center">
+                  <button
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                    className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                  >
+                    {loadingMore
+                      ? "Loading..."
+                      : `Load more (${tasks.length} of ${totalTasks})`}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </>
       )}
@@ -303,7 +338,7 @@ function TasksContent() {
             setModalMode(null);
             setEditTaskId(null);
           }}
-          onSaved={fetchTasks}
+          onSaved={() => fetchTasks()}
         />
       )}
     </div>
