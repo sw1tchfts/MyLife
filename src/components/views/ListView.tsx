@@ -384,133 +384,80 @@ function TaskTable({
   showHeaders,
 }: TaskTableProps) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        {showHeaders && (
-          <thead className="bg-gray-50 dark:bg-gray-700">
-            <tr>
-              <th className="w-10 px-3 py-3">
-                <input
-                  type="checkbox"
-                  checked={allSelected}
-                  onChange={onToggleSelectAll}
-                  className="h-3.5 w-3.5 rounded border-gray-300"
-                />
-              </th>
-              {(
-                [
-                  ["title", "Title"],
-                  ["status", "Status"],
-                  ["priority", "Priority"],
-                  ["dueDate", "Due Date"],
-                  ["createdAt", "Created"],
-                ] as const
-              ).map(([field, label]) => (
-                <th key={field} className="px-4 py-3 text-left">
-                  <button
-                    onClick={() => onSort(field)}
-                    className="flex items-center gap-1 text-xs font-medium uppercase tracking-wide text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                  >
-                    {label}
-                    {sortField === field && (
-                      <span className="text-blue-600">
-                        {sortDir === "asc" ? "↑" : "↓"}
-                      </span>
-                    )}
-                  </button>
-                </th>
-              ))}
-              <th className="w-20 px-4 py-3" />
-            </tr>
-          </thead>
-        )}
-        <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-          {tasks.map((task) => {
-            const due = getDueStatus(task.dueDate);
-            const showDue = task.status !== "DONE" ? due : null;
-            const rowBg =
-              showDue === "overdue"
-                ? "bg-red-50 dark:bg-red-900/10"
-                : showDue === "today"
-                  ? "bg-amber-50 dark:bg-amber-900/10"
-                  : showDue === "soon"
-                    ? "bg-yellow-50/50 dark:bg-yellow-900/5"
-                    : "";
-            const isSelected = selected.has(task.id);
+    <>
+      {/* ── Mobile card view ── */}
+      <div className="space-y-2 lg:hidden">
+        {tasks.map((task) => {
+          const due = getDueStatus(task.dueDate);
+          const showDue = task.status !== "DONE" ? due : null;
+          const isSelected = selected.has(task.id);
+          const cardBorder =
+            showDue === "overdue"
+              ? "border-red-300 bg-red-50 dark:border-red-800 dark:bg-red-900/10"
+              : showDue === "today"
+                ? "border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/10"
+                : showDue === "soon"
+                  ? "border-yellow-300 bg-yellow-50/50 dark:border-yellow-700 dark:bg-yellow-900/5"
+                  : "border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800";
 
-            return (
-              <tr
-                key={task.id}
-                className={`transition-colors hover:bg-gray-50 dark:hover:bg-gray-700 ${rowBg} ${isSelected ? "ring-2 ring-inset ring-blue-400 dark:ring-blue-600" : ""}`}
-              >
-                <td className="px-3 py-3">
+          return (
+            <div
+              key={task.id}
+              onClick={() => onTaskClick?.(task.id)}
+              className={`cursor-pointer rounded-lg border p-3 transition-shadow active:bg-gray-50 dark:active:bg-gray-700 ${cardBorder} ${isSelected ? "ring-2 ring-blue-400 dark:ring-blue-600" : ""}`}
+            >
+              {/* Top row: checkbox + title + delete */}
+              <div className="flex items-start gap-3">
+                <div
+                  className="flex shrink-0 items-center pt-0.5"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <input
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => onToggleSelect(task.id)}
-                    className="h-3.5 w-3.5 rounded border-gray-300"
+                    className="h-4 w-4 rounded border-gray-300"
                   />
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() =>
-                        onTaskClick ? onTaskClick(task.id) : undefined
-                      }
-                      className="text-left text-sm font-medium text-gray-900 hover:text-blue-600 dark:text-gray-100"
-                    >
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {task.title}
-                    </button>
-                    {task.taskType === "MEAL" && (
-                      <span className="inline-flex items-center rounded bg-green-100 px-1 py-0.5 text-[10px] font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                        Meal
-                      </span>
-                    )}
-                    {task.taskType === "MEDICATION" && (
-                      <span className="inline-flex items-center rounded bg-blue-100 px-1 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-                        Med
-                      </span>
-                    )}
-                    {task.taskType === "TRACKER" && (
-                      <span className="inline-flex items-center rounded bg-teal-100 px-1 py-0.5 text-[10px] font-medium text-teal-700 dark:bg-teal-900/30 dark:text-teal-400">
-                        Tracker
-                      </span>
-                    )}
-                    {task.recurrence && task.recurrence !== "NONE" && (
-                      <span
-                        className="inline-flex items-center rounded bg-purple-100 px-1 py-0.5 text-[10px] font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
-                        title={`Repeats ${task.recurrence.toLowerCase()}`}
+                    </span>
+                    <div
+                      className="flex shrink-0 items-center"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        onClick={() => onDeleteClick(task)}
+                        className="rounded p-1.5 text-gray-300 hover:bg-red-50 hover:text-red-500 dark:text-gray-600 dark:hover:bg-red-900/30"
+                        title="Delete"
                       >
-                        ↻{" "}
-                        {task.recurrence.charAt(0) +
-                          task.recurrence.slice(1).toLowerCase()}
-                      </span>
-                    )}
-                    {task.recurrenceTime && (
-                      <span className="text-[10px] text-gray-400 dark:text-gray-500">
-                        {task.recurrenceTime}
-                      </span>
-                    )}
-                    {task.blockedBy &&
-                      task.blockedBy.some(
-                        (d) => d.blocker.status !== "DONE",
-                      ) && (
-                        <span
-                          className="inline-flex items-center rounded bg-red-100 px-1 py-0.5 text-[10px] font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                          title={`Blocked by: ${task.blockedBy
-                            .filter((d) => d.blocker.status !== "DONE")
-                            .map((d) => d.blocker.title)
-                            .join(", ")}`}
+                        <svg
+                          className="h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
                         >
-                          Blocked
-                        </span>
-                      )}
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
+
+                  {/* Description */}
                   {task.description && (
                     <p className="mt-0.5 text-xs text-gray-400 line-clamp-1 dark:text-gray-500">
                       {task.description}
                     </p>
                   )}
+
+                  {/* Food / med / subtask info */}
                   {task.taskFoods &&
                     task.taskFoods.length > 0 &&
                     (() => {
@@ -528,9 +475,7 @@ function TaskTable({
                       );
                       return (
                         <p className="mt-0.5 text-xs text-green-600 dark:text-green-400">
-                          {totalCal} cal · {totalPro}g protein ·{" "}
-                          {task.taskFoods.length} food
-                          {task.taskFoods.length !== 1 ? "s" : ""}
+                          {totalCal} cal · {totalPro}g protein
                         </p>
                       );
                     })()}
@@ -541,10 +486,309 @@ function TaskTable({
                         .join(", ")}
                     </p>
                   )}
-                  {task.subtasks && task.subtasks.length > 0 && (
-                    <span className="mt-0.5 inline-flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
+
+                  {/* Badges row */}
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                    <StatusBadge status={task.status} />
+                    <PriorityBadge priority={task.priority} />
+                    {task.taskType === "MEAL" && (
+                      <span className="inline-flex items-center rounded bg-green-100 px-1.5 py-0.5 text-[10px] font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                        Meal
+                      </span>
+                    )}
+                    {task.taskType === "MEDICATION" && (
+                      <span className="inline-flex items-center rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                        Med
+                      </span>
+                    )}
+                    {task.taskType === "TRACKER" && (
+                      <span className="inline-flex items-center rounded bg-teal-100 px-1.5 py-0.5 text-[10px] font-medium text-teal-700 dark:bg-teal-900/30 dark:text-teal-400">
+                        Tracker
+                      </span>
+                    )}
+                    {task.recurrence && task.recurrence !== "NONE" && (
+                      <span className="inline-flex items-center rounded bg-purple-100 px-1.5 py-0.5 text-[10px] font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
+                        ↻{" "}
+                        {task.recurrence.charAt(0) +
+                          task.recurrence.slice(1).toLowerCase()}
+                      </span>
+                    )}
+                    {task.blockedBy &&
+                      task.blockedBy.some(
+                        (d) => d.blocker.status !== "DONE",
+                      ) && (
+                        <span className="inline-flex items-center rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                          Blocked
+                        </span>
+                      )}
+                    {task.subtasks && task.subtasks.length > 0 && (
+                      <span className="inline-flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
+                        <svg
+                          className="h-3 w-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                          />
+                        </svg>
+                        {task.subtasks.filter((s) => s.done).length}/
+                        {task.subtasks.length}
+                      </span>
+                    )}
+                    {task.dueDate && (
+                      <span
+                        className={`ml-auto text-xs ${
+                          showDue === "overdue"
+                            ? "font-medium text-red-600"
+                            : showDue === "today"
+                              ? "font-medium text-amber-600"
+                              : showDue === "soon"
+                                ? "text-yellow-600"
+                                : "text-gray-400 dark:text-gray-500"
+                        }`}
+                      >
+                        {showDue === "overdue"
+                          ? "Overdue"
+                          : showDue === "today"
+                            ? "Today"
+                            : formatDate(task.dueDate)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Desktop table view ── */}
+      <div className="hidden overflow-x-auto rounded-lg border border-gray-200 bg-white lg:block dark:border-gray-700 dark:bg-gray-800">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          {showHeaders && (
+            <thead className="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th className="w-10 px-3 py-3">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={onToggleSelectAll}
+                    className="h-3.5 w-3.5 rounded border-gray-300"
+                  />
+                </th>
+                {(
+                  [
+                    ["title", "Title"],
+                    ["status", "Status"],
+                    ["priority", "Priority"],
+                    ["dueDate", "Due Date"],
+                    ["createdAt", "Created"],
+                  ] as const
+                ).map(([field, label]) => (
+                  <th key={field} className="px-4 py-3 text-left">
+                    <button
+                      onClick={() => onSort(field)}
+                      className="flex items-center gap-1 text-xs font-medium uppercase tracking-wide text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    >
+                      {label}
+                      {sortField === field && (
+                        <span className="text-blue-600">
+                          {sortDir === "asc" ? "↑" : "↓"}
+                        </span>
+                      )}
+                    </button>
+                  </th>
+                ))}
+                <th className="w-20 px-4 py-3" />
+              </tr>
+            </thead>
+          )}
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+            {tasks.map((task) => {
+              const due = getDueStatus(task.dueDate);
+              const showDue = task.status !== "DONE" ? due : null;
+              const rowBg =
+                showDue === "overdue"
+                  ? "bg-red-50 dark:bg-red-900/10"
+                  : showDue === "today"
+                    ? "bg-amber-50 dark:bg-amber-900/10"
+                    : showDue === "soon"
+                      ? "bg-yellow-50/50 dark:bg-yellow-900/5"
+                      : "";
+              const isSelected = selected.has(task.id);
+
+              return (
+                <tr
+                  key={task.id}
+                  onClick={() => onTaskClick?.(task.id)}
+                  className={`cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-700 ${rowBg} ${isSelected ? "ring-2 ring-inset ring-blue-400 dark:ring-blue-600" : ""}`}
+                >
+                  <td
+                    className="px-3 py-3"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => onToggleSelect(task.id)}
+                      className="h-3.5 w-3.5 rounded border-gray-300"
+                    />
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-left text-sm font-medium text-gray-900 dark:text-gray-100">
+                        {task.title}
+                      </span>
+                      {task.taskType === "MEAL" && (
+                        <span className="inline-flex items-center rounded bg-green-100 px-1 py-0.5 text-[10px] font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                          Meal
+                        </span>
+                      )}
+                      {task.taskType === "MEDICATION" && (
+                        <span className="inline-flex items-center rounded bg-blue-100 px-1 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                          Med
+                        </span>
+                      )}
+                      {task.taskType === "TRACKER" && (
+                        <span className="inline-flex items-center rounded bg-teal-100 px-1 py-0.5 text-[10px] font-medium text-teal-700 dark:bg-teal-900/30 dark:text-teal-400">
+                          Tracker
+                        </span>
+                      )}
+                      {task.recurrence && task.recurrence !== "NONE" && (
+                        <span
+                          className="inline-flex items-center rounded bg-purple-100 px-1 py-0.5 text-[10px] font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
+                          title={`Repeats ${task.recurrence.toLowerCase()}`}
+                        >
+                          ↻{" "}
+                          {task.recurrence.charAt(0) +
+                            task.recurrence.slice(1).toLowerCase()}
+                        </span>
+                      )}
+                      {task.recurrenceTime && (
+                        <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                          {task.recurrenceTime}
+                        </span>
+                      )}
+                      {task.blockedBy &&
+                        task.blockedBy.some(
+                          (d) => d.blocker.status !== "DONE",
+                        ) && (
+                          <span
+                            className="inline-flex items-center rounded bg-red-100 px-1 py-0.5 text-[10px] font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                            title={`Blocked by: ${task.blockedBy
+                              .filter((d) => d.blocker.status !== "DONE")
+                              .map((d) => d.blocker.title)
+                              .join(", ")}`}
+                          >
+                            Blocked
+                          </span>
+                        )}
+                    </div>
+                    {task.description && (
+                      <p className="mt-0.5 text-xs text-gray-400 line-clamp-1 dark:text-gray-500">
+                        {task.description}
+                      </p>
+                    )}
+                    {task.taskFoods &&
+                      task.taskFoods.length > 0 &&
+                      (() => {
+                        const totalCal = Math.round(
+                          task.taskFoods.reduce(
+                            (s, tf) => s + tf.foodItem.calories * tf.quantity,
+                            0,
+                          ),
+                        );
+                        const totalPro = Math.round(
+                          task.taskFoods.reduce(
+                            (s, tf) => s + tf.foodItem.protein * tf.quantity,
+                            0,
+                          ),
+                        );
+                        return (
+                          <p className="mt-0.5 text-xs text-green-600 dark:text-green-400">
+                            {totalCal} cal · {totalPro}g protein ·{" "}
+                            {task.taskFoods.length} food
+                            {task.taskFoods.length !== 1 ? "s" : ""}
+                          </p>
+                        );
+                      })()}
+                    {task.taskMeds && task.taskMeds.length > 0 && (
+                      <p className="mt-0.5 text-xs text-blue-500 dark:text-blue-400">
+                        {task.taskMeds
+                          .map((tm) => tm.medicationItem.name)
+                          .join(", ")}
+                      </p>
+                    )}
+                    {task.subtasks && task.subtasks.length > 0 && (
+                      <span className="mt-0.5 inline-flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
+                        <svg
+                          className="h-3 w-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                          />
+                        </svg>
+                        {task.subtasks.filter((s) => s.done).length}/
+                        {task.subtasks.length}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <StatusBadge status={task.status} />
+                  </td>
+                  <td className="px-4 py-3">
+                    <PriorityBadge priority={task.priority} />
+                  </td>
+                  <td className="px-4 py-3">
+                    {task.dueDate ? (
+                      <span
+                        className={`text-sm ${
+                          showDue === "overdue"
+                            ? "font-medium text-red-600"
+                            : showDue === "today"
+                              ? "font-medium text-amber-600"
+                              : showDue === "soon"
+                                ? "text-yellow-600"
+                                : "text-gray-500 dark:text-gray-400"
+                        }`}
+                      >
+                        {showDue === "overdue"
+                          ? "Overdue"
+                          : showDue === "today"
+                            ? "Today"
+                            : formatDate(task.dueDate)}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-gray-300 dark:text-gray-600">
+                        —
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-400 dark:text-gray-500">
+                    {formatDate(task.createdAt)}
+                  </td>
+                  <td
+                    className="px-4 py-3 text-right"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      onClick={() => onDeleteClick(task)}
+                      className="rounded p-1 text-gray-300 hover:bg-red-50 hover:text-red-500 dark:text-gray-600 dark:hover:bg-red-900/30"
+                      title="Delete"
+                    >
                       <svg
-                        className="h-3 w-3"
+                        className="h-4 w-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -553,74 +797,17 @@ function TaskTable({
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                         />
                       </svg>
-                      {task.subtasks.filter((s) => s.done).length}/
-                      {task.subtasks.length}
-                    </span>
-                  )}
-                </td>
-                <td className="px-4 py-3">
-                  <StatusBadge status={task.status} />
-                </td>
-                <td className="px-4 py-3">
-                  <PriorityBadge priority={task.priority} />
-                </td>
-                <td className="px-4 py-3">
-                  {task.dueDate ? (
-                    <span
-                      className={`text-sm ${
-                        showDue === "overdue"
-                          ? "font-medium text-red-600"
-                          : showDue === "today"
-                            ? "font-medium text-amber-600"
-                            : showDue === "soon"
-                              ? "text-yellow-600"
-                              : "text-gray-500 dark:text-gray-400"
-                      }`}
-                    >
-                      {showDue === "overdue"
-                        ? "Overdue"
-                        : showDue === "today"
-                          ? "Today"
-                          : formatDate(task.dueDate)}
-                    </span>
-                  ) : (
-                    <span className="text-sm text-gray-300 dark:text-gray-600">
-                      —
-                    </span>
-                  )}
-                </td>
-                <td className="px-4 py-3 text-sm text-gray-400 dark:text-gray-500">
-                  {formatDate(task.createdAt)}
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <button
-                    onClick={() => onDeleteClick(task)}
-                    className="rounded p-1 text-gray-300 hover:bg-red-50 hover:text-red-500 dark:text-gray-600 dark:hover:bg-red-900/30"
-                    title="Delete"
-                  >
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

@@ -135,20 +135,22 @@ function TasksContent() {
       </div>
 
       {/* Tabs */}
-      <div className="mb-4 flex gap-1 border-b border-gray-200 dark:border-gray-700">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            className={`rounded-t-md px-3 py-2 text-sm font-medium transition-colors ${
-              tab === t.key
-                ? "bg-blue-600 text-white"
-                : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
+      <div className="-mx-4 mb-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
+        <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700">
+          {TABS.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              className={`shrink-0 rounded-t-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
+                tab === t.key
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Tab content */}
@@ -191,70 +193,72 @@ function TasksContent() {
               />
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-gray-400">Type:</span>
-              {TYPE_FILTERS.map((f) => (
-                <button
-                  key={f.value}
-                  onClick={() => setTypeFilter(f.value)}
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
-                    typeFilter === f.value
-                      ? "bg-blue-600 text-white"
-                      : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
-              <span className="ml-2 text-xs text-gray-400">Status:</span>
-              {STATUS_FILTERS.map((f) => (
-                <button
-                  key={f.value}
-                  onClick={() =>
-                    setStatusFilter((prev) =>
-                      prev === f.value ? null : f.value,
-                    )
-                  }
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
-                    statusFilter === f.value
-                      ? "bg-blue-600 text-white"
-                      : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
-              <span className="ml-2 text-xs text-gray-400">Priority:</span>
-              {PRIORITY_FILTERS.map((f) => (
-                <button
-                  key={f.value}
-                  onClick={() =>
-                    setPriorityFilter((prev) =>
-                      prev === f.value ? null : f.value,
-                    )
-                  }
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
-                    priorityFilter === f.value
-                      ? "bg-blue-600 text-white"
-                      : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
-              {hasFilters && (
-                <button
-                  onClick={() => {
-                    setSearch("");
-                    setStatusFilter(null);
-                    setPriorityFilter(null);
-                    setTypeFilter("ALL");
-                  }}
-                  className="ml-1 text-xs text-gray-400 hover:text-gray-600"
-                >
-                  Clear all
-                </button>
-              )}
+            <div className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
+              <div className="flex items-center gap-2 whitespace-nowrap pb-1">
+                <span className="text-xs text-gray-400">Type:</span>
+                {TYPE_FILTERS.map((f) => (
+                  <button
+                    key={f.value}
+                    onClick={() => setTypeFilter(f.value)}
+                    className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                      typeFilter === f.value
+                        ? "bg-blue-600 text-white"
+                        : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+                <span className="ml-2 text-xs text-gray-400">Status:</span>
+                {STATUS_FILTERS.map((f) => (
+                  <button
+                    key={f.value}
+                    onClick={() =>
+                      setStatusFilter((prev) =>
+                        prev === f.value ? null : f.value,
+                      )
+                    }
+                    className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                      statusFilter === f.value
+                        ? "bg-blue-600 text-white"
+                        : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+                <span className="ml-2 text-xs text-gray-400">Priority:</span>
+                {PRIORITY_FILTERS.map((f) => (
+                  <button
+                    key={f.value}
+                    onClick={() =>
+                      setPriorityFilter((prev) =>
+                        prev === f.value ? null : f.value,
+                      )
+                    }
+                    className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                      priorityFilter === f.value
+                        ? "bg-blue-600 text-white"
+                        : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+                {hasFilters && (
+                  <button
+                    onClick={() => {
+                      setSearch("");
+                      setStatusFilter(null);
+                      setPriorityFilter(null);
+                      setTypeFilter("ALL");
+                    }}
+                    className="ml-1 text-xs text-gray-400 hover:text-gray-600"
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -277,7 +281,8 @@ function TasksContent() {
       {tab === "adhoc-config" && (
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Create ad-hoc task templates that you can quickly add to your task list.
+            Create ad-hoc task templates that you can quickly add to your task
+            list.
           </p>
           <div className="mt-4 rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
             <p className="text-gray-500 dark:text-gray-400">
