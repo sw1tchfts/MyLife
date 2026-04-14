@@ -15,7 +15,7 @@ export interface SubtaskData {
 }
 
 export type Recurrence = "NONE" | "DAILY" | "WEEKLY" | "MONTHLY";
-export type TaskType = "TASK" | "MEAL" | "MEDICATION";
+export type TaskType = "TASK" | "MEAL" | "MEDICATION" | "TRACKER";
 export type MealType = "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
 
 export interface FoodItemData {

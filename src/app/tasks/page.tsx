@@ -231,6 +231,7 @@ function TasksContent() {
               tasks={filtered}
               onDelete={handleDelete}
               onTaskClick={handleTaskClick}
+              onRefresh={fetchTasks}
             />
           )}
           {view === "calendar" && <CalendarView tasks={filtered} />}

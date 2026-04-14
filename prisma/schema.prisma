@@ -30,6 +30,7 @@ enum TaskType {
   TASK
   MEAL
   MEDICATION
+  TRACKER
 }
 
 enum MealType {
@@ -121,10 +122,12 @@ model AppSettings {
 }
 
 model UserSettings {
-  userId              String  @id
-  theme               String  @default("light")
-  emailNotifications  Boolean @default(false)
+  userId               String  @id
+  theme                String  @default("light")
+  emailNotifications   Boolean @default(false)
   browserNotifications Boolean @default(false)
+  trackerEnabled       Boolean @default(true)
+  trackerConfig        Json    @default("{\"metrics\":{\"weight\":true,\"bodyFat\":true,\"waist\":false,\"chest\":false,\"manualCalories\":false},\"units\":{\"weight\":\"lbs\",\"measurements\":\"in\"},\"profile\":{\"height\":null,\"heightUnit\":\"in\",\"age\":null,\"sex\":null,\"activityLevel\":\"moderate\"},\"goal\":{\"type\":\"maintenance\",\"weeklyRateLbs\":0}}")
 }
 
 // ── Pairwise Ranking System ────────────────────────────

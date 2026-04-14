@@ -21,6 +21,25 @@ export async function GET() {
         theme: "light",
         emailNotifications: false,
         browserNotifications: false,
+        trackerEnabled: true,
+        trackerConfig: {
+          metrics: {
+            weight: true,
+            bodyFat: true,
+            waist: false,
+            chest: false,
+            manualCalories: false,
+          },
+          units: { weight: "lbs", measurements: "in" },
+          profile: {
+            height: null,
+            heightUnit: "in",
+            age: null,
+            sex: null,
+            activityLevel: "moderate",
+          },
+          goal: { type: "maintenance", weeklyRateLbs: 0 },
+        },
       },
     );
   } catch (error) {
@@ -53,12 +72,20 @@ export async function PUT(request: NextRequest) {
         ...(body.browserNotifications !== undefined && {
           browserNotifications: body.browserNotifications,
         }),
+        ...(body.trackerEnabled !== undefined && {
+          trackerEnabled: body.trackerEnabled,
+        }),
+        ...(body.trackerConfig !== undefined && {
+          trackerConfig: body.trackerConfig,
+        }),
       },
       create: {
         userId: user.id,
         theme: body.theme || "light",
         emailNotifications: body.emailNotifications || false,
         browserNotifications: body.browserNotifications || false,
+        trackerEnabled: body.trackerEnabled ?? true,
+        trackerConfig: body.trackerConfig || undefined,
       },
     });
     return NextResponse.json(settings);

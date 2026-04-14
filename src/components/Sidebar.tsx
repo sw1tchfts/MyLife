@@ -114,11 +114,22 @@ export default function Sidebar({ userEmail }: SidebarProps) {
             </Link>
           </div>
 
-          {/* Diet section */}
+          {/* Health section */}
           <div className="mb-4">
             <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
               Health
             </p>
+            <Link
+              href="/daily-log"
+              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+                pathname.startsWith("/daily-log")
+                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              }`}
+            >
+              <DailyLogIcon active={pathname.startsWith("/daily-log")} />
+              Daily Log
+            </Link>
             <Link
               href="/diet"
               className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
@@ -277,6 +288,25 @@ function AdminIcon({ active }: { active: boolean }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+      />
+    </svg>
+  );
+}
+
+function DailyLogIcon({ active }: { active: boolean }) {
+  const cls = active ? "text-blue-600" : "text-gray-400";
+  return (
+    <svg
+      className={`h-4 w-4 ${cls}`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
       />
     </svg>
   );

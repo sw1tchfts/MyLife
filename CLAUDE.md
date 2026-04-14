@@ -52,9 +52,11 @@ vitest.config.ts               # Vitest test config
 src/
   test/setup.ts                # Vitest test setup
   test/api-helpers.ts          # Shared mocks (Supabase auth, Prisma, request builder)
+  test/tdee.test.ts            # Adaptive TDEE algorithm tests
   lib/prisma.ts                # Prisma client singleton
   lib/types.ts                 # Validation + shared types
   lib/elo.ts                   # Elo rating algorithm for pairwise ranking
+  lib/tdee.ts                  # Adaptive TDEE algorithm (weight tracking + daily burn)
   app/
     page.tsx                   # Home (view switcher via ?view= param)
     layout.tsx                 # Root layout (sidebar for authed, plain for login)
@@ -81,6 +83,7 @@ src/
     api/diagrams/[id]/route.ts         # GET + PUT + DELETE single diagram
     api/body-metrics/route.ts          # GET + POST body metrics
     api/body-metrics/[id]/route.ts     # DELETE body metric
+    api/tracker/route.ts               # GET tracker dashboard data + POST daily log
     api/journal/route.ts               # GET + POST journal entries
     api/journal/[id]/route.ts          # GET + PUT + DELETE single journal entry
     api/gym/exercises/route.ts         # GET + POST exercises
@@ -92,6 +95,7 @@ src/
     api/settings/user/route.ts # GET + PUT user preferences
     journal/page.tsx           # Journal (write, entries list, calendar view)
     rankings/page.tsx          # Pairwise ranking system (categories, items, compare, rankings, stats)
+    daily-log/page.tsx         # Daily Log Dashboard (TDEE, weight trend, nutrition, meds)
     diet/page.tsx              # Diet & nutrition (food library, nutrition log, body metrics)
     gym/page.tsx               # Gym (exercises, routines, log workout, history)
     tasks/new/page.tsx         # Create task page
@@ -99,7 +103,7 @@ src/
     diagrams/page.tsx          # Diagram creator (flowcharts, process, swim lane, ER)
     auth/reset-password/page.tsx # Password reset page
     admin/page.tsx             # Admin settings (categories, defaults, stats)
-    settings/page.tsx          # User settings (theme, account, notifications)
+    settings/page.tsx          # User settings (theme, account, notifications, tracker config)
   components/
     Sidebar.tsx                # Left navigation sidebar (Notion-style)
     ThemeProvider.tsx           # Dark mode context + class toggle
@@ -107,6 +111,7 @@ src/
     QuickAddModal.tsx          # Quick task creation modal
     SubtaskList.tsx            # Subtask checklist with progress bar
     TaskCard.tsx               # Task card display + getDueStatus helper + types
+    TrackerForm.tsx            # Inline daily tracker form (weight, bf%, metrics + TDEE display)
     TaskForm.tsx               # Shared create/edit form (incl. recurrence)
     TaskList.tsx               # Legacy task list (kept for reference)
     StatusBadge.tsx            # Status pill
@@ -152,6 +157,26 @@ src/
 - Tasks can have recurrence: NONE, DAILY, WEEKLY, MONTHLY
 - When a recurring task is marked DONE, the API auto-creates the next occurrence with an updated due date
 - Recurrence indicator shown as purple badge in list view
+
+## Daily Tracker & TDEE
+
+- **Task type**: `TRACKER` added to `TaskType` enum (alongside TASK, MEAL, MEDICATION)
+- Auto-creates a daily recurring "Daily Log" task when tracker is enabled
+- TRACKER tasks render as an inline form in the task list (via `TrackerForm.tsx`) with configurable input fields
+- On completion, saves measurements to `BodyMetric` table
+- Shows read-only calorie/macro totals from that day's meal tasks
+- **Adaptive TDEE algorithm** (`src/lib/tdee.ts`): hybrid nSuns TDEE 3.0 + MacroFactor approach
+  - EMA-smoothed daily weights (α = 0.1) → weekly averages → rolling 6-week TDEE
+  - Seeded with Mifflin-St Jeor formula, transitions to real data over 3-4 weeks
+  - Composition-adjusted energy constant (3500 cal/lb fat → 2800 cal/lb mixed)
+  - Exercise implicitly captured via actual weight change
+  - Confidence levels: low (<2 weeks), medium (2-4 weeks), high (4+ weeks)
+- **User settings**: `trackerEnabled` (Boolean) + `trackerConfig` (JSON) on `UserSettings`
+  - Metric toggles (weight, body fat, waist, chest, manual calories)
+  - Units (lbs/kg, in/cm)
+  - Profile (height, age, sex, activity level) for TDEE seed
+  - Goal (maintenance/cut/bulk + weekly rate)
+- **Daily Log Dashboard** (`/daily-log`): read-only summary page with TDEE estimate, weight trend chart, calorie intake vs TDEE chart, nutrition summary, medication log
 
 ## Authentication
 
@@ -199,6 +224,7 @@ src/
 - #14 Diet and medication tracking — DONE
 - #15 Journal section — DONE
 - #16 Diagram creator — DONE
+- #19 Weight tracking & adaptive TDEE Daily Burn — DONE
 
 ## Development Workflow (ALWAYS follow these)
 

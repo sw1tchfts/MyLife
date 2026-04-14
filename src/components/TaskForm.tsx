@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { Status, Priority, Recurrence } from "@/generated/prisma/client";
 
-type TaskType = "TASK" | "MEAL" | "MEDICATION";
+type TaskType = "TASK" | "MEAL" | "MEDICATION" | "TRACKER";
 type MealType = "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
 
 export interface TaskFormData {

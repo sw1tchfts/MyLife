@@ -4,6 +4,7 @@ import { useState } from "react";
 import StatusBadge from "@/components/StatusBadge";
 import PriorityBadge from "@/components/PriorityBadge";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+import TrackerForm from "@/components/TrackerForm";
 import { getDueStatus } from "@/components/TaskCard";
 import type { TaskData } from "@/components/TaskCard";
 
@@ -25,16 +26,22 @@ interface ListViewProps {
   tasks: TaskData[];
   onDelete: (id: string) => void;
   onTaskClick?: (id: string) => void;
+  onRefresh?: () => void;
 }
 
 export default function ListView({
   tasks,
   onDelete,
   onTaskClick,
+  onRefresh,
 }: ListViewProps) {
   const [sortField, setSortField] = useState<SortField>("createdAt");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [deleteTarget, setDeleteTarget] = useState<TaskData | null>(null);
+
+  // Separate tracker tasks from regular tasks
+  const trackerTasks = tasks.filter((t) => t.taskType === "TRACKER");
+  const regularTasks = tasks.filter((t) => t.taskType !== "TRACKER");
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -45,7 +52,7 @@ export default function ListView({
     }
   };
 
-  const sorted = [...tasks].sort((a, b) => {
+  const sorted = [...regularTasks].sort((a, b) => {
     let cmp = 0;
     switch (sortField) {
       case "title":
@@ -70,7 +77,19 @@ export default function ListView({
     return sortDir === "asc" ? cmp : -cmp;
   });
 
-  if (tasks.length === 0) {
+  // Find today's tracker task (the one due today or most recent)
+  const todayTracker = trackerTasks.find((t) => {
+    if (!t.dueDate) return false;
+    const due = new Date(t.dueDate);
+    const today = new Date();
+    return (
+      due.getFullYear() === today.getFullYear() &&
+      due.getMonth() === today.getMonth() &&
+      due.getDate() === today.getDate()
+    );
+  });
+
+  if (regularTasks.length === 0 && !todayTracker) {
     return (
       <div className="rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 py-12 text-center">
         <p className="text-gray-500 dark:text-gray-400">No tasks found</p>
@@ -83,6 +102,17 @@ export default function ListView({
 
   return (
     <>
+      {/* Tracker task renders as a special card above the table */}
+      {todayTracker && (
+        <div className="mb-4">
+          <TrackerForm
+            taskId={todayTracker.id}
+            taskStatus={todayTracker.status}
+            onComplete={() => onRefresh?.()}
+          />
+        </div>
+      )}
+
       <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-700">

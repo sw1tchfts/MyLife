@@ -15,6 +15,29 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Auto-create tracker parent task if tracker is enabled and none exists
+    const settings = await prisma.userSettings.findUnique({
+      where: { userId: user.id },
+    });
+    if (settings?.trackerEnabled !== false) {
+      const existingTracker = await prisma.task.findFirst({
+        where: { taskType: "TRACKER", isRecurringParent: true },
+      });
+      if (!existingTracker) {
+        await prisma.task.create({
+          data: {
+            title: "Daily Log",
+            description: "Log your daily metrics",
+            status: "TODO",
+            priority: "MEDIUM",
+            recurrence: "DAILY",
+            taskType: "TRACKER",
+            isRecurringParent: true,
+          },
+        });
+      }
+    }
+
     // Auto-generate instances for recurring tasks
     await generateInstances(14);
 
