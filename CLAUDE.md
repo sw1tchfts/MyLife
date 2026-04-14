@@ -75,9 +75,9 @@ src/
     api/foods/search/route.ts          # GET search USDA FoodData Central
     api/foods/route.ts                 # GET + POST saved foods
     api/foods/[id]/route.ts            # DELETE saved food
-    api/medications/search/route.ts    # GET search OpenFDA drug labels
+    api/medications/search/route.ts    # GET search OpenFDA drug labels (includes half-life extraction)
     api/medications/route.ts           # GET + POST saved medications
-    api/medications/[id]/route.ts      # DELETE saved medication
+    api/medications/[id]/route.ts      # PUT + DELETE saved medication
     api/nutrition/route.ts             # GET nutrition logs (by date range)
     api/diagrams/route.ts              # GET + POST diagrams
     api/diagrams/[id]/route.ts         # GET + PUT + DELETE single diagram
@@ -97,6 +97,7 @@ src/
     rankings/page.tsx          # Pairwise ranking system (categories, items, compare, rankings, stats)
     daily-log/page.tsx         # Daily Log Dashboard (TDEE, weight trend, nutrition, meds)
     diet/page.tsx              # Diet & nutrition (food library, nutrition log, body metrics)
+    medications/page.tsx       # Medication manager (search, save, edit details, schedule, pharmacokinetics graph)
     gym/page.tsx               # Gym (exercises, routines, log workout, history)
     tasks/new/page.tsx         # Create task page
     tasks/[id]/edit/page.tsx   # Edit task page
