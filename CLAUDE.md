@@ -37,6 +37,10 @@ Personal task tracking web app. Single user (no sharing/collaboration features).
 - Build script: `npx prisma generate && next build` (Vercel needs prisma generate before build)
 - API routes at `src/app/api/tasks/` (GET, POST) and `src/app/api/tasks/[id]/` (GET, PUT, DELETE)
 - Validation logic in `src/lib/types.ts`
+- **Recurrence generation**: `POST /api/tasks/generate-instances` is called once on app startup (fire-and-forget from the tasks page), NOT on every GET. Recurrence logic lives in `src/lib/recurrence.ts`.
+- **Pagination**: API routes support opt-in pagination via `?limit=50&page=1`. When `limit` is provided, response is `{ items, total, page, limit }`. Without `limit`, returns all results (backward compatible). Used by tasks and journal APIs.
+- **Dynamic imports**: Large tab components are extracted into `src/components/{feature}/` directories and loaded via `next/dynamic` to enable code splitting.
+- **React.memo**: Applied to frequently-rendered components (`TaskCard`, `StatusBadge`, `PriorityBadge`) to skip unnecessary re-renders.
 
 ## File Structure
 
@@ -57,13 +61,16 @@ src/
   lib/types.ts                 # Validation + shared types
   lib/elo.ts                   # Elo rating algorithm for pairwise ranking
   lib/tdee.ts                  # Adaptive TDEE algorithm (weight tracking + daily burn)
+  lib/recurrence.ts            # Recurring task instance generation
   app/
-    page.tsx                   # Home (view switcher via ?view= param)
+    page.tsx                   # Home — redirects to /tasks
     layout.tsx                 # Root layout (sidebar for authed, plain for login)
-    api/tasks/route.ts         # GET + POST tasks
+    api/tasks/route.ts         # GET (paginated) + POST tasks
     api/tasks/[id]/route.ts    # GET + PUT + DELETE single task (auto-creates next for recurring)
     api/tasks/[id]/subtasks/route.ts # POST + PUT + DELETE subtasks
     api/tasks/[id]/dependencies/route.ts # GET + POST + DELETE task dependencies
+    api/tasks/generate-instances/route.ts # POST — generate recurring task instances (called on app startup)
+    api/tasks/notifications/route.ts     # GET — lightweight overdue/due-today counts
     api/export/route.ts            # GET data export (CSV/JSON for tasks, journal, metrics)
     api/categories/route.ts    # GET + POST categories
     api/categories/[id]/route.ts # PUT + DELETE single category
@@ -84,7 +91,7 @@ src/
     api/body-metrics/route.ts          # GET + POST body metrics
     api/body-metrics/[id]/route.ts     # DELETE body metric
     api/tracker/route.ts               # GET tracker dashboard data + POST daily log
-    api/journal/route.ts               # GET + POST journal entries
+    api/journal/route.ts               # GET (paginated) + POST journal entries
     api/journal/[id]/route.ts          # GET + PUT + DELETE single journal entry
     api/gym/exercises/route.ts         # GET + POST exercises
     api/gym/routines/route.ts          # GET + POST workout routines
@@ -93,49 +100,64 @@ src/
     api/gym/logs/[id]/route.ts         # DELETE single workout log
     api/settings/app/route.ts  # GET + PUT app-wide settings
     api/settings/user/route.ts # GET + PUT user preferences
-    journal/page.tsx           # Journal (write, entries list, calendar view)
-    rankings/page.tsx          # Pairwise ranking system (categories, items, compare, rankings, stats)
-    daily-log/page.tsx         # Daily Log Dashboard (TDEE, weight trend, nutrition, meds)
-    diet/page.tsx              # Diet & nutrition (food library, nutrition log, body metrics)
-    gym/page.tsx               # Gym (exercises, routines, log workout, history)
+    tasks/page.tsx             # Tasks (tabs: dashboard, tasks, adhoc-config, recurring-config)
+    tasks/loading.tsx          # Skeleton loading state for tasks page
     tasks/new/page.tsx         # Create task page
     tasks/[id]/edit/page.tsx   # Edit task page
+    journal/page.tsx           # Journal (write, entries list, calendar view)
+    journal/loading.tsx        # Skeleton loading state for journal page
+    rankings/page.tsx          # Pairwise ranking system (categories, items, compare, rankings, stats)
+    diet/page.tsx              # Diet & nutrition (food library, diet routines)
+    diet/loading.tsx           # Skeleton loading state for diet page
+    medications/page.tsx       # Medication tracking (search, saved meds, schedule)
+    gym/page.tsx               # Gym (exercises, routines)
     diagrams/page.tsx          # Diagram creator (flowcharts, process, swim lane, ER)
     auth/reset-password/page.tsx # Password reset page
-    admin/page.tsx             # Admin settings (categories, defaults, stats)
+    admin/page.tsx             # Admin settings (categories, defaults, data export)
     settings/page.tsx          # User settings (theme, account, notifications, tracker config)
   components/
     Sidebar.tsx                # Left navigation sidebar (Notion-style)
     ThemeProvider.tsx           # Dark mode context + class toggle
-    KeyboardShortcuts.tsx      # Global keyboard shortcuts (N, 1-5, /)
-    QuickAddModal.tsx          # Quick task creation modal
     SubtaskList.tsx            # Subtask checklist with progress bar
-    TaskCard.tsx               # Task card display + getDueStatus helper + types
+    TaskCard.tsx               # Task card display + getDueStatus helper + types (React.memo)
+    TaskModal.tsx              # Task create/edit modal (food/med managers)
     TrackerForm.tsx            # Inline daily tracker form (weight, bf%, metrics + TDEE display)
     TaskForm.tsx               # Shared create/edit form (incl. recurrence)
     TaskList.tsx               # Legacy task list (kept for reference)
-    StatusBadge.tsx            # Status pill
-    PriorityBadge.tsx          # Priority pill
+    StatusBadge.tsx            # Status pill (React.memo)
+    PriorityBadge.tsx          # Priority pill (React.memo)
     DeleteConfirmDialog.tsx    # Delete confirmation modal
-    TaskNotifications.tsx      # Browser notifications for overdue/due-today tasks
+    TaskNotifications.tsx      # Browser notifications using lightweight /api/tasks/notifications
+    SignOutButton.tsx           # Sign-out button (used by Sidebar)
     diagrams/
       DiagramNodes.tsx         # Custom React Flow node types (process, decision, etc.)
-    SignOutButton.tsx           # Sign-out button (used by Sidebar)
     views/
-      ListView.tsx             # Table/list view with sortable columns
-      CalendarView.tsx         # Monthly calendar with tasks on due dates
-      TimelineView.tsx         # Horizontal timeline/Gantt view
-      DashboardView.tsx        # Summary stats, charts, and breakdowns
-      FocusView.tsx            # Overdue + due-today/soon focus mode
+      ListView.tsx             # Table/list view with sortable columns + mobile cards
+      DashboardView.tsx        # Habit tracking grid, streaks, and weekly progress
+      DailyLogSection.tsx      # Daily log dashboard (TDEE, weight, nutrition, meds)
+      RecurringConfig.tsx      # Recurring task parent management
+    gym/
+      ExercisesTab.tsx         # Exercise library (search, filter, add)
+      RoutinesTab.tsx          # Routine builder (days, exercises, activation)
+    diet/
+      FoodLibraryTab.tsx       # Food search + saved food library
+      DietRoutineTab.tsx       # Meal planning with food assignments
+    rankings/
+      ItemsTab.tsx             # Ranking list item management
+      CompareTab.tsx           # Pairwise comparison UI
+      RankingsTab.tsx          # Ranked results display with tiers
+      StatsTab.tsx             # Ranking statistics overview
 ```
 
 ## Navigation
 
-- Left sidebar (Notion-style) with view switcher and manage links
-- Views selected via `?view=` query param: `list`, `calendar`, `timeline`, `dashboard`, `focus`
-- Default view: `list`
+- Left sidebar (Notion-style) with section links and manage links
+- Sidebar links: Tasks, Diet, Gym, Medications, Journal, Rankings, Diagrams
+- Manage section: Admin, Settings
+- `/` redirects to `/tasks`
 - Sidebar only shown for authenticated users; login page gets plain layout
-- Search bar + status/priority filter pills on home page (apply across all views)
+- Tasks page uses `?tab=` param: `dashboard`, `tasks`, `adhoc-config`, `recurring-config` (default: `tasks`)
+- Search bar + status/priority/type filter pills on tasks page
 
 ## Dark Mode
 
@@ -143,14 +165,6 @@ src/
 - ThemeProvider manages `dark` class on `<html>`, persists to localStorage
 - Settings page has light/dark/system toggle
 - All components have `dark:` classes
-
-## Keyboard Shortcuts
-
-- `N` — Open quick-add modal
-- `1`–`5` — Switch views (list/calendar/timeline/dashboard/focus)
-- `/` — Focus search bar
-- `Escape` — Close quick-add modal
-- Shortcuts disabled when typing in inputs
 
 ## Recurring Tasks
 
@@ -176,7 +190,7 @@ src/
   - Units (lbs/kg, in/cm)
   - Profile (height, age, sex, activity level) for TDEE seed
   - Goal (maintenance/cut/bulk + weekly rate)
-- **Daily Log Dashboard** (`/daily-log`): read-only summary page with TDEE estimate, weight trend chart, calorie intake vs TDEE chart, nutrition summary, medication log
+- **Daily Log Dashboard**: shown as the "Dashboard" tab on `/tasks?tab=dashboard` via `DailyLogSection.tsx` — displays TDEE estimate, weight trend chart, calorie intake vs TDEE chart, nutrition summary, medication log
 
 ## Gym & Workout Logs
 
@@ -233,6 +247,7 @@ src/
 - #15 Journal section — DONE
 - #16 Diagram creator — DONE
 - #19 Weight tracking & adaptive TDEE Daily Burn — DONE
+- #20 App performance improvements — DONE
 
 ## Development Workflow (ALWAYS follow these)
 
