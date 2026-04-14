@@ -65,7 +65,7 @@ export default function ListView({
   const [sortField, setSortField] = useState<SortField>("dueDate");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [deleteTarget, setDeleteTarget] = useState<TaskData | null>(null);
-  const [groupByDate, setGroupByDate] = useState(false);
+  const [groupByDate, setGroupByDate] = useState(true);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
 

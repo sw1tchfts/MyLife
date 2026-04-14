@@ -22,11 +22,10 @@ interface TrackerConfig {
     heightUnit: "in" | "cm";
     age: number | null;
     sex: "male" | "female" | null;
-    activityLevel: "sedentary" | "light" | "moderate" | "active" | "very_active";
   };
   goal: {
-    type: "maintenance" | "cut" | "bulk";
-    weeklyRateLbs: number;
+    goalWeight: number | null;
+    goalBodyFat: number | null;
   };
 }
 
@@ -44,9 +43,8 @@ const DEFAULT_TRACKER_CONFIG: TrackerConfig = {
     heightUnit: "in",
     age: null,
     sex: null,
-    activityLevel: "moderate",
   },
-  goal: { type: "maintenance", weeklyRateLbs: 0 },
+  goal: { goalWeight: null, goalBodyFat: null },
 };
 
 interface UserSettingsData {
@@ -406,33 +404,122 @@ export default function SettingsPage() {
                 Used to estimate your initial daily burn before enough tracking
                 data is available.
               </p>
-              <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400">
-                    Height (
-                    {settings.trackerConfig.profile.heightUnit})
-                  </label>
-                  <input
-                    type="number"
-                    value={settings.trackerConfig.profile.height ?? ""}
-                    onChange={(e) =>
-                      setSettings((s) => ({
-                        ...s,
-                        trackerConfig: {
-                          ...s.trackerConfig,
-                          profile: {
-                            ...s.trackerConfig.profile,
-                            height: e.target.value
+              <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                {/* Height — feet/inches when imperial, cm when metric */}
+                {settings.trackerConfig.profile.heightUnit === "in" ? (
+                  <div className="col-span-2 sm:col-span-1">
+                    <label className="block text-xs text-gray-500 dark:text-gray-400">
+                      Height
+                    </label>
+                    <div className="mt-1 flex gap-1.5">
+                      <div className="relative flex-1">
+                        <input
+                          type="number"
+                          min="0"
+                          max="8"
+                          value={
+                            settings.trackerConfig.profile.height !== null
+                              ? Math.floor(
+                                  settings.trackerConfig.profile.height / 12,
+                                )
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const feet = e.target.value
                               ? Number(e.target.value)
-                              : null,
+                              : 0;
+                            const currentInches =
+                              settings.trackerConfig.profile.height !== null
+                                ? settings.trackerConfig.profile.height % 12
+                                : 0;
+                            setSettings((s) => ({
+                              ...s,
+                              trackerConfig: {
+                                ...s.trackerConfig,
+                                profile: {
+                                  ...s.trackerConfig.profile,
+                                  height:
+                                    feet * 12 + Math.round(currentInches),
+                                },
+                              },
+                            }));
+                          }}
+                          placeholder="5"
+                          className="w-full rounded-md border border-gray-300 px-2 py-1.5 pr-7 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                        />
+                        <span className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-xs text-gray-400">
+                          ft
+                        </span>
+                      </div>
+                      <div className="relative flex-1">
+                        <input
+                          type="number"
+                          min="0"
+                          max="11"
+                          value={
+                            settings.trackerConfig.profile.height !== null
+                              ? Math.round(
+                                  settings.trackerConfig.profile.height % 12,
+                                )
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const inches = e.target.value
+                              ? Number(e.target.value)
+                              : 0;
+                            const currentFeet =
+                              settings.trackerConfig.profile.height !== null
+                                ? Math.floor(
+                                    settings.trackerConfig.profile.height / 12,
+                                  )
+                                : 0;
+                            setSettings((s) => ({
+                              ...s,
+                              trackerConfig: {
+                                ...s.trackerConfig,
+                                profile: {
+                                  ...s.trackerConfig.profile,
+                                  height: currentFeet * 12 + inches,
+                                },
+                              },
+                            }));
+                          }}
+                          placeholder="10"
+                          className="w-full rounded-md border border-gray-300 px-2 py-1.5 pr-7 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                        />
+                        <span className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-xs text-gray-400">
+                          in
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-xs text-gray-500 dark:text-gray-400">
+                      Height (cm)
+                    </label>
+                    <input
+                      type="number"
+                      value={settings.trackerConfig.profile.height ?? ""}
+                      onChange={(e) =>
+                        setSettings((s) => ({
+                          ...s,
+                          trackerConfig: {
+                            ...s.trackerConfig,
+                            profile: {
+                              ...s.trackerConfig.profile,
+                              height: e.target.value
+                                ? Number(e.target.value)
+                                : null,
+                            },
                           },
-                        },
-                      }))
-                    }
-                    placeholder="70"
-                    className="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                  />
-                </div>
+                        }))
+                      }
+                      placeholder="178"
+                      className="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    />
+                  </div>
+                )}
                 <div>
                   <label className="block text-xs text-gray-500 dark:text-gray-400">
                     Age
@@ -486,33 +573,6 @@ export default function SettingsPage() {
                     <option value="female">Female</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400">
-                    Activity Level
-                  </label>
-                  <select
-                    value={settings.trackerConfig.profile.activityLevel}
-                    onChange={(e) =>
-                      setSettings((s) => ({
-                        ...s,
-                        trackerConfig: {
-                          ...s.trackerConfig,
-                          profile: {
-                            ...s.trackerConfig.profile,
-                            activityLevel: e.target.value as TrackerConfig["profile"]["activityLevel"],
-                          },
-                        },
-                      }))
-                    }
-                    className="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                  >
-                    <option value="sedentary">Sedentary</option>
-                    <option value="light">Lightly Active</option>
-                    <option value="moderate">Moderately Active</option>
-                    <option value="active">Active</option>
-                    <option value="very_active">Very Active</option>
-                  </select>
-                </div>
               </div>
             </div>
 
@@ -521,79 +581,64 @@ export default function SettingsPage() {
               <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 Goal
               </h3>
-              <div className="mt-2 flex flex-wrap gap-4">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Your target weight and body fat %. The system will calculate
+                your daily calorie target based on your TDEE and how far you are
+                from these goals.
+              </p>
+              <div className="mt-2 grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs text-gray-500 dark:text-gray-400">
-                    Goal Type
+                    Goal Weight ({settings.trackerConfig.units.weight})
                   </label>
-                  <div className="mt-1 flex gap-2">
-                    {(
-                      [
-                        ["cut", "Cut"],
-                        ["maintenance", "Maintain"],
-                        ["bulk", "Bulk"],
-                      ] as const
-                    ).map(([val, label]) => (
-                      <button
-                        key={val}
-                        onClick={() =>
-                          setSettings((s) => ({
-                            ...s,
-                            trackerConfig: {
-                              ...s.trackerConfig,
-                              goal: {
-                                ...s.trackerConfig.goal,
-                                type: val,
-                                weeklyRateLbs:
-                                  val === "maintenance"
-                                    ? 0
-                                    : s.trackerConfig.goal.weeklyRateLbs || 1,
-                              },
-                            },
-                          }))
-                        }
-                        className={`rounded-md border px-3 py-1 text-xs font-medium ${
-                          settings.trackerConfig.goal.type === val
-                            ? val === "cut"
-                              ? "border-red-600 bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                              : val === "bulk"
-                                ? "border-green-600 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                                : "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                {settings.trackerConfig.goal.type !== "maintenance" && (
-                  <div>
-                    <label className="block text-xs text-gray-500 dark:text-gray-400">
-                      Rate ({settings.trackerConfig.units.weight}/week)
-                    </label>
-                    <input
-                      type="number"
-                      step="0.25"
-                      min="0.25"
-                      max="3"
-                      value={settings.trackerConfig.goal.weeklyRateLbs}
-                      onChange={(e) =>
-                        setSettings((s) => ({
-                          ...s,
-                          trackerConfig: {
-                            ...s.trackerConfig,
-                            goal: {
-                              ...s.trackerConfig.goal,
-                              weeklyRateLbs: Number(e.target.value),
-                            },
+                  <input
+                    type="number"
+                    step="0.5"
+                    value={settings.trackerConfig.goal.goalWeight ?? ""}
+                    onChange={(e) =>
+                      setSettings((s) => ({
+                        ...s,
+                        trackerConfig: {
+                          ...s.trackerConfig,
+                          goal: {
+                            ...s.trackerConfig.goal,
+                            goalWeight: e.target.value
+                              ? Number(e.target.value)
+                              : null,
                           },
-                        }))
-                      }
-                      className="mt-1 w-24 rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                    />
-                  </div>
-                )}
+                        },
+                      }))
+                    }
+                    placeholder="170"
+                    className="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 dark:text-gray-400">
+                    Goal Body Fat (%)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    value={settings.trackerConfig.goal.goalBodyFat ?? ""}
+                    onChange={(e) =>
+                      setSettings((s) => ({
+                        ...s,
+                        trackerConfig: {
+                          ...s.trackerConfig,
+                          goal: {
+                            ...s.trackerConfig.goal,
+                            goalBodyFat: e.target.value
+                              ? Number(e.target.value)
+                              : null,
+                          },
+                        },
+                      }))
+                    }
+                    placeholder="15"
+                    className="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                  />
+                </div>
               </div>
             </div>
           </div>

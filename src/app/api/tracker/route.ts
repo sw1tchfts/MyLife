@@ -52,8 +52,8 @@ export async function GET(request: NextRequest) {
     const trackerConfig = (settings?.trackerConfig as Record<string, unknown>) || {};
     const profile = (trackerConfig.profile || {}) as TrackerProfile;
     const goal = (trackerConfig.goal || {
-      type: "maintenance",
-      weeklyRateLbs: 0,
+      goalWeight: null,
+      goalBodyFat: null,
     }) as TrackerGoal;
     const units = (trackerConfig.units || { weight: "lbs" }) as {
       weight: "lbs" | "kg";

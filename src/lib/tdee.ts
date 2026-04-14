@@ -22,12 +22,11 @@ export interface TrackerProfile {
   heightUnit: "in" | "cm";
   age: number | null;
   sex: "male" | "female" | null;
-  activityLevel: "sedentary" | "light" | "moderate" | "active" | "very_active";
 }
 
 export interface TrackerGoal {
-  type: "maintenance" | "cut" | "bulk";
-  weeklyRateLbs: number;
+  goalWeight: number | null; // in user's weight unit
+  goalBodyFat: number | null; // percentage
 }
 
 export interface TDEEResult {
@@ -52,13 +51,12 @@ export interface WeekSummary {
 
 // ── Constants ────────────────────────────────────────────
 
-const ACTIVITY_MULTIPLIERS: Record<string, number> = {
-  sedentary: 1.2,
-  light: 1.375,
-  moderate: 1.55,
-  active: 1.725,
-  very_active: 1.9,
-};
+/**
+ * Default activity multiplier for seed TDEE.
+ * Uses moderate (1.55) since the adaptive algorithm will converge
+ * to the real value within 3-4 weeks regardless of the starting point.
+ */
+const DEFAULT_ACTIVITY_MULTIPLIER = 1.55;
 
 /** Calories per pound of body weight change. */
 const CAL_PER_LB_FAT = 3500;
@@ -99,8 +97,7 @@ export function calculateSeedTDEE(
     // Fallback: weight × 13 (nSuns heuristic)
     return Math.round(weightLbs * 13);
   }
-  const multiplier = ACTIVITY_MULTIPLIERS[profile.activityLevel] || 1.55;
-  return Math.round(bmr * multiplier);
+  return Math.round(bmr * DEFAULT_ACTIVITY_MULTIPLIER);
 }
 
 // ── EMA weight smoothing ─────────────────────────────────
@@ -221,7 +218,7 @@ export function calculateAdaptiveTDEE(
     : 2200; // absolute fallback
 
   if (weeks.length === 0) {
-    const target = goalCalorieTarget(seedTDEE, goal, weightUnit);
+    const target = goalCalorieTarget(seedTDEE, goal, firstWeight ?? null, weightUnit);
     return {
       estimatedTDEE: seedTDEE,
       trendWeight: firstWeight
@@ -332,7 +329,7 @@ export function calculateAdaptiveTDEE(
   else if (weeksOfData < 4) confidence = "medium";
   else confidence = "high";
 
-  const target = goalCalorieTarget(blendedTDEE, goal, weightUnit);
+  const target = goalCalorieTarget(blendedTDEE, goal, lastSmoothed, weightUnit);
 
   return {
     estimatedTDEE: blendedTDEE,
@@ -352,25 +349,47 @@ export function calculateAdaptiveTDEE(
 
 // ── Goal-based calorie target ────────────────────────────
 
+/**
+ * Derive a calorie target from TDEE + goal weight.
+ *
+ * Logic: compare current trend weight to goal weight to determine direction
+ * and a safe weekly rate. The further away you are, the more aggressive the
+ * rate (capped at 1 lb/week for cuts, 0.5 lb/week for bulks).
+ *
+ * If no goal weight is set, returns TDEE (maintenance).
+ */
 function goalCalorieTarget(
   tdee: number,
   goal: TrackerGoal,
+  currentWeightLbs: number | null,
   weightUnit: "lbs" | "kg",
 ): number {
-  if (goal.type === "maintenance") return tdee;
+  if (!goal.goalWeight || !currentWeightLbs) return tdee;
 
-  // Convert weekly rate to lbs if needed
-  const rateLbs =
-    weightUnit === "kg"
-      ? goal.weeklyRateLbs * 2.20462
-      : goal.weeklyRateLbs;
+  // Convert goal weight to lbs for internal math
+  const goalLbs =
+    weightUnit === "kg" ? goal.goalWeight * 2.20462 : goal.goalWeight;
 
-  const dailyAdjustment = (rateLbs * CAL_PER_LB_MIXED) / 7;
+  const diff = currentWeightLbs - goalLbs; // positive = need to lose
 
-  if (goal.type === "cut") {
+  // Within 2 lbs of goal — maintain
+  if (Math.abs(diff) < 2) return tdee;
+
+  // Derive a weekly rate: scale with distance, cap at safe limits
+  let weeklyRateLbs: number;
+  if (diff > 0) {
+    // Cutting: 0.5-1 lb/week depending on distance
+    weeklyRateLbs = Math.min(1.0, Math.max(0.5, diff / 20));
+  } else {
+    // Bulking: 0.25-0.5 lb/week (more conservative)
+    weeklyRateLbs = Math.min(0.5, Math.max(0.25, Math.abs(diff) / 30));
+  }
+
+  const dailyAdjustment = (weeklyRateLbs * CAL_PER_LB_MIXED) / 7;
+
+  if (diff > 0) {
     return Math.round((tdee - dailyAdjustment) / 5) * 5;
   }
-  // bulk
   return Math.round((tdee + dailyAdjustment) / 5) * 5;
 }
 

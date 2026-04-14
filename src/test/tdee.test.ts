@@ -15,12 +15,11 @@ const PROFILE: TrackerProfile = {
   heightUnit: "in",
   age: 30,
   sex: "male",
-  activityLevel: "moderate",
 };
 
-const MAINTENANCE_GOAL: TrackerGoal = {
-  type: "maintenance",
-  weeklyRateLbs: 0,
+const NO_GOAL: TrackerGoal = {
+  goalWeight: null,
+  goalBodyFat: null,
 };
 
 describe("calculateBMR", () => {
@@ -92,7 +91,7 @@ describe("smoothWeights", () => {
 
 describe("calculateAdaptiveTDEE", () => {
   it("returns seed TDEE with no data", () => {
-    const result = calculateAdaptiveTDEE([], PROFILE, MAINTENANCE_GOAL, "lbs");
+    const result = calculateAdaptiveTDEE([], PROFILE, NO_GOAL, "lbs");
     // No weight data, falls back to 2200 absolute fallback
     expect(result.estimatedTDEE).toBe(2200);
     expect(result.confidence).toBe("low");
@@ -117,7 +116,7 @@ describe("calculateAdaptiveTDEE", () => {
     const result = calculateAdaptiveTDEE(
       entries,
       PROFILE,
-      MAINTENANCE_GOAL,
+      NO_GOAL,
       "lbs",
     );
 
@@ -146,7 +145,7 @@ describe("calculateAdaptiveTDEE", () => {
     const result = calculateAdaptiveTDEE(
       entries,
       PROFILE,
-      MAINTENANCE_GOAL,
+      NO_GOAL,
       "lbs",
     );
 
@@ -156,7 +155,7 @@ describe("calculateAdaptiveTDEE", () => {
   });
 
   it("applies goal-based calorie target for cutting", () => {
-    const cutGoal: TrackerGoal = { type: "cut", weeklyRateLbs: 1 };
+    const cutGoal: TrackerGoal = { goalWeight: 170, goalBodyFat: 15 };
     const entries: DailyEntry[] = [
       { date: "2024-01-01", weight: 180, caloriesIn: 2500 },
     ];
@@ -168,7 +167,7 @@ describe("calculateAdaptiveTDEE", () => {
       "lbs",
     );
 
-    // Target should be TDEE - (1 * 3200/7) ≈ TDEE - 457
+    // Goal is 170 lbs, current is 180 — should recommend a deficit
     expect(result.calorieTarget).toBeLessThan(result.estimatedTDEE);
   });
 
@@ -178,7 +177,6 @@ describe("calculateAdaptiveTDEE", () => {
       heightUnit: "cm",
       age: 30,
       sex: "male",
-      activityLevel: "moderate",
     };
     const entries: DailyEntry[] = [
       { date: "2024-01-01", weight: 82, caloriesIn: 2500 },
@@ -187,7 +185,7 @@ describe("calculateAdaptiveTDEE", () => {
     const result = calculateAdaptiveTDEE(
       entries,
       kgProfile,
-      MAINTENANCE_GOAL,
+      NO_GOAL,
       "kg",
     );
 
