@@ -164,7 +164,7 @@ export default function JournalPage() {
 
       {/* Inline form */}
       {showForm && (
-        <div className="mb-6 rounded-lg border border-accent bg-accent-soft p-4">
+        <div className="mb-6 rounded-xl border border-accent bg-accent-soft p-4">
           <h3 className="mb-3 text-sm font-semibold text-heading">
             {editId ? "Edit Entry" : "New Entry"}
           </h3>
@@ -308,7 +308,7 @@ export default function JournalPage() {
                   return (
                     <div
                       key={entry.id}
-                      className="rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-sm"
+                      className="rounded-xl border border-border bg-card p-4 transition-shadow hover:shadow-sm"
                     >
                       <div className="flex items-start justify-between">
                         <div

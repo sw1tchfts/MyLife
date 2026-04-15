@@ -32,7 +32,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
   return (
     <>
       {/* Mobile top bar */}
-      <div className="fixed top-0 right-0 left-0 z-40 flex h-14 items-center justify-between border-b border-border bg-surface px-4 lg:hidden">
+      <div className="fixed top-0 right-0 left-0 z-40 flex h-14 items-center justify-between border-b border-border bg-surface/80 px-4 backdrop-blur-xl lg:hidden">
         <Link href="/" className="text-lg font-bold text-heading">
           MyLife
         </Link>
@@ -82,7 +82,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 flex h-screen w-60 shrink-0 flex-col border-r border-border bg-surface transition-transform lg:static lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed top-0 left-0 z-50 flex h-screen w-60 shrink-0 flex-col border-r border-border bg-surface/80 backdrop-blur-xl transition-transform lg:static lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* App name */}
         <div className="flex h-14 items-center px-4">

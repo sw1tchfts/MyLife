@@ -200,7 +200,7 @@ export default function DietRoutineTab() {
       </div>
 
       {showAdd && (
-        <div className="mt-4 rounded-lg border border-accent bg-accent-soft p-4">
+        <div className="mt-4 rounded-xl border border-accent bg-accent-soft p-4">
           <h3 className="mb-3 text-sm font-semibold text-heading">
             Add Meal to Plan
           </h3>
@@ -356,7 +356,7 @@ export default function DietRoutineTab() {
             return (
               <div
                 key={i}
-                className="flex items-start justify-between rounded-lg border border-border bg-card p-3"
+                className="flex items-start justify-between rounded-xl border border-border bg-card p-3"
               >
                 <div>
                   <div className="flex items-center gap-2">

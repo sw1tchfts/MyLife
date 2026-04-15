@@ -116,7 +116,7 @@ function ToastItem({
   }, [toast.duration, onDismiss]);
 
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-elevated px-4 py-3 text-sm text-white shadow-lg">
+    <div className="flex items-center gap-3 rounded-xl bg-elevated px-4 py-3 text-sm text-white shadow-lg">
       <span>{toast.message}</span>
       {toast.onUndo && (
         <button

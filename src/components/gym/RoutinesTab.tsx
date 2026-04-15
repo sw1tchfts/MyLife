@@ -293,7 +293,7 @@ export default function RoutinesTab() {
 
       {/* Create form */}
       {showCreate && (
-        <div className="rounded-lg border border-accent bg-accent-soft p-4">
+        <div className="rounded-xl border border-accent bg-accent-soft p-4">
           <h3 className="mb-3 text-sm font-semibold text-heading">
             New Workout Routine
           </h3>

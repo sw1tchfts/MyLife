@@ -217,7 +217,7 @@ function MedicationsTab() {
             {meds.map((m) => (
               <div
                 key={m.id}
-                className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
+                className="flex items-center justify-between rounded-xl border border-border bg-card p-3"
               >
                 <div>
                   <p className="text-sm font-medium text-heading">{m.name}</p>
@@ -388,7 +388,7 @@ function ScheduleTab() {
 
       {/* Create form */}
       {showForm && (
-        <div className="mt-4 rounded-lg border border-accent bg-accent-soft p-4">
+        <div className="mt-4 rounded-xl border border-accent bg-accent-soft p-4">
           <h3 className="mb-3 text-sm font-semibold text-heading">
             New Medication Schedule
           </h3>
@@ -514,7 +514,7 @@ function ScheduleTab() {
           schedules.map((s) => (
             <div
               key={s.id}
-              className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
+              className="flex items-center justify-between rounded-xl border border-border bg-card p-3"
             >
               <div>
                 <p className="text-sm font-medium text-heading">{s.title}</p>

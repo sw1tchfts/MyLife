@@ -150,7 +150,7 @@ export default function TrackerForm({
 
   if (loading) {
     return (
-      <div className="animate-pulse rounded-lg border border-border bg-inset p-4">
+      <div className="animate-pulse rounded-xl border border-border bg-inset p-4">
         <div className="h-4 w-32 rounded bg-elevated" />
         <div className="mt-3 h-8 w-full rounded bg-elevated" />
       </div>
@@ -164,7 +164,7 @@ export default function TrackerForm({
   const conf = tdee ? CONFIDENCE_LABELS[tdee.confidence] : null;
 
   return (
-    <div className="rounded-lg border border-info-soft bg-info-soft/30 p-4">
+    <div className="rounded-xl border border-info-soft bg-info-soft/30 p-4">
       {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">

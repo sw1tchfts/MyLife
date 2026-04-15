@@ -217,7 +217,7 @@ export default function RecurringConfig() {
 
       {/* Inline create form */}
       {showCreate && (
-        <div className="mt-4 rounded-lg border border-accent bg-accent-soft/30 p-4">
+        <div className="mt-4 rounded-xl border border-accent bg-accent-soft/30 p-4">
           <h3 className="text-sm font-semibold text-heading">
             New Recurring Task
           </h3>
@@ -382,7 +382,7 @@ export default function RecurringConfig() {
             return (
               <div
                 key={task.id}
-                className={`rounded-lg border bg-card p-4 ${
+                className={`rounded-xl border bg-card p-4 ${
                   isEditing ? "border-accent" : "border-border"
                 }`}
               >

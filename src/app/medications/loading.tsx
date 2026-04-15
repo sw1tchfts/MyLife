@@ -10,7 +10,7 @@ export default function Loading() {
       <div className="h-10 w-full rounded-md bg-elevated" />
       <div className="space-y-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-20 rounded-lg bg-elevated" />
+          <div key={i} className="h-20 rounded-xl bg-elevated" />
         ))}
       </div>
     </div>

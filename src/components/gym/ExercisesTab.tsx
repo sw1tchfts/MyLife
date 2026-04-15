@@ -189,7 +189,7 @@ export default function ExercisesTab() {
           {exercises.map((ex) => (
             <div
               key={ex.id}
-              className="rounded-lg border border-border bg-card p-3"
+              className="rounded-xl border border-border bg-card p-3"
             >
               <div className="flex items-start justify-between">
                 <p className="text-sm font-medium text-heading">{ex.name}</p>

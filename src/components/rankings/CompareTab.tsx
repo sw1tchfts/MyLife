@@ -108,7 +108,7 @@ export default function CompareTab({
         {/* Left item */}
         <button
           onClick={() => submitChoice("LEFT")}
-          className="group rounded-lg border-2 border-border bg-card p-6 text-left transition-all hover:border-accent hover:shadow-lg"
+          className="group rounded-xl border-2 border-border bg-card p-6 text-left transition-all hover:border-accent hover:shadow-lg"
         >
           <h3 className="text-lg font-bold text-heading group-hover:text-accent-text">
             {left.title}
@@ -141,7 +141,7 @@ export default function CompareTab({
         {/* Right item */}
         <button
           onClick={() => submitChoice("RIGHT")}
-          className="group rounded-lg border-2 border-border bg-card p-6 text-left transition-all hover:border-accent hover:shadow-lg"
+          className="group rounded-xl border-2 border-border bg-card p-6 text-left transition-all hover:border-accent hover:shadow-lg"
         >
           <h3 className="text-lg font-bold text-heading group-hover:text-accent-text">
             {right.title}

@@ -249,7 +249,7 @@ export const SwimLaneNode = memo(function SwimLaneNode({ data }: NodeProps) {
   const color = (d.color as string) || "#3B82F6";
   return (
     <div
-      className="min-h-[300px] min-w-[250px] rounded-lg border-2 border-dashed p-3 opacity-60"
+      className="min-h-[300px] min-w-[250px] rounded-xl border-2 border-dashed p-3 opacity-60"
       style={{ borderColor: color }}
     >
       <div

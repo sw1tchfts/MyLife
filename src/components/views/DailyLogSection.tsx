@@ -172,7 +172,7 @@ export default function DailyLogSection() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Weight Trend Chart */}
-        <div className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <h2 className="text-sm font-semibold text-heading">Weight Trend</h2>
           <p className="text-xs text-muted">Last 30 days</p>
           {weightEntries.length < 2 ? (
@@ -233,7 +233,7 @@ export default function DailyLogSection() {
         </div>
 
         {/* Calorie Intake vs TDEE */}
-        <div className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <h2 className="text-sm font-semibold text-heading">
             Calories vs Daily Burn
           </h2>
@@ -294,7 +294,7 @@ export default function DailyLogSection() {
         </div>
 
         {/* Today's Nutrition Summary */}
-        <div className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <h2 className="text-sm font-semibold text-heading">
             Today&apos;s Nutrition
           </h2>
@@ -348,7 +348,7 @@ export default function DailyLogSection() {
         </div>
 
         {/* Today's Medications */}
-        <div className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <h2 className="text-sm font-semibold text-heading">
             Today&apos;s Medications
           </h2>
@@ -387,7 +387,7 @@ export default function DailyLogSection() {
         </div>
 
         {/* Logging Status */}
-        <div className="rounded-lg border border-border bg-card p-4 lg:col-span-2">
+        <div className="rounded-xl border border-border bg-card p-4 lg:col-span-2">
           <h2 className="text-sm font-semibold text-heading">
             Tracking Status
           </h2>

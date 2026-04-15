@@ -5,7 +5,7 @@ export default function Loading() {
         <div className="h-7 w-32 rounded bg-elevated" />
         <div className="h-9 w-32 rounded-md bg-elevated" />
       </div>
-      <div className="h-[500px] rounded-lg bg-elevated" />
+      <div className="h-[500px] rounded-xl bg-elevated" />
     </div>
   );
 }

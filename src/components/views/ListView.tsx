@@ -346,7 +346,7 @@ function TaskTable({
             <div
               key={task.id}
               onClick={() => onTaskClick?.(task.id)}
-              className={`cursor-pointer rounded-lg border border-border bg-card p-3 transition-shadow active:bg-elevated ${isSelected ? "ring-2 ring-accent" : ""}`}
+              className={`cursor-pointer rounded-xl border border-border bg-card p-3 transition-shadow active:bg-elevated ${isSelected ? "ring-2 ring-accent" : ""}`}
             >
               {/* Top row: checkbox + title + delete */}
               <div className="flex items-start gap-3">

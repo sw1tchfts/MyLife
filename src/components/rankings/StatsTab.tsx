@@ -35,19 +35,19 @@ export default function StatsTab({
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <p className="text-2xl font-bold text-heading">{totalItems}</p>
           <p className="text-xs text-faint">Items</p>
         </div>
-        <div className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <p className="text-2xl font-bold text-heading">{totalComparisons}</p>
           <p className="text-xs text-faint">Comparisons</p>
         </div>
-        <div className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <p className="text-2xl font-bold text-heading">{maxPossiblePairs}</p>
           <p className="text-xs text-faint">Possible Pairs</p>
         </div>
-        <div className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <p className="text-2xl font-bold text-heading">{avgComparisons}</p>
           <p className="text-xs text-faint">Avg per Item</p>
         </div>

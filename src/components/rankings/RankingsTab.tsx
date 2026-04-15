@@ -65,7 +65,7 @@ export default function RankingsTab({
         return (
           <div
             key={item.id}
-            className="flex items-center gap-3 rounded-lg border border-border bg-card p-3"
+            className="flex items-center gap-3 rounded-xl border border-border bg-card p-3"
           >
             <span className="w-8 text-center text-lg font-bold text-faint">
               {i + 1}

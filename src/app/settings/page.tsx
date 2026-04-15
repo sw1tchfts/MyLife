@@ -245,7 +245,7 @@ export default function SettingsPage() {
         </label>
 
         {settings.trackerEnabled && (
-          <div className="mt-4 space-y-6 rounded-lg border border-border bg-card/50 p-4">
+          <div className="mt-4 space-y-6 rounded-xl border border-border bg-card/50 p-4">
             {/* Metrics to track */}
             <div>
               <h3 className="text-sm font-medium text-heading">
