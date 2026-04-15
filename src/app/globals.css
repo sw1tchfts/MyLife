@@ -59,3 +59,24 @@
   --color-amber-soft: rgba(255, 159, 10, 0.15);
   --color-amber-text: #ff9f0a;
 }
+
+/* ── Global interaction defaults ───────────────────── */
+
+@layer base {
+  /* Apple-style smooth transitions on interactive elements */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    transition-property:
+      color, background-color, border-color, opacity, box-shadow;
+    transition-duration: 200ms;
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  /* Smoother skeleton pulse */
+  .animate-pulse {
+    animation-duration: 1.8s;
+  }
+}

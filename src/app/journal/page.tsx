@@ -308,7 +308,7 @@ export default function JournalPage() {
                   return (
                     <div
                       key={entry.id}
-                      className="rounded-xl border border-border bg-card p-4 transition-shadow hover:shadow-sm"
+                      className="rounded-xl border border-border bg-card p-4 transition-colors hover:bg-elevated/40"
                     >
                       <div className="flex items-start justify-between">
                         <div
