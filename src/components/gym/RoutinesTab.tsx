@@ -292,13 +292,13 @@ export default function RoutinesTab() {
 
       {/* Create form */}
       {showCreate && (
-        <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
-          <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
+        <div className="rounded-lg border border-accent bg-accent-soft p-4">
+          <h3 className="mb-3 text-sm font-semibold text-heading">
             New Workout Routine
           </h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className={labelSm}>
                 Name
               </label>
               <input
@@ -306,11 +306,11 @@ export default function RoutinesTab() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Push Pull Legs"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={`mt-1 ${inputSm}`}
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className={labelSm}>
                 Description
               </label>
               <input
@@ -318,17 +318,17 @@ export default function RoutinesTab() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Optional description"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={`mt-1 ${inputSm}`}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className={labelSm}>
                 Goal
               </label>
               <select
                 value={goal}
                 onChange={(e) => setGoal(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className="mt-1 w-full rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
               >
                 <option value="hypertrophy">Hypertrophy</option>
                 <option value="strength">Strength</option>
@@ -337,13 +337,13 @@ export default function RoutinesTab() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className={labelSm}>
                 Level
               </label>
               <select
                 value={level}
                 onChange={(e) => setLevel(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className="mt-1 w-full rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
               >
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
@@ -354,29 +354,29 @@ export default function RoutinesTab() {
 
           {/* Days builder */}
           <div className="mt-4">
-            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+            <label className={labelSm}>
               Workout Days ({days.length})
             </label>
             <div className="mt-2 space-y-3">
               {days.map((day, dayIdx) => (
                 <div
                   key={dayIdx}
-                  className="rounded-md border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800"
+                  className="rounded-md border border-border bg-card p-3"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <span className="text-sm font-medium text-heading">
                       {day.name}
                     </span>
                     <button
                       onClick={() => removeDay(dayIdx)}
-                      className="text-xs text-gray-400 hover:text-red-500"
+                      className="text-xs text-faint hover:text-danger-text"
                     >
                       Remove
                     </button>
                   </div>
                   {/* Weekday selector */}
                   <div className="mt-1.5 flex items-center gap-1.5">
-                    <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                    <span className="text-[10px] text-faint">
                       Day:
                     </span>
                     {WEEKDAYS_GYM.map((wd) => (
@@ -398,8 +398,8 @@ export default function RoutinesTab() {
                         }
                         className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${
                           day.scheduledDay === wd
-                            ? "border-blue-600 bg-blue-600 text-white"
-                            : "border-gray-300 text-gray-500 hover:border-gray-400 dark:border-gray-600 dark:text-gray-400"
+                            ? "border-accent bg-accent text-white"
+                            : `${pillInactive}`
                         }`}
                       >
                         {WEEKDAY_LABELS_GYM[wd]}
@@ -416,9 +416,9 @@ export default function RoutinesTab() {
                         return (
                           <div
                             key={exIdx}
-                            className="flex items-center gap-2 rounded bg-gray-50 px-2 py-1 text-xs dark:bg-gray-700"
+                            className="flex items-center gap-2 rounded bg-elevated px-2 py-1 text-xs"
                           >
-                            <span className="flex-1 text-gray-700 dark:text-gray-300">
+                            <span className="flex-1 text-body">
                               {exerciseInfo?.name || "Unknown"}
                             </span>
                             <input
@@ -434,10 +434,10 @@ export default function RoutinesTab() {
                                   Number(e.target.value),
                                 )
                               }
-                              className="w-12 rounded border border-gray-300 px-1 py-0.5 text-center text-xs dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                              className="w-12 rounded border border-input-border bg-card px-1 py-0.5 text-center text-xs text-heading"
                               title="Sets"
                             />
-                            <span className="text-gray-400">×</span>
+                            <span className="text-faint">x</span>
                             <input
                               type="number"
                               min="1"
@@ -451,10 +451,10 @@ export default function RoutinesTab() {
                                   Number(e.target.value),
                                 )
                               }
-                              className="w-12 rounded border border-gray-300 px-1 py-0.5 text-center text-xs dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                              className="w-12 rounded border border-input-border bg-card px-1 py-0.5 text-center text-xs text-heading"
                               title="Min reps"
                             />
-                            <span className="text-gray-400">-</span>
+                            <span className="text-faint">-</span>
                             <input
                               type="number"
                               min="1"
@@ -468,14 +468,14 @@ export default function RoutinesTab() {
                                   Number(e.target.value),
                                 )
                               }
-                              className="w-12 rounded border border-gray-300 px-1 py-0.5 text-center text-xs dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                              className="w-12 rounded border border-input-border bg-card px-1 py-0.5 text-center text-xs text-heading"
                               title="Max reps"
                             />
                             <button
                               onClick={() =>
                                 removeExerciseFromDay(dayIdx, exIdx)
                               }
-                              className="text-gray-400 hover:text-red-500"
+                              className="text-faint hover:text-danger-text"
                             >
                               &times;
                             </button>
@@ -493,7 +493,7 @@ export default function RoutinesTab() {
                           e.target.value = "";
                         }
                       }}
-                      className="w-full rounded-md border border-gray-300 px-2 py-1 text-xs dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                      className="w-full rounded-md border border-input-border bg-card px-2 py-1 text-xs text-heading"
                       defaultValue=""
                     >
                       <option value="">+ Add exercise...</option>
@@ -515,12 +515,12 @@ export default function RoutinesTab() {
                 onChange={(e) => setNewDayName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addDay()}
                 placeholder="Day name (e.g. Push Day)"
-                className="flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={`flex-1 ${inputSm}`}
               />
               <button
                 onClick={addDay}
                 disabled={!newDayName.trim()}
-                className="rounded-md bg-gray-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-gray-700 disabled:opacity-50 dark:bg-gray-600"
+                className="rounded-md bg-elevated px-3 py-1.5 text-xs font-medium text-heading hover:bg-card disabled:opacity-50"
               >
                 Add Day
               </button>
@@ -534,14 +534,14 @@ export default function RoutinesTab() {
                 setDays([]);
                 setName("");
               }}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300"
+              className={btnSecondary}
             >
               Cancel
             </button>
             <button
               onClick={handleCreateRoutine}
               disabled={saving || !name.trim() || days.length === 0}
-              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className={btnPrimary}
             >
               {saving ? "Creating..." : "Create Routine"}
             </button>
@@ -550,9 +550,9 @@ export default function RoutinesTab() {
       )}
 
       {routines.length === 0 && !showCreate ? (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-          <p className="text-gray-500 dark:text-gray-400">No routines yet</p>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+        <div className={emptyState}>
+          <p className="text-muted">No routines yet</p>
+          <p className="mt-1 text-sm text-faint">
             Create a workout routine to get started
           </p>
         </div>
@@ -560,19 +560,19 @@ export default function RoutinesTab() {
         routines.map((routine) => (
           <div
             key={routine.id}
-            className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+            className={`${panel} p-4`}
           >
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                <h3 className="text-sm font-semibold text-heading">
                   {routine.name}
                 </h3>
                 {routine.description && (
-                  <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">
+                  <p className="mt-0.5 text-xs text-faint">
                     {routine.description}
                   </p>
                 )}
-                <div className="mt-1 flex gap-2 text-xs text-gray-400 dark:text-gray-500">
+                <div className="mt-1 flex gap-2 text-xs text-faint">
                   <span className="capitalize">{routine.goal}</span>
                   <span>·</span>
                   <span className="capitalize">{routine.level}</span>
@@ -583,13 +583,13 @@ export default function RoutinesTab() {
               <div className="flex gap-1">
                 <button
                   onClick={() => startActivation(routine)}
-                  className="rounded-md bg-green-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-700"
+                  className="rounded-md bg-success px-2.5 py-1 text-xs font-medium text-white hover:bg-green-700"
                 >
                   Activate
                 </button>
                 <button
                   onClick={() => deleteRoutine(routine.id)}
-                  className="rounded p-1 text-gray-300 hover:text-red-500 dark:text-gray-600"
+                  className={deleteBtn}
                 >
                   <svg
                     className="h-4 w-4"

@@ -106,7 +106,7 @@ function AllHandles() {
 export const ProcessNode = memo(function ProcessNode({ data }: NodeProps) {
   const d = data as { label?: string; onLabelChange?: (v: string) => void };
   return (
-    <div className="min-w-[120px] rounded-md border-2 border-blue-500 bg-white px-4 py-3 text-center text-sm shadow-sm dark:border-blue-400 dark:bg-gray-800 dark:text-gray-100">
+    <div className="min-w-[120px] rounded-md border-2 border-blue-500 bg-card px-4 py-3 text-center text-sm text-heading shadow-sm">
       <AllHandles />
       <EditableText
         value={(d.label as string) ?? ""}
@@ -122,9 +122,9 @@ export const ProcessNode = memo(function ProcessNode({ data }: NodeProps) {
 export const DecisionNode = memo(function DecisionNode({ data }: NodeProps) {
   const d = data as { label?: string; onLabelChange?: (v: string) => void };
   return (
-    <div className="flex h-[80px] w-[120px] rotate-45 items-center justify-center border-2 border-amber-500 bg-white shadow-sm dark:border-amber-400 dark:bg-gray-800">
+    <div className="flex h-[80px] w-[120px] rotate-45 items-center justify-center border-2 border-amber-500 bg-card shadow-sm">
       <AllHandles />
-      <div className="-rotate-45 px-1 text-center text-xs dark:text-gray-100">
+      <div className="-rotate-45 px-1 text-center text-xs text-heading">
         <EditableText
           value={(d.label as string) ?? ""}
           onChange={(v) => d.onLabelChange?.(v)}
@@ -140,7 +140,7 @@ export const DecisionNode = memo(function DecisionNode({ data }: NodeProps) {
 export const TerminalNode = memo(function TerminalNode({ data }: NodeProps) {
   const d = data as { label?: string; onLabelChange?: (v: string) => void };
   return (
-    <div className="min-w-[100px] rounded-full border-2 border-green-500 bg-white px-5 py-2 text-center text-sm shadow-sm dark:border-green-400 dark:bg-gray-800 dark:text-gray-100">
+    <div className="min-w-[100px] rounded-full border-2 border-green-500 bg-card px-5 py-2 text-center text-sm text-heading shadow-sm">
       <AllHandles />
       <EditableText
         value={(d.label as string) ?? ""}

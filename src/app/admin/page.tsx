@@ -276,10 +276,10 @@ export default function AdminPage() {
 
       {/* Data Export */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h2 className={sectionTitle}>
           Data Export
         </h2>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-1 text-sm text-muted">
           Download your data as CSV or JSON files.
         </p>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -304,11 +304,11 @@ export default function AdminPage() {
           ).map((item) => (
             <div
               key={item.type}
-              className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+              className="rounded-lg border border-border bg-card p-4"
             >
               <div className="flex items-center gap-2">
                 <svg
-                  className="h-5 w-5 text-gray-400"
+                  className="h-5 w-5 text-muted"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -320,7 +320,7 @@ export default function AdminPage() {
                     d={item.icon}
                   />
                 </svg>
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <span className="text-sm font-medium text-heading">
                   {item.label}
                 </span>
               </div>
@@ -328,14 +328,14 @@ export default function AdminPage() {
                 <a
                   href={`/api/export?type=${item.type}&format=csv`}
                   download
-                  className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                  className="rounded-md border border-input-border px-3 py-1.5 text-xs font-medium text-body hover:bg-elevated"
                 >
                   CSV
                 </a>
                 <a
                   href={`/api/export?type=${item.type}&format=json`}
                   download
-                  className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                  className="rounded-md border border-input-border px-3 py-1.5 text-xs font-medium text-body hover:bg-elevated"
                 >
                   JSON
                 </a>
