@@ -7,6 +7,7 @@ import {
   inputSm,
   btnPrimary,
   btnSecondary,
+  btnSuccessXs,
   emptyState,
   deleteBtn,
   labelSm,
@@ -568,7 +569,7 @@ export default function RoutinesTab() {
               <div className="flex gap-1">
                 <button
                   onClick={() => startActivation(routine)}
-                  className="rounded-md bg-success px-2.5 py-1 text-xs font-medium text-white hover:bg-green-700"
+                  className={btnSuccessXs}
                 >
                   Activate
                 </button>
@@ -647,7 +648,7 @@ export default function RoutinesTab() {
                   <button
                     onClick={() => handleActivate(routine)}
                     disabled={saving}
-                    className="rounded-md bg-success px-2.5 py-1 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                    className={btnSuccessXs}
                   >
                     {saving ? "Creating tasks..." : "Create Recurring Tasks"}
                   </button>

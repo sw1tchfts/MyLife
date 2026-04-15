@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { badge, inputSm } from "@/lib/styles";
+import { badge, inputSm, btnInfo } from "@/lib/styles";
 
 interface TrackerConfig {
   metrics: {
@@ -345,11 +345,7 @@ export default function TrackerForm({
             )}
           </div>
           <div className="mt-3 flex justify-end">
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="rounded-md bg-info px-4 py-1.5 text-sm font-medium text-white hover:bg-teal-700 disabled:opacity-50"
-            >
+            <button onClick={handleSave} disabled={saving} className={btnInfo}>
               {saving ? "Saving..." : "Log & Complete"}
             </button>
           </div>

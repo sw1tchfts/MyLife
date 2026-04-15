@@ -11,6 +11,9 @@ import {
   btnPrimary,
   emptyState,
   deleteBtn,
+  tabButton,
+  tabButtonActive,
+  tabButtonInactive,
 } from "@/lib/styles";
 
 const ItemsTab = dynamic(() => import("@/components/rankings/ItemsTab"));
@@ -179,20 +182,18 @@ function RankingsContent() {
             </select>
 
             {listId && (
-              <div className="flex gap-1">
-                {TABS.map((t) => (
-                  <button
-                    key={t.key}
-                    onClick={() => navigate(t.key)}
-                    className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                      tab === t.key
-                        ? "bg-accent text-white"
-                        : "text-muted hover:bg-elevated"
-                    }`}
-                  >
-                    {t.label}
-                  </button>
-                ))}
+              <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+                <div className="flex gap-1">
+                  {TABS.map((t) => (
+                    <button
+                      key={t.key}
+                      onClick={() => navigate(t.key)}
+                      className={`${tabButton} ${tab === t.key ? tabButtonActive : tabButtonInactive}`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>

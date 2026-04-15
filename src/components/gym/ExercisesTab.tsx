@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { panel, inputSm, btnPrimary, emptyState, badgeSm } from "@/lib/styles";
+import {
+  panel,
+  inputSm,
+  btnPrimary,
+  btnSuccess,
+  emptyState,
+  badgeSm,
+} from "@/lib/styles";
 
 /* ── Types ─────────────────────────────────────────── */
 
@@ -162,10 +169,7 @@ export default function ExercisesTab() {
                 </option>
               ))}
             </select>
-            <button
-              onClick={addExercise}
-              className="rounded-md bg-success px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
-            >
+            <button onClick={addExercise} className={btnSuccess}>
               Save
             </button>
           </div>

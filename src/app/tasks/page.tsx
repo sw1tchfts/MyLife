@@ -9,12 +9,18 @@ import type { Status, Priority } from "@/generated/prisma/client";
 import ListView from "@/components/views/ListView";
 import TaskModal from "@/components/TaskModal";
 import {
+  pageTitle,
   sectionTitle,
   btnPrimary,
   btnSecondary,
   pillActive,
   pillInactive,
   emptyState,
+  tabWrapper,
+  tabWrapperScrollable,
+  tabButton,
+  tabButtonActive,
+  tabButtonInactive,
 } from "@/lib/styles";
 
 // Lazy-load tab components that aren't shown by default
@@ -166,7 +172,7 @@ function TasksContent() {
     <div>
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-heading">Tasks</h1>
+        <h1 className={pageTitle}>Tasks</h1>
         {tab === "tasks" && (
           <button
             onClick={() => setModalMode("create")}
@@ -178,17 +184,13 @@ function TasksContent() {
       </div>
 
       {/* Tabs */}
-      <div className="-mx-4 mb-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
-        <div className="flex gap-1 border-b border-border">
+      <div className={`mb-4 ${tabWrapperScrollable}`}>
+        <div className={tabWrapper}>
           {TABS.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`shrink-0 rounded-t-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
-                tab === t.key
-                  ? "bg-accent text-white"
-                  : "text-muted hover:bg-elevated"
-              }`}
+              className={`${tabButton} ${tab === t.key ? tabButtonActive : tabButtonInactive}`}
             >
               {t.label}
             </button>

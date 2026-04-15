@@ -233,7 +233,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
               <path
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                 fill="none"
-                className="stroke-green-500"
+                className="stroke-success"
                 strokeWidth="3"
                 strokeDasharray={`${overallPct}, 100`}
                 strokeLinecap="round"
@@ -277,7 +277,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
                 </div>
                 <div className="h-3 overflow-hidden rounded-full bg-elevated">
                   <div
-                    className="h-full rounded-full bg-green-500 transition-all"
+                    className="h-full rounded-full bg-success transition-all"
                     style={{ width: `${weekPct}%` }}
                   />
                 </div>
@@ -331,10 +331,10 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
                   return (
                     <div
                       key={i}
-                      className={`flex h-5 w-7 shrink-0 items-center justify-center ${isToday ? "rounded ring-1 ring-blue-400" : ""}`}
+                      className={`flex h-5 w-7 shrink-0 items-center justify-center ${isToday ? "rounded ring-1 ring-accent-text" : ""}`}
                     >
                       {done ? (
-                        <div className="h-4 w-4 rounded-sm bg-green-500" />
+                        <div className="h-4 w-4 rounded-sm bg-success" />
                       ) : (
                         <div className="h-4 w-4 rounded-sm border border-input-border" />
                       )}

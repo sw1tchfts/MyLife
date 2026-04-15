@@ -112,10 +112,10 @@ export default function DailyLogSection() {
   return (
     <div>
       {/* TDEE Hero Card */}
-      <div className="mt-6 rounded-xl border border-teal-800 bg-gradient-to-br from-teal-900/30 to-cyan-900/20 p-6">
+      <div className="mt-6 rounded-xl border border-info-soft bg-gradient-to-br from-info-soft/30 to-info-soft/20 p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-teal-400">
+            <p className="text-sm font-medium text-info-text">
               Estimated Daily Burn (TDEE)
             </p>
             <p className="mt-1 text-4xl font-bold text-heading">
@@ -192,7 +192,7 @@ export default function DailyLogSection() {
                     y1={110 - ((tdee.trendWeight - minW) / weightRange) * 100}
                     x2={weightEntries.length * 20}
                     y2={110 - ((tdee.trendWeight - minW) / weightRange) * 100}
-                    stroke="#14b8a6"
+                    style={{ stroke: "var(--color-info)" }}
                     strokeWidth="1"
                     strokeDasharray="4 2"
                     opacity="0.5"
@@ -201,7 +201,7 @@ export default function DailyLogSection() {
                 {/* Weight line */}
                 <polyline
                   fill="none"
-                  stroke="#0ea5e9"
+                  style={{ stroke: "var(--color-accent)" }}
                   strokeWidth="2"
                   points={weightEntries
                     .map(
@@ -217,7 +217,7 @@ export default function DailyLogSection() {
                     cx={i * 20 + 10}
                     cy={110 - ((e.weight! - minW) / weightRange) * 100}
                     r="3"
-                    fill="#0ea5e9"
+                    style={{ fill: "var(--color-accent)" }}
                   />
                 ))}
               </svg>
@@ -256,7 +256,7 @@ export default function DailyLogSection() {
                   y1={110 - (tdee.estimatedTDEE / maxCal) * 100}
                   x2={calorieEntries.length * 16}
                   y2={110 - (tdee.estimatedTDEE / maxCal) * 100}
-                  stroke="#14b8a6"
+                  style={{ stroke: "var(--color-info)" }}
                   strokeWidth="1.5"
                   strokeDasharray="4 2"
                 />
@@ -272,7 +272,11 @@ export default function DailyLogSection() {
                       width="12"
                       height={h}
                       rx="2"
-                      fill={over ? "#f87171" : "#60a5fa"}
+                      style={{
+                        fill: over
+                          ? "var(--color-danger)"
+                          : "var(--color-accent-text)",
+                      }}
                       opacity="0.7"
                     />
                   );
@@ -280,7 +284,7 @@ export default function DailyLogSection() {
               </svg>
               <div className="mt-1 flex justify-between text-[10px] text-faint">
                 <span>{calorieEntries[0]?.date}</span>
-                <span className="text-teal-400">
+                <span className="text-info-text">
                   — TDEE: {tdee.estimatedTDEE.toLocaleString()} cal
                 </span>
                 <span>{calorieEntries[calorieEntries.length - 1]?.date}</span>
@@ -311,8 +315,8 @@ export default function DailyLogSection() {
                   <div
                     className={`h-full rounded-full transition-all ${
                       todayNutrition.calories > tdee.calorieTarget
-                        ? "bg-red-500"
-                        : "bg-teal-500"
+                        ? "bg-danger"
+                        : "bg-info"
                     }`}
                     style={{
                       width: `${Math.min((todayNutrition.calories / tdee.calorieTarget) * 100, 100)}%`,
@@ -360,7 +364,7 @@ export default function DailyLogSection() {
                   className="flex items-center gap-2 text-sm text-body"
                 >
                   <svg
-                    className="h-4 w-4 text-green-500"
+                    className="h-4 w-4 text-success-text"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -421,7 +425,7 @@ export default function DailyLogSection() {
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-teal-900/30 text-xs font-bold text-teal-400">
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-info-soft/30 text-xs font-bold text-info-text">
                 {tdee.weeksOfData}
               </span>
               <span className="text-sm text-body">weeks of tracking data</span>

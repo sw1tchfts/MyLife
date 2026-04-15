@@ -121,7 +121,7 @@ function ToastItem({
       {toast.onUndo && (
         <button
           onClick={onUndo}
-          className="font-medium text-accent-text hover:text-blue-300"
+          className="font-medium text-accent-text hover:text-accent-text/70"
         >
           Undo
         </button>

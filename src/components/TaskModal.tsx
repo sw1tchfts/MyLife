@@ -6,7 +6,12 @@ import type { TaskFormData } from "./TaskForm";
 import TrackerForm from "./TrackerForm";
 import { MODAL_TITLES } from "@/lib/screens";
 import SubtaskList from "./SubtaskList";
-import { sectionTitle, inputSm, sectionDivider } from "@/lib/styles";
+import {
+  sectionTitle,
+  inputSm,
+  sectionDivider,
+  btnSuccessSm,
+} from "@/lib/styles";
 import type {
   SubtaskData,
   TaskFoodData,
@@ -340,7 +345,7 @@ function TaskFoodManager({
         <button
           onClick={addFood}
           disabled={!selectedFoodId}
-          className="rounded-md bg-success px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+          className={btnSuccessSm}
         >
           Add
         </button>

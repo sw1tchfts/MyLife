@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, Suspense } from "react";
 import { useToast } from "@/components/ToastProvider";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
+  pageTitle,
   panel,
   inputSm,
   btnPrimary,
@@ -12,6 +13,11 @@ import {
   deleteBtn,
   labelSm,
   pillInactive,
+  tabWrapper,
+  tabWrapperScrollable,
+  tabButton,
+  tabButtonActive,
+  tabButtonInactive,
 } from "@/lib/styles";
 
 interface MedicationItem {
@@ -56,22 +62,20 @@ function MedicationsContent() {
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-bold text-heading">Medications</h1>
+      <h1 className={`mb-4 ${pageTitle}`}>Medications</h1>
 
-      <div className="mb-6 flex gap-1 border-b border-border">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            className={`rounded-t-md px-3 py-2 text-sm font-medium transition-colors ${
-              tab === t.key
-                ? "bg-accent text-white"
-                : "text-muted hover:bg-elevated"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
+      <div className={`mb-6 ${tabWrapperScrollable}`}>
+        <div className={tabWrapper}>
+          {TABS.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              className={`${tabButton} ${tab === t.key ? tabButtonActive : tabButtonInactive}`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {tab === "medications" && <MedicationsTab />}

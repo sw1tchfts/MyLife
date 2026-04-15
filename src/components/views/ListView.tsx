@@ -7,6 +7,7 @@ import { getDueStatus } from "@/components/TaskCard";
 import type { TaskData } from "@/components/TaskCard";
 import {
   badgeSm,
+  btnDangerSm,
   emptyState,
   deleteBtn,
   panel,
@@ -212,7 +213,7 @@ export default function ListView({
               </span>
               <button
                 onClick={handleBulkDelete}
-                className="inline-flex items-center gap-1 rounded-md bg-danger px-2.5 py-1 text-xs font-medium text-white hover:bg-red-700"
+                className={`inline-flex items-center gap-1 ${btnDangerSm}`}
               >
                 <svg
                   className="h-3.5 w-3.5"

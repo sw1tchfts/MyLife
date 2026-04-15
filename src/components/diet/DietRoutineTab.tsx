@@ -6,6 +6,7 @@ import {
   select,
   btnPrimary,
   btnSecondary,
+  btnSuccessSm,
   emptyState,
   deleteBtn,
   labelSm,
@@ -190,7 +191,7 @@ export default function DietRoutineTab() {
             <button
               onClick={activatePlan}
               disabled={saving}
-              className="inline-flex items-center rounded-md bg-success px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
+              className={`inline-flex items-center shadow-sm ${btnSuccessSm}`}
             >
               {saving ? "Creating..." : "Activate Plan"}
             </button>
@@ -304,7 +305,7 @@ export default function DietRoutineTab() {
               <button
                 onClick={addFoodToMeal}
                 disabled={!addFoodId}
-                className="rounded-md bg-success px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                className={btnSuccessSm}
               >
                 Add
               </button>

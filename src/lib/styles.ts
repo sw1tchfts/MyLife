@@ -40,7 +40,22 @@ export const btnSecondary =
   "rounded-md border border-input-border bg-card px-4 py-2 text-sm font-medium text-body hover:bg-elevated";
 
 export const btnDanger =
-  "rounded-md bg-danger px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50";
+  "rounded-md bg-danger px-4 py-2 text-sm font-medium text-white hover:bg-danger-hover disabled:opacity-50";
+
+export const btnDangerSm =
+  "rounded-md bg-danger px-2.5 py-1 text-xs font-medium text-white hover:bg-danger-hover";
+
+export const btnSuccess =
+  "rounded-md bg-success px-4 py-2 text-sm font-medium text-white hover:bg-success-hover disabled:opacity-50";
+
+export const btnSuccessSm =
+  "rounded-md bg-success px-3 py-1.5 text-xs font-medium text-white hover:bg-success-hover disabled:opacity-50";
+
+export const btnSuccessXs =
+  "rounded-md bg-success px-2.5 py-1 text-xs font-medium text-white hover:bg-success-hover disabled:opacity-50";
+
+export const btnInfo =
+  "rounded-md bg-info px-4 py-1.5 text-sm font-medium text-white hover:bg-info-hover disabled:opacity-50";
 
 export const btnGhost =
   "rounded-md px-4 py-2 text-sm font-medium text-muted hover:bg-elevated hover:text-body";
@@ -72,7 +87,21 @@ export const navLinkActive = "bg-accent-soft font-medium text-accent-text";
 
 export const navLinkInactive = "text-muted hover:bg-elevated hover:text-body";
 
-/* ── Misc ───────────────────────────────────────────────────────── */
+/* ── Tabs ──────────────────────────────────────────────────────── */
+
+export const tabWrapper = "flex gap-1 border-b border-border";
+
+export const tabWrapperScrollable =
+  "-mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0";
+
+export const tabButton =
+  "shrink-0 rounded-t-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors";
+
+export const tabButtonActive = "bg-accent text-white";
+
+export const tabButtonInactive = "text-muted hover:bg-elevated";
+
+/* ── Misc ──────────────────────────────────────────────────────── */
 
 export const emptyState =
   "rounded-lg border-2 border-dashed border-input-border py-12 text-center";
