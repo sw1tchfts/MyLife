@@ -75,7 +75,7 @@ export const MODAL_TITLES = {
 
 /* ── Section Headings ────────────────────────────────── */
 
-export const SECTION_HEADINGS = {
+const SECTION_HEADINGS = {
   // Tasks page
   taskStats: "Task Stats",
 
@@ -103,19 +103,19 @@ export const SECTION_HEADINGS = {
 
 /* ── Filter Labels ───────────────────────────────────── */
 
-export const STATUS_LABELS = {
+const STATUS_LABELS = {
   TODO: "To Do",
   IN_PROGRESS: "In Progress",
   DONE: "Done",
 } as const;
 
-export const PRIORITY_LABELS = {
+const PRIORITY_LABELS = {
   HIGH: "High",
   MEDIUM: "Medium",
   LOW: "Low",
 } as const;
 
-export const TASK_TYPE_LABELS = {
+const TASK_TYPE_LABELS = {
   ALL: "All",
   TASK: "Tasks",
   MEAL: "Meals",
@@ -165,7 +165,7 @@ export const MEAL_LABELS: Record<string, string> = {
   SNACK: "Snack",
 };
 
-export const MOOD_OPTIONS = [
+const MOOD_OPTIONS = [
   { value: "GREAT", label: "Great", emoji: "\u{1f929}" },
   { value: "GOOD", label: "Good", emoji: "\u{1f60a}" },
   { value: "OKAY", label: "Okay", emoji: "\u{1f610}" },
@@ -179,67 +179,3 @@ export const DIAGRAM_TYPE_LABELS: Record<string, string> = {
   SWIMLANE: "Swim Lane",
   ER_DIAGRAM: "ER Diagram",
 };
-
-/* ── Reverse Lookup (dev inspector) ──────────────────── */
-
-/**
- * Builds a map from display text → constant path(s) in this file.
- * Used by ScreenNameInspector to show where a label is defined.
- */
-export function buildNameLookup(): Map<string, string[]> {
-  const map = new Map<string, string[]>();
-
-  const add = (text: string, path: string) => {
-    const arr = map.get(text) ?? [];
-    arr.push(path);
-    map.set(text, arr);
-  };
-
-  // Screen names
-  for (const [k, v] of Object.entries(SCREEN_NAMES))
-    add(v, `SCREEN_NAMES.${k}`);
-
-  // Sidebar sections
-  for (const [k, v] of Object.entries(SIDEBAR_SECTIONS))
-    add(v, `SIDEBAR_SECTIONS.${k}`);
-
-  // Tab arrays
-  const tabSets = [
-    ["TASK_TABS", TASK_TABS],
-    ["DIET_TABS", DIET_TABS],
-    ["GYM_TABS", GYM_TABS],
-    ["MEDICATION_TABS", MEDICATION_TABS],
-    ["RANKING_TABS", RANKING_TABS],
-  ] as const;
-  for (const [name, tabs] of tabSets) {
-    for (const t of tabs) add(t.label, `${name} → ${t.key}`);
-  }
-
-  // Modal titles
-  for (const [k, v] of Object.entries(MODAL_TITLES))
-    add(v, `MODAL_TITLES.${k}`);
-
-  // Section headings
-  for (const [k, v] of Object.entries(SECTION_HEADINGS))
-    add(v, `SECTION_HEADINGS.${k}`);
-
-  // Filter labels
-  for (const [k, v] of Object.entries(STATUS_LABELS))
-    add(v, `STATUS_LABELS.${k}`);
-  for (const [k, v] of Object.entries(PRIORITY_LABELS))
-    add(v, `PRIORITY_LABELS.${k}`);
-  for (const [k, v] of Object.entries(TASK_TYPE_LABELS))
-    add(v, `TASK_TYPE_LABELS.${k}`);
-
-  // Shared label maps
-  for (const [k, v] of Object.entries(WEEKDAY_LABELS_SHORT))
-    add(v, `WEEKDAY_LABELS_SHORT.${k}`);
-  for (const [k, v] of Object.entries(WEEKDAY_LABELS_FULL))
-    add(v, `WEEKDAY_LABELS_FULL.${k}`);
-  for (const [k, v] of Object.entries(MEAL_LABELS)) add(v, `MEAL_LABELS.${k}`);
-  for (const m of MOOD_OPTIONS) add(m.label, `MOOD_OPTIONS → ${m.value}`);
-  for (const [k, v] of Object.entries(DIAGRAM_TYPE_LABELS))
-    add(v, `DIAGRAM_TYPE_LABELS.${k}`);
-
-  return map;
-}
