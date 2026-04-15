@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 /* ── Types ─────────────────────────────────────────── */
 
@@ -129,30 +129,49 @@ function CategoryBadge({ category }: { category: string }) {
 
 export default function ExercisesTab() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [search, setSearch] = useState("");
   const [showAdd, setShowAdd] = useState(false);
-  const [seeding, setSeeding] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
   const [newMuscle, setNewMuscle] = useState("chest");
   const [newEquipment, setNewEquipment] = useState("barbell");
   const [newCategory, setNewCategory] = useState("strength");
+  const seededRef = useRef(false);
 
   const fetchExercises = useCallback(() => {
     const params = new URLSearchParams();
     if (filter) params.set("muscleGroup", filter);
     if (categoryFilter) params.set("category", categoryFilter);
     if (search) params.set("search", search);
-    fetch(`/api/gym/exercises?${params}`)
+    return fetch(`/api/gym/exercises?${params}`)
       .then((r) => r.json())
-      .then(setExercises);
+      .then((data: Exercise[]) => {
+        setExercises(data);
+        setLoading(false);
+        return data;
+      });
   }, [filter, categoryFilter, search]);
 
+  // On first mount, fetch exercises. If empty (no filters), auto-seed from free-exercise-db.
   useEffect(() => {
-    fetchExercises();
-  }, [fetchExercises]);
+    fetchExercises().then((data) => {
+      if (
+        data.length === 0 &&
+        !filter &&
+        !categoryFilter &&
+        !search &&
+        !seededRef.current
+      ) {
+        seededRef.current = true;
+        fetch("/api/gym/exercises/seed", { method: "POST" }).then(() =>
+          fetchExercises(),
+        );
+      }
+    });
+  }, [fetchExercises, filter, categoryFilter, search]);
 
   const addExercise = async () => {
     if (!newName.trim()) return;
@@ -169,19 +188,6 @@ export default function ExercisesTab() {
     setNewName("");
     setShowAdd(false);
     fetchExercises();
-  };
-
-  const seedExercises = async () => {
-    setSeeding(true);
-    try {
-      const res = await fetch("/api/gym/exercises/seed", { method: "POST" });
-      const data = await res.json();
-      if (data.imported > 0) {
-        fetchExercises();
-      }
-    } finally {
-      setSeeding(false);
-    }
   };
 
   return (
@@ -282,94 +288,127 @@ export default function ExercisesTab() {
         </div>
       )}
 
-      {/* Exercise list */}
-      {exercises.length === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-          <p className="text-gray-500 dark:text-gray-400">No exercises found</p>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
-            Import ~870 exercises from the open-source exercise database
+      {/* Loading state */}
+      {loading ? (
+        <div className="py-12 text-center">
+          <p className="text-sm text-gray-400 dark:text-gray-500">
+            Loading exercises...
           </p>
-          <button
-            onClick={seedExercises}
-            disabled={seeding}
-            className="mt-4 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-          >
-            {seeding ? "Importing..." : "Import Exercise Library"}
-          </button>
+        </div>
+      ) : exercises.length === 0 ? (
+        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
+          <p className="text-gray-500 dark:text-gray-400">
+            No exercises match your filters
+          </p>
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-gray-400 dark:text-gray-500">
-              {exercises.length} exercise{exercises.length !== 1 ? "s" : ""}
-            </p>
-            <button
-              onClick={seedExercises}
-              disabled={seeding}
-              className="text-xs text-blue-600 hover:text-blue-700 disabled:opacity-50 dark:text-blue-400"
-            >
-              {seeding ? "Importing..." : "Import more from library"}
-            </button>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {exercises.map((ex) => (
-              <div
-                key={ex.id}
-                className="cursor-pointer rounded-lg border border-gray-200 bg-white p-3 transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
-                onClick={() =>
-                  setExpandedId(expandedId === ex.id ? null : ex.id)
-                }
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {ex.name}
-                  </p>
-                  <MuscleGroupBadge group={ex.muscleGroup} />
-                </div>
-                <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                  <CategoryBadge category={ex.category} />
-                  <span className="text-[10px] text-gray-400 dark:text-gray-500">
-                    {ex.equipment}
-                  </span>
-                  {ex.mechanic && (
-                    <span className="text-[10px] text-gray-400 dark:text-gray-500">
-                      &middot; {ex.mechanic}
-                    </span>
-                  )}
-                  {ex.force && (
-                    <span className="text-[10px] text-gray-400 dark:text-gray-500">
-                      &middot; {ex.force}
-                    </span>
-                  )}
-                  {ex.difficulty !== "beginner" && (
-                    <span className="text-[10px] font-medium text-amber-600 dark:text-amber-400">
-                      &middot; {ex.difficulty}
-                    </span>
-                  )}
-                </div>
-                {ex.secondaryMuscles && (
-                  <p className="mt-1 text-[10px] text-gray-400 dark:text-gray-500">
-                    Also: {ex.secondaryMuscles}
-                  </p>
-                )}
+          <p className="text-xs text-gray-400 dark:text-gray-500">
+            {exercises.length} exercise{exercises.length !== 1 ? "s" : ""}
+          </p>
 
-                {/* Expanded details */}
-                {expandedId === ex.id && ex.instructions && (
-                  <div className="mt-3 border-t border-gray-100 pt-3 dark:border-gray-700">
-                    <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                      Instructions
-                    </p>
-                    <div className="max-h-40 overflow-y-auto text-xs leading-relaxed text-gray-600 dark:text-gray-300">
-                      {ex.instructions.split("\n\n").map((step, i) => (
-                        <p key={i} className="mb-1">
-                          {step}
+          {/* Row-based exercise list */}
+          <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+            {/* Header — hidden on mobile */}
+            <div className="hidden border-b border-gray-200 bg-gray-50 px-4 py-2 text-[11px] font-medium uppercase tracking-wide text-gray-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400 sm:grid sm:grid-cols-[1fr_120px_100px_90px_80px]">
+              <span>Exercise</span>
+              <span>Muscle</span>
+              <span>Equipment</span>
+              <span>Category</span>
+              <span>Type</span>
+            </div>
+
+            <div className="divide-y divide-gray-100 dark:divide-gray-700/50">
+              {exercises.map((ex) => (
+                <div key={ex.id}>
+                  <div
+                    className="cursor-pointer px-4 py-2.5 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50 sm:grid sm:grid-cols-[1fr_120px_100px_90px_80px] sm:items-center"
+                    onClick={() =>
+                      setExpandedId(expandedId === ex.id ? null : ex.id)
+                    }
+                  >
+                    {/* Name + secondary muscles */}
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                        {ex.name}
+                      </p>
+                      {ex.secondaryMuscles && (
+                        <p className="truncate text-[10px] text-gray-400 dark:text-gray-500">
+                          Also: {ex.secondaryMuscles}
                         </p>
-                      ))}
+                      )}
+                    </div>
+
+                    {/* Muscle group */}
+                    <div className="mt-1 sm:mt-0">
+                      <MuscleGroupBadge group={ex.muscleGroup} />
+                    </div>
+
+                    {/* Equipment */}
+                    <span className="hidden text-xs capitalize text-gray-500 dark:text-gray-400 sm:block">
+                      {ex.equipment}
+                    </span>
+
+                    {/* Category */}
+                    <div className="hidden sm:block">
+                      <CategoryBadge category={ex.category} />
+                    </div>
+
+                    {/* Mechanic / force */}
+                    <span className="hidden text-xs capitalize text-gray-400 dark:text-gray-500 sm:block">
+                      {ex.mechanic || ex.force || "—"}
+                    </span>
+
+                    {/* Mobile-only meta line */}
+                    <div className="mt-1 flex flex-wrap items-center gap-1.5 sm:hidden">
+                      <CategoryBadge category={ex.category} />
+                      <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                        {ex.equipment}
+                      </span>
+                      {ex.mechanic && (
+                        <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                          &middot; {ex.mechanic}
+                        </span>
+                      )}
+                      {ex.difficulty !== "beginner" && (
+                        <span className="text-[10px] font-medium text-amber-600 dark:text-amber-400">
+                          &middot; {ex.difficulty}
+                        </span>
+                      )}
                     </div>
                   </div>
-                )}
-              </div>
-            ))}
+
+                  {/* Expanded instructions */}
+                  {expandedId === ex.id && ex.instructions && (
+                    <div className="border-t border-gray-100 bg-gray-50/50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800/30">
+                      <div className="flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400">
+                        {ex.force && (
+                          <span>
+                            <strong>Force:</strong> {ex.force}
+                          </span>
+                        )}
+                        {ex.mechanic && (
+                          <span>
+                            <strong>Mechanic:</strong> {ex.mechanic}
+                          </span>
+                        )}
+                        <span>
+                          <strong>Level:</strong> {ex.difficulty}
+                        </span>
+                      </div>
+                      <p className="mb-1.5 mt-3 text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        Instructions
+                      </p>
+                      <ol className="list-inside list-decimal space-y-1 text-xs leading-relaxed text-gray-600 dark:text-gray-300">
+                        {ex.instructions.split("\n\n").map((step, i) => (
+                          <li key={i}>{step}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </>
       )}
