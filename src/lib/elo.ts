@@ -5,7 +5,7 @@
 
 const K = 32;
 
-export function expectedScore(ratingA: number, ratingB: number): number {
+function expectedScore(ratingA: number, ratingB: number): number {
   return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
 }
 
@@ -35,14 +35,4 @@ export function newRatings(
     newA: ratingA + K * (sA - eA),
     newB: ratingB + K * (sB - eB),
   };
-}
-
-/**
- * Calculate ranking stability as a percentage (0–100).
- * Based on number of comparisons per item — more comparisons = more stable.
- * An item with 10+ comparisons is considered fully stable.
- */
-export function stabilityScore(totalComparisons: number): number {
-  const maxComparisons = 10;
-  return Math.min(100, Math.round((totalComparisons / maxComparisons) * 100));
 }

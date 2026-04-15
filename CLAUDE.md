@@ -42,7 +42,7 @@ Personal task tracking web app. Single user (no sharing/collaboration features).
 - **Dynamic imports**: Large tab components are extracted into `src/components/{feature}/` directories and loaded via `next/dynamic` to enable code splitting.
 - **React.memo**: Applied to frequently-rendered components (`TaskCard`, `StatusBadge`, `PriorityBadge`) to skip unnecessary re-renders.
 - **Centralized screen names**: All user-visible names (page titles, tab labels, modal titles, section headings, shared label maps like weekdays/meals/moods) live in `src/lib/screens.ts`. Import from there instead of hardcoding strings in components. This is the single source of truth for what anything in the UI is called.
-- **Screen Name Inspector**: Right-click any element in the UI to see its `screens.ts` constant path in a floating badge. Powered by `ScreenNameInspector.tsx`. The badge auto-dismisses after 4 seconds.
+- **Reusable analysis commands**: Slash commands in `.claude/commands/` for code health checks (`/scan-unused-code`, `/scan-dead-files`, `/audit-deps`, `/detect-circular-deps`, `/safe-cleanup-plan`).
 
 ## File Structure
 
@@ -121,19 +121,15 @@ src/
     settings/page.tsx          # User settings (theme, account, notifications, tracker config)
   components/
     Sidebar.tsx                # Left navigation sidebar (Notion-style)
-    ThemeProvider.tsx           # Dark mode context + class toggle
     SubtaskList.tsx            # Subtask checklist with progress bar
     TaskCard.tsx               # Task card display + getDueStatus helper + types (React.memo)
     TaskModal.tsx              # Task create/edit modal (food/med managers)
     TrackerForm.tsx            # Inline daily tracker form (weight, bf%, metrics + TDEE display)
     TaskForm.tsx               # Shared create/edit form (incl. recurrence)
-    TaskList.tsx               # Legacy task list (kept for reference)
     StatusBadge.tsx            # Status pill (React.memo)
     PriorityBadge.tsx          # Priority pill (React.memo)
     ToastProvider.tsx          # Toast notifications with undo support
     TaskNotifications.tsx      # Browser notifications using lightweight /api/tasks/notifications
-    ScreenNameInspector.tsx     # Dev-only: right-click any element to see its screens.ts constant
-    SignOutButton.tsx           # Sign-out button (used by Sidebar)
     diagrams/
       DiagramNodes.tsx         # Custom React Flow node types (process, decision, etc.)
     views/
