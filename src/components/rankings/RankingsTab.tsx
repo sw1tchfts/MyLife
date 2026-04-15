@@ -1,5 +1,7 @@
 "use client";
 
+import { emptyState } from "@/lib/styles";
+
 interface RankingItem {
   id: string;
   title: string;
@@ -34,17 +36,17 @@ export default function RankingsTab({
   };
 
   const tierColors: Record<string, string> = {
-    S: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-    A: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    B: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-    C: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
-    D: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+    S: "bg-warning-soft text-warning-text",
+    A: "bg-success-soft text-success-text",
+    B: "bg-accent-soft text-accent-text",
+    C: "bg-elevated text-body",
+    D: "bg-danger-soft text-danger-text",
   };
 
   if (items.length === 0) {
     return (
-      <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-        <p className="text-gray-500 dark:text-gray-400">No items to rank</p>
+      <div className={emptyState}>
+        <p className="text-muted">No items to rank</p>
       </div>
     );
   }
@@ -63,9 +65,9 @@ export default function RankingsTab({
         return (
           <div
             key={item.id}
-            className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800"
+            className="flex items-center gap-3 rounded-lg border border-border bg-card p-3"
           >
-            <span className="w-8 text-center text-lg font-bold text-gray-300 dark:text-gray-600">
+            <span className="w-8 text-center text-lg font-bold text-faint">
               {i + 1}
             </span>
             <span
@@ -75,20 +77,20 @@ export default function RankingsTab({
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <p className="text-sm font-medium text-heading">
                   {item.title}
                 </p>
-                <span className="font-mono text-xs text-gray-400 dark:text-gray-500">
+                <span className="font-mono text-xs text-faint">
                   {Math.round(item.elo)}
                 </span>
               </div>
-              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-elevated">
                 <div
-                  className="h-full rounded-full bg-blue-500 transition-all"
+                  className="h-full rounded-full bg-accent transition-all"
                   style={{ width: `${barWidth}%` }}
                 />
               </div>
-              <div className="mt-1 flex gap-3 text-[10px] text-gray-400 dark:text-gray-500">
+              <div className="mt-1 flex gap-3 text-[10px] text-faint">
                 <span>
                   {item.wins}W / {item.losses}L / {item.ties}T
                 </span>

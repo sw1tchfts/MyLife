@@ -1,6 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  panel,
+  inputSm,
+  select,
+  btnPrimary,
+  btnSecondary,
+  emptyState,
+  deleteBtn,
+  labelSm,
+  pillInactive,
+} from "@/lib/styles";
 
 interface FoodItem {
   id: string;
@@ -148,7 +159,7 @@ export default function DietRoutineTab() {
     setMeals([]);
   };
 
-  if (loading) return <p className="text-center text-gray-400">Loading...</p>;
+  if (loading) return <p className="text-center text-muted">Loading...</p>;
 
   const totalDailyCal = meals.reduce(
     (sum, m) => sum + m.foods.reduce((s, f) => s + f.calories, 0),
@@ -159,12 +170,12 @@ export default function DietRoutineTab() {
     <div>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-muted">
             Build your meal plan. Add meals with their foods, then activate to
             create recurring tasks.
           </p>
           {meals.length > 0 && (
-            <p className="mt-1 text-xs text-teal-600 dark:text-teal-400">
+            <p className="mt-1 text-xs text-info-text">
               Plan total: ~{Math.round(totalDailyCal)} cal/day
             </p>
           )}
@@ -172,7 +183,7 @@ export default function DietRoutineTab() {
         <div className="flex gap-2">
           <button
             onClick={() => setShowAdd(true)}
-            className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+            className={`inline-flex items-center shadow-sm ${btnPrimary}`}
           >
             + Add Meal
           </button>
@@ -180,7 +191,7 @@ export default function DietRoutineTab() {
             <button
               onClick={activatePlan}
               disabled={saving}
-              className="inline-flex items-center rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
+              className="inline-flex items-center rounded-md bg-success px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
             >
               {saving ? "Creating..." : "Activate Plan"}
             </button>
@@ -189,19 +200,19 @@ export default function DietRoutineTab() {
       </div>
 
       {showAdd && (
-        <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
-          <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
+        <div className="mt-4 rounded-lg border border-accent bg-accent-soft p-4">
+          <h3 className="mb-3 text-sm font-semibold text-heading">
             Add Meal to Plan
           </h3>
           <div className="grid gap-3 sm:grid-cols-3">
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className={labelSm}>
                 Meal Type
               </label>
               <select
                 value={newMealType}
                 onChange={(e) => setNewMealType(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={select}
               >
                 {MEAL_TYPES.map((t) => (
                   <option key={t} value={t}>
@@ -211,18 +222,18 @@ export default function DietRoutineTab() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className={labelSm}>
                 Time
               </label>
               <input
                 type="time"
                 value={newTime}
                 onChange={(e) => setNewTime(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={`${inputSm} mt-1`}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className={labelSm}>
                 Days
               </label>
               <div className="mt-1 flex gap-1">
@@ -238,7 +249,7 @@ export default function DietRoutineTab() {
                           : [...current, day];
                         setNewDays(next.join(","));
                       }}
-                      className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${active ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 text-gray-500 dark:border-gray-600 dark:text-gray-400"}`}
+                      className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${active ? "border-accent bg-accent text-white" : `${pillInactive}`}`}
                     >
                       {day.charAt(0).toUpperCase() + day.slice(1, 3)}
                     </button>
@@ -249,7 +260,7 @@ export default function DietRoutineTab() {
           </div>
 
           <div className="mt-3">
-            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+            <label className={labelSm}>
               Foods
             </label>
             {newFoods.length > 0 && (
@@ -259,17 +270,17 @@ export default function DietRoutineTab() {
                   return (
                     <div
                       key={i}
-                      className="flex items-center justify-between rounded bg-white px-2 py-1 text-xs dark:bg-gray-800"
+                      className="flex items-center justify-between rounded bg-card px-2 py-1 text-xs"
                     >
-                      <span className="text-gray-700 dark:text-gray-300">
+                      <span className="text-body">
                         {item?.name} &times;{f.quantity}
-                        <span className="ml-2 text-gray-400">
+                        <span className="ml-2 text-faint">
                           {Math.round((item?.calories || 0) * f.quantity)} cal
                         </span>
                       </span>
                       <button
                         onClick={() => removeFoodFromMeal(i)}
-                        className="text-gray-400 hover:text-red-500"
+                        className="text-faint hover:text-danger-text"
                       >
                         &times;
                       </button>
@@ -282,7 +293,7 @@ export default function DietRoutineTab() {
               <select
                 value={addFoodId}
                 onChange={(e) => setAddFoodId(e.target.value)}
-                className="flex-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={`flex-1 ${inputSm}`}
               >
                 <option value="">Select food...</option>
                 {foods.map((f) => (
@@ -297,18 +308,18 @@ export default function DietRoutineTab() {
                 min="0.5"
                 value={addFoodQty}
                 onChange={(e) => setAddFoodQty(e.target.value)}
-                className="w-16 rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className="w-16 rounded-md border border-input-border bg-card px-2 py-1.5 text-sm text-heading"
               />
               <button
                 onClick={addFoodToMeal}
                 disabled={!addFoodId}
-                className="rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                className="rounded-md bg-success px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
               >
                 Add
               </button>
             </div>
             {foods.length === 0 && (
-              <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+              <p className="mt-1 text-xs text-warning-text">
                 No foods saved. Add foods in the Food Library tab first.
               </p>
             )}
@@ -320,14 +331,14 @@ export default function DietRoutineTab() {
                 setShowAdd(false);
                 setNewFoods([]);
               }}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300"
+              className={btnSecondary}
             >
               Cancel
             </button>
             <button
               onClick={addMealToPlan}
               disabled={newFoods.length === 0}
-              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className={btnPrimary}
             >
               Add to Plan
             </button>
@@ -337,11 +348,11 @@ export default function DietRoutineTab() {
 
       <div className="mt-4 space-y-2">
         {meals.length === 0 && !showAdd ? (
-          <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-            <p className="text-gray-500 dark:text-gray-400">
+          <div className={emptyState}>
+            <p className="text-muted">
               No meals in your plan yet
             </p>
-            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-sm text-faint">
               Add meals to build your weekly diet routine
             </p>
           </div>
@@ -355,22 +366,22 @@ export default function DietRoutineTab() {
             return (
               <div
                 key={i}
-                className="flex items-start justify-between rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800"
+                className="flex items-start justify-between rounded-lg border border-border bg-card p-3"
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <span className="text-sm font-medium text-heading">
                       {MEAL_LABELS[meal.mealType]}
                     </span>
-                    <span className="text-xs text-gray-400">{meal.time}</span>
-                    <span className="text-xs text-green-600 dark:text-green-400">
+                    <span className="text-xs text-faint">{meal.time}</span>
+                    <span className="text-xs text-success-text">
                       {Math.round(mealCal)} cal
                     </span>
                   </div>
-                  <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                  <p className="mt-0.5 text-xs text-muted">
                     {daysList}
                   </p>
-                  <p className="mt-0.5 text-xs text-gray-400">
+                  <p className="mt-0.5 text-xs text-faint">
                     {meal.foods
                       .map((f) => `${f.name} ×${f.quantity}`)
                       .join(", ")}
@@ -378,7 +389,7 @@ export default function DietRoutineTab() {
                 </div>
                 <button
                   onClick={() => removeMealFromPlan(i)}
-                  className="rounded p-1 text-gray-300 hover:text-red-500 dark:text-gray-600"
+                  className={deleteBtn}
                 >
                   <svg
                     className="h-4 w-4"

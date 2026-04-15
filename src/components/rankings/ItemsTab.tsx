@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 import { useToast } from "@/components/ToastProvider";
+import {
+  panel,
+  input as inputCls,
+  btnPrimary,
+  emptyState,
+  deleteBtn,
+} from "@/lib/styles";
 
 interface RankingList {
   id: string;
@@ -95,8 +102,8 @@ export default function ItemsTab({
   return (
     <div className="space-y-4">
       {/* Add item form */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-        <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
+      <div className={`${panel} p-4`}>
+        <h3 className="mb-3 text-sm font-semibold text-body">
           Add Item to &quot;{list.name}&quot;
         </h3>
         <div className="flex flex-wrap gap-3">
@@ -106,26 +113,26 @@ export default function ItemsTab({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addItem()}
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            className={`${inputCls} mt-0 flex-1`}
           />
           <input
             type="text"
             placeholder="Description (optional)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            className={`${inputCls} mt-0 flex-1`}
           />
           <input
             type="text"
             placeholder="Tags (comma-separated)"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            className={`${inputCls} mt-0`}
           />
           <button
             onClick={addItem}
             disabled={adding || !title.trim()}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className={btnPrimary}
           >
             Add
           </button>
@@ -134,49 +141,49 @@ export default function ItemsTab({
 
       {/* Items list */}
       {items.length === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-          <p className="text-gray-500 dark:text-gray-400">No items yet</p>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+        <div className={emptyState}>
+          <p className="text-muted">No items yet</p>
+          <p className="mt-1 text-sm text-faint">
             Add items above, then start comparing
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+        <div className={`overflow-x-auto ${panel}`}>
+          <table className="min-w-full divide-y divide-border">
+            <thead className="bg-elevated">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-muted uppercase">
                   Title
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-muted uppercase">
                   Tags
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-muted uppercase">
                   Elo
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-muted uppercase">
                   W/L/T
                 </th>
                 {allLists.length > 1 && (
-                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-muted uppercase">
                     List
                   </th>
                 )}
                 <th className="w-12 px-4 py-3" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+            <tbody className="divide-y divide-border">
               {items.map((item) => (
                 <tr
                   key={item.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="hover:bg-elevated"
                 >
                   <td className="px-4 py-3">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <p className="text-sm font-medium text-heading">
                       {item.title}
                     </p>
                     {item.description && (
-                      <p className="text-xs text-gray-400 dark:text-gray-500">
+                      <p className="text-xs text-faint">
                         {item.description}
                       </p>
                     )}
@@ -187,7 +194,7 @@ export default function ItemsTab({
                         {item.tags.split(",").map((tag, i) => (
                           <span
                             key={i}
-                            className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-400"
+                            className="rounded bg-elevated px-1.5 py-0.5 text-xs text-muted"
                           >
                             {tag.trim()}
                           </span>
@@ -195,10 +202,10 @@ export default function ItemsTab({
                       </div>
                     )}
                   </td>
-                  <td className="px-4 py-3 font-mono text-sm text-gray-700 dark:text-gray-300">
+                  <td className="px-4 py-3 font-mono text-sm text-body">
                     {Math.round(item.elo)}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-4 py-3 text-sm text-muted">
                     {item.wins}/{item.losses}/{item.ties}
                   </td>
                   {allLists.length > 1 && (
@@ -206,7 +213,7 @@ export default function ItemsTab({
                       <select
                         value={item.categoryId}
                         onChange={(e) => moveItem(item.id, e.target.value)}
-                        className="rounded border border-gray-300 px-2 py-1 text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                        className="rounded border border-input-border bg-card px-2 py-1 text-xs text-body"
                       >
                         {allLists.map((l) => (
                           <option key={l.id} value={l.id}>
@@ -219,7 +226,7 @@ export default function ItemsTab({
                   <td className="px-4 py-3">
                     <button
                       onClick={() => deleteItem(item.id)}
-                      className="rounded p-1 text-gray-300 hover:text-red-500 dark:text-gray-600"
+                      className={deleteBtn}
                     >
                       <svg
                         className="h-4 w-4"

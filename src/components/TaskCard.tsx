@@ -4,6 +4,7 @@ import { memo } from "react";
 import Link from "next/link";
 import StatusBadge from "./StatusBadge";
 import PriorityBadge from "./PriorityBadge";
+import { card } from "@/lib/styles";
 import type { Status, Priority } from "@/generated/prisma/client";
 
 export interface SubtaskData {
@@ -112,28 +113,17 @@ export function getDueStatus(
 export default memo(function TaskCard({ task, onDelete }: TaskCardProps) {
   const dueStatus = task.status !== "DONE" ? getDueStatus(task.dueDate) : null;
 
-  const cardBorder =
-    dueStatus === "overdue"
-      ? "border-red-400 bg-red-50"
-      : dueStatus === "today"
-        ? "border-amber-400 bg-amber-50"
-        : dueStatus === "soon"
-          ? "border-yellow-300"
-          : "border-gray-200";
-
   return (
     <>
-      <div
-        className={`rounded-lg border bg-white p-4 shadow-sm transition-shadow hover:shadow-md ${cardBorder}`}
-      >
+      <div className={card}>
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-gray-900 line-clamp-1">
+          <h3 className="font-semibold text-heading line-clamp-1">
             {task.title}
           </h3>
           <div className="flex shrink-0 gap-1">
             <Link
               href={`/tasks/${task.id}/edit`}
-              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded p-1 text-muted hover:bg-elevated hover:text-body"
               title="Edit task"
             >
               <svg
@@ -152,7 +142,7 @@ export default memo(function TaskCard({ task, onDelete }: TaskCardProps) {
             </Link>
             <button
               onClick={() => onDelete(task.id)}
-              className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
+              className="rounded p-1 text-muted hover:bg-danger-soft hover:text-danger-text"
               title="Delete task"
             >
               <svg
@@ -173,7 +163,7 @@ export default memo(function TaskCard({ task, onDelete }: TaskCardProps) {
         </div>
 
         {task.description && (
-          <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+          <p className="mt-1 text-sm text-faint line-clamp-2">
             {task.description}
           </p>
         )}
@@ -182,17 +172,7 @@ export default memo(function TaskCard({ task, onDelete }: TaskCardProps) {
           <StatusBadge status={task.status} />
           <PriorityBadge priority={task.priority} />
           {task.dueDate && (
-            <span
-              className={`text-xs ${
-                dueStatus === "overdue"
-                  ? "font-medium text-red-600"
-                  : dueStatus === "today"
-                    ? "font-medium text-amber-600"
-                    : dueStatus === "soon"
-                      ? "font-medium text-yellow-600"
-                      : "text-gray-500"
-              }`}
-            >
+            <span className="text-xs text-muted">
               {dueStatus === "overdue"
                 ? "Overdue"
                 : dueStatus === "today"

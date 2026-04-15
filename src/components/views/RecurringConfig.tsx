@@ -2,6 +2,16 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/components/ToastProvider";
+import {
+  inputSm,
+  select,
+  btnPrimary,
+  btnSecondary,
+  badgeSm,
+  emptyState,
+  pillActive,
+  pillInactive,
+} from "@/lib/styles";
 
 interface RecurringTask {
   id: string;
@@ -38,19 +48,19 @@ const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   TASK: {
     label: "Task",
-    cls: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
+    cls: "bg-elevated text-body",
   },
   MEAL: {
     label: "Meal",
-    cls: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+    cls: "bg-success-soft text-success-text",
   },
   MEDICATION: {
     label: "Med",
-    cls: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+    cls: "bg-accent-soft text-accent-text",
   },
   TRACKER: {
     label: "Tracker",
-    cls: "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400",
+    cls: "bg-info-soft text-info-text",
   },
 };
 
@@ -188,7 +198,7 @@ export default function RecurringConfig() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-gray-400 dark:text-gray-500">Loading...</p>
+        <p className="text-muted">Loading...</p>
       </div>
     );
   }
@@ -196,12 +206,12 @@ export default function RecurringConfig() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-muted">
           Manage your repeating tasks, meals, and medications
         </p>
         <button
           onClick={() => setShowCreate(true)}
-          className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+          className={`${btnPrimary} inline-flex items-center shadow-sm`}
         >
           + New Recurring
         </button>
@@ -209,13 +219,13 @@ export default function RecurringConfig() {
 
       {/* Inline create form */}
       {showCreate && (
-        <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+        <div className="mt-4 rounded-lg border border-accent bg-accent-soft/30 p-4">
+          <h3 className="text-sm font-semibold text-heading">
             New Recurring Task
           </h3>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className="block text-xs font-medium text-muted">
                 Title
               </label>
               <input
@@ -223,12 +233,12 @@ export default function RecurringConfig() {
                 value={createTitle}
                 onChange={(e) => setCreateTitle(e.target.value)}
                 placeholder="e.g. Take Vitamins"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={inputSm}
                 autoFocus
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className="block text-xs font-medium text-muted">
                 Frequency
               </label>
               <select
@@ -237,7 +247,7 @@ export default function RecurringConfig() {
                   setCreateRecurrence(e.target.value);
                   setCreateDays("");
                 }}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={select}
               >
                 <option value="DAILY">Daily</option>
                 <option value="WEEKLY">Weekly</option>
@@ -245,13 +255,13 @@ export default function RecurringConfig() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className="block text-xs font-medium text-muted">
                 Type
               </label>
               <select
                 value={createType}
                 onChange={(e) => setCreateType(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={select}
               >
                 <option value="TASK">Task</option>
                 <option value="MEAL">Meal</option>
@@ -260,7 +270,7 @@ export default function RecurringConfig() {
             </div>
             {createRecurrence === "WEEKLY" && (
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+                <label className="block text-xs font-medium text-muted">
                   Days
                 </label>
                 <div className="mt-1 flex gap-1">
@@ -286,8 +296,8 @@ export default function RecurringConfig() {
                         }}
                         className={`rounded-md border px-2 py-1 text-xs font-medium ${
                           active
-                            ? "border-blue-600 bg-blue-600 text-white"
-                            : "border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"
+                            ? "border-accent bg-accent text-white"
+                            : `${pillInactive}`
                         }`}
                       >
                         {WEEKDAY_LABELS[day]}
@@ -299,7 +309,7 @@ export default function RecurringConfig() {
             )}
             {createRecurrence === "MONTHLY" && (
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+                <label className="block text-xs font-medium text-muted">
                   Days of month (comma-separated)
                 </label>
                 <input
@@ -307,29 +317,29 @@ export default function RecurringConfig() {
                   value={createDays}
                   onChange={(e) => setCreateDays(e.target.value)}
                   placeholder="1, 15"
-                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                  className={inputSm}
                 />
               </div>
             )}
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className="block text-xs font-medium text-muted">
                 Time (optional)
               </label>
               <input
                 type="time"
                 value={createTime}
                 onChange={(e) => setCreateTime(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={inputSm}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className="block text-xs font-medium text-muted">
                 Priority
               </label>
               <select
                 value={createPriority}
                 onChange={(e) => setCreatePriority(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={select}
               >
                 <option value="HIGH">High</option>
                 <option value="MEDIUM">Medium</option>
@@ -340,7 +350,7 @@ export default function RecurringConfig() {
           <div className="mt-3 flex justify-end gap-2">
             <button
               onClick={() => setShowCreate(false)}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+              className={btnSecondary}
             >
               Cancel
             </button>
@@ -351,7 +361,7 @@ export default function RecurringConfig() {
                 !createTitle.trim() ||
                 (createRecurrence === "WEEKLY" && !createDays.trim())
               }
-              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className={btnPrimary}
             >
               {saving ? "Creating..." : "Create"}
             </button>
@@ -361,11 +371,11 @@ export default function RecurringConfig() {
 
       {/* Recurring tasks list */}
       {tasks.length === 0 && !showCreate ? (
-        <div className="mt-8 rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-          <p className="text-gray-500 dark:text-gray-400">
+        <div className={`mt-8 ${emptyState}`}>
+          <p className="text-muted">
             No recurring tasks yet
           </p>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+          <p className="mt-1 text-sm text-faint">
             Create one to get started
           </p>
         </div>
@@ -378,10 +388,10 @@ export default function RecurringConfig() {
             return (
               <div
                 key={task.id}
-                className={`rounded-lg border bg-white p-4 dark:bg-gray-800 ${
+                className={`rounded-lg border bg-card p-4 ${
                   isEditing
-                    ? "border-blue-400 dark:border-blue-600"
-                    : "border-gray-200 dark:border-gray-700"
+                    ? "border-accent"
+                    : "border-border"
                 }`}
               >
                 {isEditing ? (
@@ -393,12 +403,12 @@ export default function RecurringConfig() {
                       onChange={(e) =>
                         setEditTarget({ ...editTarget, title: e.target.value })
                       }
-                      className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                      className={`${inputSm} font-medium`}
                     />
                     <div className="flex flex-wrap gap-3">
                       {task.recurrence === "WEEKLY" && (
                         <div>
-                          <label className="block text-xs text-gray-500 dark:text-gray-400">
+                          <label className="block text-xs text-muted">
                             Days
                           </label>
                           <div className="mt-1 flex gap-1">
@@ -427,8 +437,8 @@ export default function RecurringConfig() {
                                   }}
                                   className={`rounded-md border px-2 py-1 text-xs font-medium ${
                                     active
-                                      ? "border-blue-600 bg-blue-600 text-white"
-                                      : "border-gray-300 text-gray-500 dark:border-gray-600 dark:text-gray-400"
+                                      ? "border-accent bg-accent text-white"
+                                      : `${pillInactive}`
                                   }`}
                                 >
                                   {WEEKDAY_LABELS[day]}
@@ -440,7 +450,7 @@ export default function RecurringConfig() {
                       )}
                       {task.recurrence === "MONTHLY" && (
                         <div>
-                          <label className="block text-xs text-gray-500 dark:text-gray-400">
+                          <label className="block text-xs text-muted">
                             Days of month
                           </label>
                           <input
@@ -452,12 +462,12 @@ export default function RecurringConfig() {
                                 recurrenceDays: e.target.value,
                               })
                             }
-                            className="mt-1 w-40 rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                            className={`${inputSm} w-40`}
                           />
                         </div>
                       )}
                       <div>
-                        <label className="block text-xs text-gray-500 dark:text-gray-400">
+                        <label className="block text-xs text-muted">
                           Time
                         </label>
                         <input
@@ -469,11 +479,11 @@ export default function RecurringConfig() {
                               recurrenceTime: e.target.value,
                             })
                           }
-                          className="mt-1 rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                          className={inputSm}
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-500 dark:text-gray-400">
+                        <label className="block text-xs text-muted">
                           Priority
                         </label>
                         <select
@@ -484,7 +494,7 @@ export default function RecurringConfig() {
                               priority: e.target.value,
                             })
                           }
-                          className="mt-1 rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                          className={select}
                         >
                           <option value="HIGH">High</option>
                           <option value="MEDIUM">Medium</option>
@@ -495,14 +505,14 @@ export default function RecurringConfig() {
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={() => setEditTarget(null)}
-                        className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                        className={btnSecondary}
                       >
                         Cancel
                       </button>
                       <button
                         onClick={handleEditSave}
                         disabled={saving}
-                        className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                        className={btnPrimary}
                       >
                         {saving ? "Saving..." : "Save"}
                       </button>
@@ -513,7 +523,7 @@ export default function RecurringConfig() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        <h3 className="text-sm font-semibold text-heading">
                           {task.title}
                         </h3>
                         <span
@@ -521,20 +531,20 @@ export default function RecurringConfig() {
                         >
                           {badge.label}
                         </span>
-                        <span className="inline-flex rounded bg-purple-100 px-1 py-0.5 text-[10px] font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
+                        <span className="inline-flex rounded bg-purple-soft px-1 py-0.5 text-[10px] font-medium text-purple-text">
                           ↻{" "}
                           {RECURRENCE_LABELS[task.recurrence] ||
                             task.recurrence}
                         </span>
                       </div>
-                      <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                      <p className="mt-0.5 text-xs text-muted">
                         {describeSchedule(task)}
                       </p>
                     </div>
                     <div className="flex shrink-0 items-center gap-1">
                       <button
                         onClick={() => setEditTarget({ ...task })}
-                        className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                        className="rounded p-1.5 text-muted hover:bg-elevated hover:text-body"
                         title="Edit"
                       >
                         <svg

@@ -8,6 +8,16 @@ import type { TaskData, TaskType } from "@/components/TaskCard";
 import type { Status, Priority } from "@/generated/prisma/client";
 import ListView from "@/components/views/ListView";
 import TaskModal from "@/components/TaskModal";
+import {
+  pageTitle,
+  sectionTitle,
+  btnPrimary,
+  btnSecondary,
+  input,
+  pillActive,
+  pillInactive,
+  emptyState,
+} from "@/lib/styles";
 
 // Lazy-load tab components that aren't shown by default
 const DashboardView = dynamic(() => import("@/components/views/DashboardView"));
@@ -158,13 +168,13 @@ function TasksContent() {
     <div>
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-xl font-bold text-heading">
           Tasks
         </h1>
         {tab === "tasks" && (
           <button
             onClick={() => setModalMode("create")}
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+            className={`inline-flex items-center shadow-sm ${btnPrimary}`}
           >
             + New Task
           </button>
@@ -173,15 +183,15 @@ function TasksContent() {
 
       {/* Tabs */}
       <div className="-mx-4 mb-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
-        <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex gap-1 border-b border-border">
           {TABS.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
               className={`shrink-0 rounded-t-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
                 tab === t.key
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                  ? "bg-accent text-white"
+                  : "text-muted hover:bg-elevated"
               }`}
             >
               {t.label}
@@ -194,8 +204,8 @@ function TasksContent() {
       {tab === "dashboard" && (
         <div className="space-y-8">
           <DailyLogSection />
-          <div className="border-t border-gray-200 pt-6 dark:border-gray-700">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <div className="border-t border-border pt-6">
+            <h2 className={`mb-4 ${sectionTitle}`}>
               Task Stats
             </h2>
             <DashboardView tasks={tasks} />
@@ -209,7 +219,7 @@ function TasksContent() {
           <div className="mb-4 space-y-2">
             <div className="relative">
               <svg
-                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -226,7 +236,7 @@ function TasksContent() {
                 placeholder="Search tasks..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
+                className="w-full rounded-md border border-input-border bg-card py-2 pl-10 pr-3 text-sm text-heading placeholder-faint focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
               />
             </div>
 

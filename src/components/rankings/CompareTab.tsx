@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { emptyState, btnSecondary } from "@/lib/styles";
 
 interface RankingItem {
   id: string;
@@ -82,9 +83,9 @@ export default function CompareTab({
 
   if (error) {
     return (
-      <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-        <p className="text-gray-500 dark:text-gray-400">{error}</p>
-        <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+      <div className={emptyState}>
+        <p className="text-muted">{error}</p>
+        <p className="mt-1 text-sm text-faint">
           Add more items to start comparing
         </p>
       </div>
@@ -92,13 +93,13 @@ export default function CompareTab({
   }
 
   if (loadingPair || !left || !right) {
-    return <p className="text-center text-gray-400">Loading matchup...</p>;
+    return <p className="text-center text-muted">Loading matchup...</p>;
   }
 
   return (
     <div className="space-y-6">
       {totalDone > 0 && (
-        <p className="text-center text-xs text-gray-400 dark:text-gray-500">
+        <p className="text-center text-xs text-faint">
           {totalDone} comparison{totalDone !== 1 ? "s" : ""} this session
         </p>
       )}
@@ -107,13 +108,13 @@ export default function CompareTab({
         {/* Left item */}
         <button
           onClick={() => submitChoice("LEFT")}
-          className="group rounded-lg border-2 border-gray-200 bg-white p-6 text-left transition-all hover:border-blue-400 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-500"
+          className="group rounded-lg border-2 border-border bg-card p-6 text-left transition-all hover:border-accent hover:shadow-lg"
         >
-          <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 dark:text-gray-100">
+          <h3 className="text-lg font-bold text-heading group-hover:text-accent-text">
             {left.title}
           </h3>
           {left.description && (
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-2 text-sm text-muted">
               {left.description}
             </p>
           )}
@@ -122,21 +123,21 @@ export default function CompareTab({
               {left.tags.split(",").map((t, i) => (
                 <span
                   key={i}
-                  className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500 dark:bg-gray-700 dark:text-gray-400"
+                  className="rounded bg-elevated px-1.5 py-0.5 text-xs text-muted"
                 >
                   {t.trim()}
                 </span>
               ))}
             </div>
           )}
-          <p className="mt-4 text-center text-xs font-medium text-gray-400 group-hover:text-blue-500">
+          <p className="mt-4 text-center text-xs font-medium text-muted group-hover:text-accent-text">
             Click to pick this one
           </p>
         </button>
 
         {/* VS divider */}
         <div className="flex items-center justify-center">
-          <span className="text-2xl font-black text-gray-300 dark:text-gray-600">
+          <span className="text-2xl font-black text-faint">
             VS
           </span>
         </div>
@@ -144,13 +145,13 @@ export default function CompareTab({
         {/* Right item */}
         <button
           onClick={() => submitChoice("RIGHT")}
-          className="group rounded-lg border-2 border-gray-200 bg-white p-6 text-left transition-all hover:border-blue-400 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-500"
+          className="group rounded-lg border-2 border-border bg-card p-6 text-left transition-all hover:border-accent hover:shadow-lg"
         >
-          <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 dark:text-gray-100">
+          <h3 className="text-lg font-bold text-heading group-hover:text-accent-text">
             {right.title}
           </h3>
           {right.description && (
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-2 text-sm text-muted">
               {right.description}
             </p>
           )}
@@ -159,14 +160,14 @@ export default function CompareTab({
               {right.tags.split(",").map((t, i) => (
                 <span
                   key={i}
-                  className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500 dark:bg-gray-700 dark:text-gray-400"
+                  className="rounded bg-elevated px-1.5 py-0.5 text-xs text-muted"
                 >
                   {t.trim()}
                 </span>
               ))}
             </div>
           )}
-          <p className="mt-4 text-center text-xs font-medium text-gray-400 group-hover:text-blue-500">
+          <p className="mt-4 text-center text-xs font-medium text-muted group-hover:text-accent-text">
             Click to pick this one
           </p>
         </button>
@@ -176,13 +177,13 @@ export default function CompareTab({
       <div className="flex justify-center gap-3">
         <button
           onClick={() => submitChoice("TIE")}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"
+          className={btnSecondary}
         >
           Tie / Equal
         </button>
         <button
           onClick={() => submitChoice("SKIP")}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"
+          className={btnSecondary}
         >
           Skip
         </button>

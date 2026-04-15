@@ -3,7 +3,18 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { useTheme } from "@/components/ThemeProvider";
+import {
+  input,
+  inputSm,
+  select,
+  btnPrimary,
+  label as labelStyle,
+  labelSm,
+  sectionTitle,
+  pageTitle,
+  pillActive,
+  pillInactive,
+} from "@/lib/styles";
 
 interface TrackerConfig {
   metrics: {
@@ -48,7 +59,6 @@ const DEFAULT_TRACKER_CONFIG: TrackerConfig = {
 };
 
 interface UserSettingsData {
-  theme: string;
   emailNotifications: boolean;
   browserNotifications: boolean;
   trackerEnabled: boolean;
@@ -56,9 +66,7 @@ interface UserSettingsData {
 }
 
 export default function SettingsPage() {
-  const { setTheme } = useTheme();
   const [settings, setSettings] = useState<UserSettingsData>({
-    theme: "light",
     emailNotifications: false,
     browserNotifications: false,
     trackerEnabled: true,
@@ -76,7 +84,6 @@ export default function SettingsPage() {
       .then((r) => r.json())
       .then((data) => {
         setSettings({
-          theme: data.theme || "light",
           emailNotifications: data.emailNotifications || false,
           browserNotifications: data.browserNotifications || false,
           trackerEnabled: data.trackerEnabled ?? true,
@@ -89,11 +96,6 @@ export default function SettingsPage() {
       if (user?.email) setEmail(user.email);
     });
   }, [supabase.auth]);
-
-  const handleThemeChange = (t: string) => {
-    setSettings((s) => ({ ...s, theme: t }));
-    setTheme(t as "light" | "dark" | "system");
-  };
 
   const saveSettings = async () => {
     setSaving(true);
@@ -129,63 +131,30 @@ export default function SettingsPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          Settings
-        </h1>
-        <Link href="/" className="text-sm text-blue-600 hover:text-blue-500">
+        <h1 className={pageTitle}>Settings</h1>
+        <Link
+          href="/"
+          className="text-sm text-accent-text hover:text-accent-hover"
+        >
           Back to Tasks
         </Link>
       </div>
 
-      {message && <p className="mt-4 text-sm text-green-600">{message}</p>}
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
-
-      {/* Theme */}
-      <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Appearance
-        </h2>
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Theme
-          </label>
-          <div className="mt-2 flex gap-3">
-            {["light", "dark", "system"].map((t) => (
-              <button
-                key={t}
-                onClick={() => handleThemeChange(t)}
-                className={`rounded-md border px-4 py-2 text-sm font-medium capitalize ${
-                  settings.theme === t
-                    ? "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                    : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      {message && (
+        <p className="mt-4 text-sm text-success-text">{message}</p>
+      )}
+      {error && <p className="mt-4 text-sm text-danger-text">{error}</p>}
 
       {/* Account */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Account
-        </h2>
+        <h2 className={sectionTitle}>Account</h2>
         <div className="mt-4 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Email
-            </label>
-            <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-              {email}
-            </p>
+            <label className={labelStyle}>Email</label>
+            <p className="mt-1 text-sm text-heading">{email}</p>
           </div>
           <div>
-            <label
-              htmlFor="new-password"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="new-password" className={labelStyle}>
               Change Password
             </label>
             <div className="mt-1 flex gap-2">
@@ -196,12 +165,9 @@ export default function SettingsPage() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="New password"
                 minLength={6}
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={`flex-1 ${input}`}
               />
-              <button
-                onClick={updatePassword}
-                className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600"
-              >
+              <button onClick={updatePassword} className={btnPrimary}>
                 Update
               </button>
             </div>
@@ -211,9 +177,7 @@ export default function SettingsPage() {
 
       {/* Notifications */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Notifications
-        </h2>
+        <h2 className={sectionTitle}>Notifications</h2>
         <div className="mt-4 space-y-3">
           <label className="flex items-center gap-3">
             <input
@@ -225,9 +189,9 @@ export default function SettingsPage() {
                   emailNotifications: e.target.checked,
                 }))
               }
-              className="h-4 w-4 rounded border-gray-300"
+              className="h-4 w-4 rounded border-input-border"
             />
-            <span className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="text-sm text-body">
               Email notifications for upcoming due dates
             </span>
           </label>
@@ -250,9 +214,9 @@ export default function SettingsPage() {
                   browserNotifications: e.target.checked,
                 }));
               }}
-              className="h-4 w-4 rounded border-gray-300"
+              className="h-4 w-4 rounded border-input-border"
             />
-            <span className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="text-sm text-body">
               Browser notifications for overdue and due-today tasks
             </span>
           </label>
@@ -261,10 +225,8 @@ export default function SettingsPage() {
 
       {/* Daily Tracker */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Daily Tracker
-        </h2>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <h2 className={sectionTitle}>Daily Tracker</h2>
+        <p className="mt-1 text-sm text-muted">
           Configure the daily &quot;Log Your Data&quot; task that appears in your
           task list.
         </p>
@@ -277,18 +239,18 @@ export default function SettingsPage() {
             onChange={(e) =>
               setSettings((s) => ({ ...s, trackerEnabled: e.target.checked }))
             }
-            className="h-4 w-4 rounded border-gray-300"
+            className="h-4 w-4 rounded border-input-border"
           />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className="text-sm font-medium text-body">
             Enable daily tracking task
           </span>
         </label>
 
         {settings.trackerEnabled && (
-          <div className="mt-4 space-y-6 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
+          <div className="mt-4 space-y-6 rounded-lg border border-border bg-card/50 p-4">
             {/* Metrics to track */}
             <div>
-              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              <h3 className="text-sm font-medium text-heading">
                 Metrics to Track
               </h3>
               <div className="mt-2 space-y-2">
@@ -300,7 +262,7 @@ export default function SettingsPage() {
                     ["chest", "Chest circumference"],
                     ["manualCalories", "Manual calorie entry (instead of meal tasks)"],
                   ] as const
-                ).map(([key, label]) => (
+                ).map(([key, lbl]) => (
                   <label key={key} className="flex items-center gap-3">
                     <input
                       type="checkbox"
@@ -317,11 +279,9 @@ export default function SettingsPage() {
                           },
                         }))
                       }
-                      className="h-4 w-4 rounded border-gray-300"
+                      className="h-4 w-4 rounded border-input-border"
                     />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">
-                      {label}
-                    </span>
+                    <span className="text-sm text-body">{lbl}</span>
                   </label>
                 ))}
               </div>
@@ -329,14 +289,10 @@ export default function SettingsPage() {
 
             {/* Units */}
             <div>
-              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                Units
-              </h3>
+              <h3 className="text-sm font-medium text-heading">Units</h3>
               <div className="mt-2 flex gap-6">
                 <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400">
-                    Weight
-                  </label>
+                  <label className={labelSm}>Weight</label>
                   <div className="mt-1 flex gap-2">
                     {(["lbs", "kg"] as const).map((u) => (
                       <button
@@ -352,8 +308,8 @@ export default function SettingsPage() {
                         }
                         className={`rounded-md border px-3 py-1 text-xs font-medium ${
                           settings.trackerConfig.units.weight === u
-                            ? "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
+                            ? pillActive
+                            : pillInactive
                         }`}
                       >
                         {u}
@@ -362,9 +318,7 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400">
-                    Measurements
-                  </label>
+                  <label className={labelSm}>Measurements</label>
                   <div className="mt-1 flex gap-2">
                     {(["in", "cm"] as const).map((u) => (
                       <button
@@ -383,8 +337,8 @@ export default function SettingsPage() {
                         }
                         className={`rounded-md border px-3 py-1 text-xs font-medium ${
                           settings.trackerConfig.units.measurements === u
-                            ? "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
+                            ? pillActive
+                            : pillInactive
                         }`}
                       >
                         {u}
@@ -397,20 +351,16 @@ export default function SettingsPage() {
 
             {/* Profile (for TDEE seed) */}
             <div>
-              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                Profile
-              </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <h3 className="text-sm font-medium text-heading">Profile</h3>
+              <p className="text-xs text-faint">
                 Used to estimate your initial daily burn before enough tracking
                 data is available.
               </p>
               <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-3">
-                {/* Height — feet/inches when imperial, cm when metric */}
+                {/* Height -- feet/inches when imperial, cm when metric */}
                 {settings.trackerConfig.profile.heightUnit === "in" ? (
                   <div className="col-span-2 sm:col-span-1">
-                    <label className="block text-xs text-gray-500 dark:text-gray-400">
-                      Height
-                    </label>
+                    <label className={labelSm}>Height</label>
                     <div className="mt-1 flex gap-1.5">
                       <div className="relative flex-1">
                         <input
@@ -445,9 +395,9 @@ export default function SettingsPage() {
                             }));
                           }}
                           placeholder="5"
-                          className="w-full rounded-md border border-gray-300 px-2 py-1.5 pr-7 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                          className={`${inputSm} pr-7`}
                         />
-                        <span className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-xs text-gray-400">
+                        <span className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-xs text-faint">
                           ft
                         </span>
                       </div>
@@ -485,9 +435,9 @@ export default function SettingsPage() {
                             }));
                           }}
                           placeholder="10"
-                          className="w-full rounded-md border border-gray-300 px-2 py-1.5 pr-7 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                          className={`${inputSm} pr-7`}
                         />
-                        <span className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-xs text-gray-400">
+                        <span className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-xs text-faint">
                           in
                         </span>
                       </div>
@@ -495,9 +445,7 @@ export default function SettingsPage() {
                   </div>
                 ) : (
                   <div>
-                    <label className="block text-xs text-gray-500 dark:text-gray-400">
-                      Height (cm)
-                    </label>
+                    <label className={labelSm}>Height (cm)</label>
                     <input
                       type="number"
                       value={settings.trackerConfig.profile.height ?? ""}
@@ -516,14 +464,12 @@ export default function SettingsPage() {
                         }))
                       }
                       placeholder="178"
-                      className="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                      className={inputSm}
                     />
                   </div>
                 )}
                 <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400">
-                    Age
-                  </label>
+                  <label className={labelSm}>Age</label>
                   <input
                     type="number"
                     value={settings.trackerConfig.profile.age ?? ""}
@@ -542,13 +488,11 @@ export default function SettingsPage() {
                       }))
                     }
                     placeholder="30"
-                    className="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    className={inputSm}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400">
-                    Sex
-                  </label>
+                  <label className={labelSm}>Sex</label>
                   <select
                     value={settings.trackerConfig.profile.sex ?? ""}
                     onChange={(e) =>
@@ -566,7 +510,7 @@ export default function SettingsPage() {
                         },
                       }))
                     }
-                    className="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    className={select}
                   >
                     <option value="">Select</option>
                     <option value="male">Male</option>
@@ -578,17 +522,15 @@ export default function SettingsPage() {
 
             {/* Goal */}
             <div>
-              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                Goal
-              </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <h3 className="text-sm font-medium text-heading">Goal</h3>
+              <p className="text-xs text-faint">
                 Your target weight and body fat %. The system will calculate
                 your daily calorie target based on your TDEE and how far you are
                 from these goals.
               </p>
               <div className="mt-2 grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400">
+                  <label className={labelSm}>
                     Goal Weight ({settings.trackerConfig.units.weight})
                   </label>
                   <input
@@ -610,13 +552,11 @@ export default function SettingsPage() {
                       }))
                     }
                     placeholder="170"
-                    className="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    className={inputSm}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400">
-                    Goal Body Fat (%)
-                  </label>
+                  <label className={labelSm}>Goal Body Fat (%)</label>
                   <input
                     type="number"
                     step="0.5"
@@ -636,7 +576,7 @@ export default function SettingsPage() {
                       }))
                     }
                     placeholder="15"
-                    className="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    className={inputSm}
                   />
                 </div>
               </div>
@@ -646,11 +586,7 @@ export default function SettingsPage() {
       </div>
 
       <div className="mt-8">
-        <button
-          onClick={saveSettings}
-          disabled={saving}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-        >
+        <button onClick={saveSettings} disabled={saving} className={btnPrimary}>
           {saving ? "Saving..." : "Save Settings"}
         </button>
       </div>

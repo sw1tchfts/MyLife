@@ -78,11 +78,9 @@ export default function SubtaskList({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          Subtasks
-        </h3>
+        <h3 className="text-sm font-medium text-body">Subtasks</h3>
         {total > 0 && (
-          <span className="text-xs text-gray-400 dark:text-gray-500">
+          <span className="text-xs text-faint">
             {doneCount}/{total} done
           </span>
         )}
@@ -90,9 +88,9 @@ export default function SubtaskList({
 
       {/* Progress bar */}
       {total > 0 && (
-        <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+        <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-elevated">
           <div
-            className="h-full rounded-full bg-green-500 transition-all"
+            className="h-full rounded-full bg-success transition-all"
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -103,26 +101,26 @@ export default function SubtaskList({
         {visibleSubtasks.map((subtask) => (
           <div
             key={subtask.id}
-            className="group flex items-center gap-2 rounded-md px-1 py-1 hover:bg-gray-50 dark:hover:bg-gray-700"
+            className="group flex items-center gap-2 rounded-md px-1 py-1 hover:bg-elevated"
           >
             <input
               type="checkbox"
               checked={subtask.done}
               onChange={() => toggleDone(subtask)}
-              className="h-4 w-4 rounded border-gray-300"
+              className="h-4 w-4 rounded border-input-border"
             />
             <span
               className={`flex-1 text-sm ${
                 subtask.done
-                  ? "text-gray-400 line-through dark:text-gray-500"
-                  : "text-gray-700 dark:text-gray-300"
+                  ? "text-faint line-through"
+                  : "text-body"
               }`}
             >
               {subtask.title}
             </span>
             <button
               onClick={() => deleteSubtask(subtask.id)}
-              className="rounded p-0.5 text-gray-300 opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100 dark:text-gray-600"
+              className="rounded p-0.5 text-faint opacity-0 transition-opacity hover:text-danger group-hover:opacity-100"
               title="Remove"
             >
               <svg
@@ -151,12 +149,12 @@ export default function SubtaskList({
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="flex-1 rounded-md border border-gray-300 px-2 py-1 text-sm placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
+          className="flex-1 rounded-md border border-input-border bg-card px-2 py-1 text-sm text-heading placeholder-faint focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
         />
         <button
           onClick={addSubtask}
           disabled={adding || !newTitle.trim()}
-          className="rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-200 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+          className="rounded-md bg-elevated px-2 py-1 text-xs font-medium text-body hover:bg-gray-600 disabled:opacity-50"
         >
           Add
         </button>

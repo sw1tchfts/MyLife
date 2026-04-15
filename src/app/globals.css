@@ -1,8 +1,56 @@
 @import "tailwindcss";
 
-@variant dark (&:is(.dark, .dark *));
-
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* ── Surfaces ─────────────────────────────────────── */
+  --color-surface: #111827;
+  --color-card: #1f2937;
+  --color-elevated: #374151;
+  --color-inset: rgba(31, 41, 55, 0.5);
+
+  /* ── Borders ──────────────────────────────────────── */
+  --color-border: #374151;
+  --color-input-border: #4b5563;
+
+  /* ── Text ──────────────────────────────────────────── */
+  --color-heading: #f3f4f6;
+  --color-body: #d1d5db;
+  --color-muted: #9ca3af;
+  --color-faint: #6b7280;
+
+  /* ── Primary (blue) ───────────────────────────────── */
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-soft: #172554;
+  --color-accent-text: #60a5fa;
+
+  /* ── Success (green) ──────────────────────────────── */
+  --color-success: #16a34a;
+  --color-success-soft: #14532d;
+  --color-success-text: #86efac;
+
+  /* ── Danger (red) ─────────────────────────────────── */
+  --color-danger: #dc2626;
+  --color-danger-soft: #7f1d1d;
+  --color-danger-text: #fca5a5;
+
+  /* ── Warning (yellow/amber) ───────────────────────── */
+  --color-warning: #ca8a04;
+  --color-warning-soft: #713f12;
+  --color-warning-text: #fde047;
+
+  /* ── Info (teal) ──────────────────────────────────── */
+  --color-info: #0d9488;
+  --color-info-soft: #134e4a;
+  --color-info-text: #5eead4;
+
+  /* ── Purple (recurrence, misc) ────────────────────── */
+  --color-purple-soft: #581c87;
+  --color-purple-text: #d8b4fe;
+
+  /* ── Amber accent ─────────────────────────────────── */
+  --color-amber-soft: #78350f;
+  --color-amber-text: #fcd34d;
 }
