@@ -161,9 +161,9 @@ export default function DailyLogSection() {
               color={
                 tdee.weeklyWeightChange !== null
                   ? tdee.weeklyWeightChange > 0
-                    ? "text-red-600 dark:text-red-400"
+                    ? "text-danger-text"
                     : tdee.weeklyWeightChange < 0
-                      ? "text-green-600 dark:text-green-400"
+                      ? "text-success-text"
                       : undefined
                   : undefined
               }
@@ -353,12 +353,12 @@ export default function DailyLogSection() {
         </div>
 
         {/* Today's Medications */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+        <div className="rounded-lg border border-border bg-card p-4">
+          <h2 className="text-sm font-semibold text-heading">
             Today&apos;s Medications
           </h2>
           {todayMedications.length === 0 ? (
-            <p className="mt-2 text-sm text-gray-400 dark:text-gray-500">
+            <p className="mt-2 text-sm text-faint">
               No medications taken today
             </p>
           ) : (
@@ -366,7 +366,7 @@ export default function DailyLogSection() {
               {todayMedications.map((m, i) => (
                 <li
                   key={i}
-                  className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300"
+                  className="flex items-center gap-2 text-sm text-body"
                 >
                   <svg
                     className="h-4 w-4 text-green-500"
@@ -383,7 +383,7 @@ export default function DailyLogSection() {
                   </svg>
                   {m.name}
                   {m.dosage && (
-                    <span className="text-xs text-gray-400">({m.dosage})</span>
+                    <span className="text-xs text-faint">({m.dosage})</span>
                   )}
                 </li>
               ))}
@@ -392,8 +392,8 @@ export default function DailyLogSection() {
         </div>
 
         {/* Logging Status */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 lg:col-span-2">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+        <div className="rounded-lg border border-border bg-card p-4 lg:col-span-2">
+          <h2 className="text-sm font-semibold text-heading">
             Tracking Status
           </h2>
           <div className="mt-3 flex flex-wrap gap-6">
@@ -401,13 +401,13 @@ export default function DailyLogSection() {
               <span
                 className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
                   hasLoggedToday
-                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                    : "bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500"
+                    ? "bg-success-soft text-success-text"
+                    : "bg-elevated text-faint"
                 }`}
               >
                 {hasLoggedToday ? "!" : "?"}
               </span>
-              <span className="text-sm text-gray-700 dark:text-gray-300">
+              <span className="text-sm text-body">
                 {hasLoggedToday
                   ? "Today's metrics logged"
                   : "Today's metrics not yet logged"}
@@ -417,23 +417,23 @@ export default function DailyLogSection() {
               <span
                 className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
                   todayNutrition.calories > 0
-                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                    : "bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500"
+                    ? "bg-success-soft text-success-text"
+                    : "bg-elevated text-faint"
                 }`}
               >
                 {todayNutrition.calories > 0 ? "!" : "?"}
               </span>
-              <span className="text-sm text-gray-700 dark:text-gray-300">
+              <span className="text-sm text-body">
                 {todayNutrition.calories > 0
                   ? `${Math.round(todayNutrition.calories)} cal logged from meals`
                   : "No meals logged today"}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-teal-100 text-xs font-bold text-teal-700 dark:bg-teal-900/30 dark:text-teal-400">
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-teal-900/30 text-xs font-bold text-teal-400">
                 {tdee.weeksOfData}
               </span>
-              <span className="text-sm text-gray-700 dark:text-gray-300">
+              <span className="text-sm text-body">
                 weeks of tracking data
               </span>
             </div>
@@ -455,11 +455,11 @@ function StatCard({
 }) {
   return (
     <div>
-      <p className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+      <p className="text-[10px] uppercase tracking-wide text-muted">
         {label}
       </p>
       <p
-        className={`text-sm font-semibold ${color || "text-gray-900 dark:text-gray-100"}`}
+        className={`text-sm font-semibold ${color || "text-heading"}`}
       >
         {value}
       </p>
@@ -477,8 +477,8 @@ function MacroCard({
   color: string;
 }) {
   return (
-    <div className="rounded-md bg-gray-50 p-2 text-center dark:bg-gray-700/50">
-      <p className="text-[10px] text-gray-500 dark:text-gray-400">{label}</p>
+    <div className="rounded-md bg-elevated/50 p-2 text-center">
+      <p className="text-[10px] text-muted">{label}</p>
       <p className={`text-lg font-bold ${color}`}>{Math.round(grams)}g</p>
     </div>
   );

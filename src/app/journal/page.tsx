@@ -173,8 +173,8 @@ export default function JournalPage() {
 
       {/* Inline form */}
       {showForm && (
-        <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
-          <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
+        <div className="mb-6 rounded-lg border border-accent bg-accent-soft p-4">
+          <h3 className="mb-3 text-sm font-semibold text-heading">
             {editId ? "Edit Entry" : "New Entry"}
           </h3>
           <div className="space-y-3">
@@ -183,14 +183,14 @@ export default function JournalPage() {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-40 rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className="w-40 rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
               />
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Title (optional)"
-                className="flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className="flex-1 rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
               />
             </div>
             <div className="flex gap-1.5">
@@ -200,12 +200,12 @@ export default function JournalPage() {
                   onClick={() => setMood(mood === m.value ? null : m.value)}
                   className={`flex items-center gap-1 rounded-md border px-2 py-1 text-xs transition-colors ${
                     mood === m.value
-                      ? "border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/30"
-                      : "border-gray-200 hover:border-gray-300 dark:border-gray-600"
+                      ? "border-accent bg-accent-soft"
+                      : "border-border hover:border-input-border"
                   }`}
                 >
                   <span>{m.emoji}</span>
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="text-muted">
                     {m.label}
                   </span>
                 </button>
@@ -216,7 +216,7 @@ export default function JournalPage() {
               onChange={(e) => setContent(e.target.value)}
               placeholder="Write about your day..."
               rows={6}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm leading-relaxed dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              className="w-full rounded-md border border-input-border bg-card px-3 py-2 text-sm leading-relaxed text-heading"
               autoFocus
             />
             <input
@@ -224,19 +224,19 @@ export default function JournalPage() {
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="Tags (comma-separated)"
-              className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              className="w-full rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
             />
             <div className="flex justify-end gap-2">
               <button
                 onClick={resetForm}
-                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                className={btnSecondary}
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={saving || !content.trim()}
-                className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                className={btnPrimary}
               >
                 {saving ? "Saving..." : editId ? "Update" : "Save"}
               </button>
@@ -252,15 +252,15 @@ export default function JournalPage() {
           placeholder="Search entries..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+          className="flex-1 rounded-md border border-input-border bg-card px-3 py-2 text-sm text-heading"
         />
         <div className="flex gap-1">
           <button
             onClick={() => setMoodFilter(null)}
             className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
               !moodFilter
-                ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                : "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400"
+                ? "bg-accent-soft text-accent-text"
+                : "bg-elevated text-muted hover:bg-elevated"
             }`}
           >
             All
@@ -274,8 +274,8 @@ export default function JournalPage() {
               title={m.label}
               className={`rounded-full px-2 py-1 text-sm transition-colors ${
                 moodFilter === m.value
-                  ? "bg-blue-100 dark:bg-blue-900/30"
-                  : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-700"
+                  ? "bg-accent-soft"
+                  : "bg-elevated hover:bg-elevated"
               }`}
             >
               {m.emoji}
@@ -286,13 +286,13 @@ export default function JournalPage() {
 
       {/* Entries list */}
       {loading ? (
-        <p className="text-center text-gray-400">Loading entries...</p>
+        <p className="text-center text-muted">Loading entries...</p>
       ) : entries.length === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-          <p className="text-gray-500 dark:text-gray-400">
+        <div className={emptyState}>
+          <p className="text-muted">
             No journal entries yet
           </p>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+          <p className="mt-1 text-sm text-faint">
             Click &quot;+ New Entry&quot; to write your first one
           </p>
         </div>
@@ -300,7 +300,7 @@ export default function JournalPage() {
         <div className="space-y-4">
           {grouped.map(([month, monthEntries]) => (
             <div key={month}>
-              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-faint">
                 {month}
               </h3>
               <div className="space-y-2">
@@ -324,7 +324,7 @@ export default function JournalPage() {
                   return (
                     <div
                       key={entry.id}
-                      className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-sm dark:border-gray-700 dark:bg-gray-800"
+                      className="rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-sm"
                     >
                       <div className="flex items-start justify-between">
                         <div
@@ -334,7 +334,7 @@ export default function JournalPage() {
                           }
                         >
                           <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-400 dark:text-gray-500">
+                            <span className="text-sm text-faint">
                               {dateStr}
                             </span>
                             {entry.mood && (
@@ -344,11 +344,11 @@ export default function JournalPage() {
                             )}
                           </div>
                           {entry.title && (
-                            <h4 className="mt-1 font-medium text-gray-900 dark:text-gray-100">
+                            <h4 className="mt-1 font-medium text-heading">
                               {entry.title}
                             </h4>
                           )}
-                          <p className="mt-1 whitespace-pre-line text-sm text-gray-600 dark:text-gray-300">
+                          <p className="mt-1 whitespace-pre-line text-sm text-body">
                             {isExpanded ? entry.content : preview}
                           </p>
                           {tagList.length > 0 && (
@@ -356,7 +356,7 @@ export default function JournalPage() {
                               {tagList.map((tag) => (
                                 <span
                                   key={tag}
-                                  className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500 dark:bg-gray-700 dark:text-gray-400"
+                                  className="rounded-full bg-elevated px-2 py-0.5 text-xs text-muted"
                                 >
                                   {tag}
                                 </span>
@@ -368,7 +368,7 @@ export default function JournalPage() {
                         <div className="ml-3 flex gap-1">
                           <button
                             onClick={() => startEdit(entry)}
-                            className="rounded p-1.5 text-gray-300 hover:text-blue-500 dark:text-gray-600 dark:hover:text-blue-400"
+                            className="rounded p-1.5 text-faint hover:text-accent-text"
                             title="Edit"
                           >
                             <svg
@@ -387,7 +387,7 @@ export default function JournalPage() {
                           </button>
                           <button
                             onClick={() => deleteEntry(entry.id)}
-                            className="rounded p-1.5 text-gray-300 hover:text-red-500 dark:text-gray-600 dark:hover:text-red-400"
+                            className={deleteBtn}
                             title="Delete"
                           >
                             <svg
