@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { input, btnPrimary, label as labelStyle } from "@/lib/styles";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -48,19 +49,16 @@ export default function ResetPasswordPage() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
       <div className="w-full max-w-sm">
-        <h1 className="mb-2 text-center text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="mb-2 text-center text-2xl font-bold text-heading">
           Set New Password
         </h1>
-        <p className="mb-6 text-center text-sm text-gray-500 dark:text-gray-400">
+        <p className="mb-6 text-center text-sm text-muted">
           Enter your new password below.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="password" className={labelStyle}>
               New Password
             </label>
             <input
@@ -70,15 +68,12 @@ export default function ResetPasswordPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              className={input}
             />
           </div>
 
           <div>
-            <label
-              htmlFor="confirm"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="confirm" className={labelStyle}>
               Confirm Password
             </label>
             <input
@@ -88,17 +83,19 @@ export default function ResetPasswordPage() {
               onChange={(e) => setConfirm(e.target.value)}
               required
               minLength={6}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              className={input}
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          {message && <p className="text-sm text-green-600">{message}</p>}
+          {error && <p className="text-sm text-danger-text">{error}</p>}
+          {message && (
+            <p className="text-sm text-success-text">{message}</p>
+          )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+            className={`w-full ${btnPrimary}`}
           >
             {loading ? "Updating..." : "Update Password"}
           </button>

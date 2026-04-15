@@ -1,17 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import dynamic from "next/dynamic";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
-import ThemeProvider from "@/components/ThemeProvider";
 import ToastProvider from "@/components/ToastProvider";
 import TaskNotifications from "@/components/TaskNotifications";
 import { createClient } from "@/lib/supabase/server";
-
-const ScreenNameInspector = dynamic(
-  () => import("@/components/ScreenNameInspector"),
-  { ssr: false },
-);
 
 export const metadata: Metadata = {
   title: "MyLife - Task Tracker",
@@ -32,28 +25,23 @@ export default async function RootLayout({
   const user = session?.user ?? null;
 
   return (
-    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
-      <body className="h-full font-sans">
-        <ThemeProvider>
-          <ToastProvider>
-            {user ? (
-              <div className="flex h-full">
-                <Suspense>
-                  <Sidebar userEmail={user.email ?? ""} />
-                </Suspense>
-                <main className="flex-1 overflow-y-auto bg-gray-50 p-4 pt-16 dark:bg-gray-900 lg:p-8 lg:pt-8">
-                  {children}
-                </main>
-                <TaskNotifications />
-                <ScreenNameInspector />
-              </div>
-            ) : (
-              <div className="min-h-full bg-gray-50 dark:bg-gray-900">
+    <html lang="en" className="h-full antialiased">
+      <body className="h-full bg-surface font-sans text-body">
+        <ToastProvider>
+          {user ? (
+            <div className="flex h-full">
+              <Suspense>
+                <Sidebar userEmail={user.email ?? ""} />
+              </Suspense>
+              <main className="flex-1 overflow-y-auto p-4 pt-16 lg:p-8 lg:pt-8">
                 {children}
-              </div>
-            )}
-          </ToastProvider>
-        </ThemeProvider>
+              </main>
+              <TaskNotifications />
+            </div>
+          ) : (
+            <div className="min-h-full">{children}</div>
+          )}
+        </ToastProvider>
       </body>
     </html>
   );

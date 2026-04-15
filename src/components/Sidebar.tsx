@@ -5,15 +5,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { SCREEN_NAMES, SIDEBAR_SECTIONS } from "@/lib/screens";
+import { navLinkBase, navLinkActive, navLinkInactive } from "@/lib/styles";
 
 interface SidebarProps {
   userEmail: string;
 }
 
 const MANAGE = [
-  { href: "/admin", label: SCREEN_NAMES.admin, icon: AdminIcon },
-  { href: "/settings", label: SCREEN_NAMES.settings, icon: SettingsIcon },
+  { href: "/admin", label: "Admin", icon: AdminIcon },
+  { href: "/settings", label: "Settings", icon: SettingsIcon },
 ] as const;
 
 export default function Sidebar({ userEmail }: SidebarProps) {
@@ -33,16 +33,13 @@ export default function Sidebar({ userEmail }: SidebarProps) {
   return (
     <>
       {/* Mobile top bar */}
-      <div className="fixed top-0 right-0 left-0 z-40 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 dark:border-gray-700 dark:bg-gray-900 lg:hidden">
-        <Link
-          href="/"
-          className="text-lg font-bold text-gray-900 dark:text-gray-100"
-        >
+      <div className="fixed top-0 right-0 left-0 z-40 flex h-14 items-center justify-between border-b border-border bg-surface px-4 lg:hidden">
+        <Link href="/" className="text-lg font-bold text-heading">
           MyLife
         </Link>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="rounded-md p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+          className="rounded-md p-2 text-muted hover:bg-elevated"
         >
           {mobileOpen ? (
             <svg
@@ -86,14 +83,11 @@ export default function Sidebar({ userEmail }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 flex h-screen w-60 shrink-0 flex-col border-r border-gray-200 bg-gray-50 transition-transform dark:border-gray-700 dark:bg-gray-900 lg:static lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed top-0 left-0 z-50 flex h-screen w-60 shrink-0 flex-col border-r border-border bg-surface transition-transform lg:static lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* App name */}
         <div className="flex h-14 items-center px-4">
-          <Link
-            href="/"
-            className="text-lg font-bold text-gray-900 dark:text-gray-100"
-          >
+          <Link href="/" className="text-lg font-bold text-heading">
             MyLife
           </Link>
         </div>
@@ -102,106 +96,106 @@ export default function Sidebar({ userEmail }: SidebarProps) {
         <nav className="flex-1 overflow-y-auto px-2 py-2" onClick={closeMobile}>
           {/* Mission Control */}
           <div className="mb-4">
-            <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
-              {SIDEBAR_SECTIONS.missionControl}
+            <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-muted uppercase">
+              Mission Control
             </p>
             <Link
               href="/tasks"
-              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+              className={`${navLinkBase} ${
                 pathname.startsWith("/tasks")
-                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                  ? navLinkActive
+                  : navLinkInactive
               }`}
             >
               <ListIcon active={pathname.startsWith("/tasks")} />
-              {SCREEN_NAMES.tasks}
+              Tasks
             </Link>
           </div>
 
           {/* Health */}
           <div className="mb-4">
-            <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
-              {SIDEBAR_SECTIONS.health}
+            <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-muted uppercase">
+              Health
             </p>
             <Link
               href="/diet"
-              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+              className={`${navLinkBase} ${
                 pathname.startsWith("/diet")
-                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                  ? navLinkActive
+                  : navLinkInactive
               }`}
             >
               <DietIcon active={pathname.startsWith("/diet")} />
-              {SCREEN_NAMES.diet}
+              Diet & Nutrition
             </Link>
             <Link
               href="/gym"
-              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+              className={`${navLinkBase} ${
                 pathname.startsWith("/gym")
-                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                  ? navLinkActive
+                  : navLinkInactive
               }`}
             >
               <GymIcon active={pathname.startsWith("/gym")} />
-              {SCREEN_NAMES.gym}
+              Gym
             </Link>
             <Link
               href="/medications"
-              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+              className={`${navLinkBase} ${
                 pathname.startsWith("/medications")
-                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                  ? navLinkActive
+                  : navLinkInactive
               }`}
             >
               <MedIcon active={pathname.startsWith("/medications")} />
-              {SCREEN_NAMES.medications}
+              Medications
             </Link>
           </div>
 
           {/* Other Applications */}
           <div className="mb-4">
-            <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
-              {SIDEBAR_SECTIONS.otherApplications}
+            <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-muted uppercase">
+              Other Applications
             </p>
             <Link
               href="/journal"
-              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+              className={`${navLinkBase} ${
                 pathname.startsWith("/journal")
-                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                  ? navLinkActive
+                  : navLinkInactive
               }`}
             >
               <JournalIcon active={pathname.startsWith("/journal")} />
-              {SCREEN_NAMES.journal}
+              Journal
             </Link>
             <Link
               href="/rankings"
-              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+              className={`${navLinkBase} ${
                 pathname.startsWith("/rankings")
-                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                  ? navLinkActive
+                  : navLinkInactive
               }`}
             >
               <RankingIcon active={pathname.startsWith("/rankings")} />
-              {SCREEN_NAMES.rankings}
+              Pairwise Ranker
             </Link>
             <Link
               href="/diagrams"
-              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+              className={`${navLinkBase} ${
                 pathname.startsWith("/diagrams")
-                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                  ? navLinkActive
+                  : navLinkInactive
               }`}
             >
               <DiagramIcon active={pathname.startsWith("/diagrams")} />
-              {SCREEN_NAMES.diagrams}
+              Diagram Creator
             </Link>
           </div>
 
           {/* Manage */}
           <div>
-            <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
-              {SIDEBAR_SECTIONS.manage}
+            <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-muted uppercase">
+              Manage
             </p>
             {MANAGE.map((item) => {
               const active = pathname === item.href;
@@ -209,10 +203,8 @@ export default function Sidebar({ userEmail }: SidebarProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
-                    active
-                      ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                  className={`${navLinkBase} ${
+                    active ? navLinkActive : navLinkInactive
                   }`}
                 >
                   <item.icon active={active} />
@@ -224,11 +216,11 @@ export default function Sidebar({ userEmail }: SidebarProps) {
         </nav>
 
         {/* User section */}
-        <div className="border-t border-gray-200 p-3 dark:border-gray-700">
-          <p className="truncate text-xs text-gray-500">{userEmail}</p>
+        <div className="border-t border-border p-3">
+          <p className="truncate text-xs text-faint">{userEmail}</p>
           <button
             onClick={handleSignOut}
-            className="mt-1 text-xs text-gray-400 hover:text-gray-600"
+            className="mt-1 text-xs text-muted hover:text-body"
           >
             Sign out
           </button>
@@ -241,7 +233,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
 /* ── Icons ──────────────────────────────────────────── */
 
 function ListIcon({ active }: { active: boolean }) {
-  const cls = active ? "text-blue-600" : "text-gray-400";
+  const cls = active ? "text-accent-text" : "text-muted";
   return (
     <svg
       className={`h-4 w-4 ${cls}`}
@@ -260,7 +252,7 @@ function ListIcon({ active }: { active: boolean }) {
 }
 
 function AdminIcon({ active }: { active: boolean }) {
-  const cls = active ? "text-blue-600" : "text-gray-400";
+  const cls = active ? "text-accent-text" : "text-muted";
   return (
     <svg
       className={`h-4 w-4 ${cls}`}
@@ -284,7 +276,7 @@ function AdminIcon({ active }: { active: boolean }) {
 }
 
 function MedIcon({ active }: { active: boolean }) {
-  const cls = active ? "text-blue-600" : "text-gray-400";
+  const cls = active ? "text-accent-text" : "text-muted";
   return (
     <svg
       className={`h-4 w-4 ${cls}`}
@@ -303,7 +295,7 @@ function MedIcon({ active }: { active: boolean }) {
 }
 
 function DietIcon({ active }: { active: boolean }) {
-  const cls = active ? "text-blue-600" : "text-gray-400";
+  const cls = active ? "text-accent-text" : "text-muted";
   return (
     <svg
       className={`h-4 w-4 ${cls}`}
@@ -322,7 +314,7 @@ function DietIcon({ active }: { active: boolean }) {
 }
 
 function GymIcon({ active }: { active: boolean }) {
-  const cls = active ? "text-blue-600" : "text-gray-400";
+  const cls = active ? "text-accent-text" : "text-muted";
   return (
     <svg
       className={`h-4 w-4 ${cls}`}
@@ -341,7 +333,7 @@ function GymIcon({ active }: { active: boolean }) {
 }
 
 function RankingIcon({ active }: { active: boolean }) {
-  const cls = active ? "text-blue-600" : "text-gray-400";
+  const cls = active ? "text-accent-text" : "text-muted";
   return (
     <svg
       className={`h-4 w-4 ${cls}`}
@@ -360,7 +352,7 @@ function RankingIcon({ active }: { active: boolean }) {
 }
 
 function JournalIcon({ active }: { active: boolean }) {
-  const cls = active ? "text-blue-600" : "text-gray-400";
+  const cls = active ? "text-accent-text" : "text-muted";
   return (
     <svg
       className={`h-4 w-4 ${cls}`}
@@ -379,7 +371,7 @@ function JournalIcon({ active }: { active: boolean }) {
 }
 
 function DiagramIcon({ active }: { active: boolean }) {
-  const cls = active ? "text-blue-600" : "text-gray-400";
+  const cls = active ? "text-accent-text" : "text-muted";
   return (
     <svg
       className={`h-4 w-4 ${cls}`}
@@ -398,7 +390,7 @@ function DiagramIcon({ active }: { active: boolean }) {
 }
 
 function SettingsIcon({ active }: { active: boolean }) {
-  const cls = active ? "text-blue-600" : "text-gray-400";
+  const cls = active ? "text-accent-text" : "text-muted";
   return (
     <svg
       className={`h-4 w-4 ${cls}`}

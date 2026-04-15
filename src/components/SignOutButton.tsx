@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { btnSecondary } from "@/lib/styles";
 
 export function SignOutButton() {
   const router = useRouter();
@@ -14,10 +15,7 @@ export function SignOutButton() {
   };
 
   return (
-    <button
-      onClick={handleSignOut}
-      className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-    >
+    <button onClick={handleSignOut} className={btnSecondary}>
       Sign Out
     </button>
   );

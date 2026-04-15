@@ -2,7 +2,14 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/components/ToastProvider";
-import { SECTION_HEADINGS } from "@/lib/screens";
+import {
+  panel,
+  inputSm,
+  btnPrimary,
+  emptyState,
+  deleteBtn,
+  labelSm,
+} from "@/lib/styles";
 
 interface FoodItem {
   id: string;
@@ -116,9 +123,9 @@ export default function FoodLibraryTab() {
   return (
     <div className="space-y-6">
       {/* Search USDA */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-        <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          {SECTION_HEADINGS.searchFoods}
+      <div className={`${panel} p-4`}>
+        <h3 className="mb-3 text-sm font-semibold text-body">
+          Search USDA Food Database
         </h3>
         <div className="flex gap-3">
           <input
@@ -127,12 +134,12 @@ export default function FoodLibraryTab() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && search()}
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            className={`flex-1 ${inputSm}`}
           />
           <button
             onClick={search}
             disabled={searching || !searchQuery.trim()}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className={btnPrimary}
           >
             {searching ? "Searching..." : "Search"}
           </button>
@@ -141,26 +148,26 @@ export default function FoodLibraryTab() {
         {/* Search results */}
         {searchResults.length > 0 && (
           <div className="mt-4 space-y-2">
-            <p className="text-xs text-gray-400 dark:text-gray-500">
+            <p className={labelSm}>
               {searchResults.length} results — click &quot;Save&quot; to add to
               your library
             </p>
             {searchResults.map((r) => (
               <div
                 key={r.fdcId}
-                className="flex items-center justify-between rounded-md border border-gray-100 p-3 dark:border-gray-700"
+                className="flex items-center justify-between rounded-md border border-border p-3"
               >
                 <div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <p className="text-sm font-medium text-heading">
                     {r.name}
                   </p>
                   {r.brand && (
-                    <p className="text-xs text-gray-400">{r.brand}</p>
+                    <p className="text-xs text-faint">{r.brand}</p>
                   )}
-                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p className="mt-1 text-xs text-muted">
                     {Math.round(r.calories)} cal · {Math.round(r.protein)}g P ·{" "}
                     {Math.round(r.carbs)}g C · {Math.round(r.fat)}g F
-                    <span className="ml-2 text-gray-400">
+                    <span className="ml-2 text-faint">
                       per {r.servingSize}
                       {r.servingUnit}
                     </span>
@@ -169,7 +176,7 @@ export default function FoodLibraryTab() {
                 <button
                   onClick={() => saveFood(r)}
                   disabled={saving === r.fdcId}
-                  className="rounded-md bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 hover:bg-green-100 disabled:opacity-50 dark:bg-green-900/30 dark:text-green-400"
+                  className="rounded-md bg-success-soft px-3 py-1.5 text-xs font-medium text-success-text disabled:opacity-50"
                 >
                   {saving === r.fdcId ? "Saving..." : "Save"}
                 </button>
@@ -181,72 +188,72 @@ export default function FoodLibraryTab() {
 
       {/* Saved foods */}
       <div>
-        <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          {SECTION_HEADINGS.yourFoodLibrary} ({foods.length})
+        <h3 className="mb-3 text-sm font-semibold text-body">
+          Your Food Library ({foods.length})
         </h3>
         {foods.length === 0 ? (
-          <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-            <p className="text-gray-500 dark:text-gray-400">
+          <div className={emptyState}>
+            <p className="text-muted">
               No saved foods yet
             </p>
-            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-sm text-faint">
               Search above to find and save foods
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+          <div className={`overflow-x-auto ${panel}`}>
+            <table className="min-w-full divide-y divide-border">
+              <thead className="bg-elevated">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-muted uppercase">
                     Food
                   </th>
-                  <th className="px-3 py-3 text-right text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                  <th className="px-3 py-3 text-right text-xs font-medium tracking-wide text-muted uppercase">
                     Cal
                   </th>
-                  <th className="px-3 py-3 text-right text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                  <th className="px-3 py-3 text-right text-xs font-medium tracking-wide text-muted uppercase">
                     Protein
                   </th>
-                  <th className="px-3 py-3 text-right text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                  <th className="px-3 py-3 text-right text-xs font-medium tracking-wide text-muted uppercase">
                     Carbs
                   </th>
-                  <th className="px-3 py-3 text-right text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                  <th className="px-3 py-3 text-right text-xs font-medium tracking-wide text-muted uppercase">
                     Fat
                   </th>
                   <th className="w-12 px-3 py-3" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+              <tbody className="divide-y divide-border">
                 {foods.map((f) => (
                   <tr
                     key={f.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className="hover:bg-elevated"
                   >
                     <td className="px-4 py-3">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <p className="text-sm font-medium text-heading">
                         {f.name}
                       </p>
-                      <p className="text-xs text-gray-400 dark:text-gray-500">
+                      <p className="text-xs text-faint">
                         per {f.servingSize}
                         {f.servingUnit}
                       </p>
                     </td>
-                    <td className="px-3 py-3 text-right text-sm text-gray-700 dark:text-gray-300">
+                    <td className="px-3 py-3 text-right text-sm text-body">
                       {Math.round(f.calories)}
                     </td>
-                    <td className="px-3 py-3 text-right text-sm text-gray-700 dark:text-gray-300">
+                    <td className="px-3 py-3 text-right text-sm text-body">
                       {Math.round(f.protein)}g
                     </td>
-                    <td className="px-3 py-3 text-right text-sm text-gray-700 dark:text-gray-300">
+                    <td className="px-3 py-3 text-right text-sm text-body">
                       {Math.round(f.carbs)}g
                     </td>
-                    <td className="px-3 py-3 text-right text-sm text-gray-700 dark:text-gray-300">
+                    <td className="px-3 py-3 text-right text-sm text-body">
                       {Math.round(f.fat)}g
                     </td>
                     <td className="px-3 py-3">
                       <button
                         onClick={() => deleteFood(f.id)}
-                        className="rounded p-1 text-gray-300 hover:text-red-500 dark:text-gray-600"
+                        className={deleteBtn}
                       >
                         <svg
                           className="h-4 w-4"

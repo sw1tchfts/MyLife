@@ -6,6 +6,7 @@ import type { TaskFormData } from "./TaskForm";
 import TrackerForm from "./TrackerForm";
 import { MODAL_TITLES } from "@/lib/screens";
 import SubtaskList from "./SubtaskList";
+import { sectionTitle, inputSm, sectionDivider } from "@/lib/styles";
 import type {
   SubtaskData,
   TaskFoodData,
@@ -127,10 +128,10 @@ export default function TaskModal({
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
 
       {/* Panel */}
-      <div className="fixed top-0 right-0 z-50 flex h-full w-full max-w-lg flex-col border-l border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800">
+      <div className="fixed top-0 right-0 z-50 flex h-full w-full max-w-lg flex-col border-l border-border bg-card shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <div className="flex items-center justify-between border-b border-border px-6 py-4">
+          <h2 className={sectionTitle}>
             {mode === "edit" && task?.taskType === "TRACKER"
               ? MODAL_TITLES.dailyLog
               : mode === "create"
@@ -139,7 +140,7 @@ export default function TaskModal({
           </h2>
           <button
             onClick={onClose}
-            className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700"
+            className="rounded-md p-1 text-muted hover:bg-elevated hover:text-body"
           >
             <svg
               className="h-5 w-5"
@@ -160,7 +161,7 @@ export default function TaskModal({
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-6">
           {loading ? (
-            <p className="text-center text-gray-400">Loading...</p>
+            <p className="text-center text-muted">Loading...</p>
           ) : mode === "edit" && task?.taskType === "TRACKER" ? (
             /* Tracker tasks get the tracker form instead of the normal edit form */
             <TrackerForm
@@ -184,7 +185,7 @@ export default function TaskModal({
               {mode === "edit" && task && (
                 <>
                   {task.taskType === "MEAL" && (
-                    <div className="border-t border-gray-200 pt-6 dark:border-gray-700">
+                    <div className={`pt-6 ${sectionDivider}`}>
                       <TaskFoodManager
                         taskId={taskId!}
                         taskFoods={task.taskFoods || []}
@@ -194,7 +195,7 @@ export default function TaskModal({
                   )}
 
                   {task.taskType === "MEDICATION" && (
-                    <div className="border-t border-gray-200 pt-6 dark:border-gray-700">
+                    <div className={`pt-6 ${sectionDivider}`}>
                       <TaskMedManager
                         taskId={taskId!}
                         taskMeds={task.taskMeds || []}
@@ -203,7 +204,7 @@ export default function TaskModal({
                     </div>
                   )}
 
-                  <div className="border-t border-gray-200 pt-6 dark:border-gray-700">
+                  <div className={`pt-6 ${sectionDivider}`}>
                     <SubtaskList
                       taskId={taskId!}
                       subtasks={task.subtasks || []}
@@ -279,11 +280,9 @@ function TaskFoodManager({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          Foods
-        </h3>
+        <h3 className="text-sm font-medium text-body">Foods</h3>
         {taskFoods.length > 0 && (
-          <span className="text-xs text-green-600 dark:text-green-400">
+          <span className="text-xs text-success-text">
             {totalCal} cal · {totalPro}g protein
           </span>
         )}
@@ -291,15 +290,15 @@ function TaskFoodManager({
       {taskFoods.map((tf) => (
         <div
           key={tf.id}
-          className="group mt-1 flex items-center justify-between rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-gray-700"
+          className="group mt-1 flex items-center justify-between rounded-md px-2 py-1 hover:bg-elevated"
         >
-          <span className="text-sm text-gray-700 dark:text-gray-300">
+          <span className="text-sm text-body">
             {tf.foodItem.name}{" "}
-            <span className="text-xs text-gray-400">x{tf.quantity}</span>
+            <span className="text-xs text-muted">x{tf.quantity}</span>
           </span>
           <button
             onClick={() => removeFood(tf.id)}
-            className="text-gray-300 opacity-0 hover:text-red-500 group-hover:opacity-100"
+            className="text-faint opacity-0 hover:text-danger group-hover:opacity-100"
           >
             <svg
               className="h-3.5 w-3.5"
@@ -321,7 +320,7 @@ function TaskFoodManager({
         <select
           value={selectedFoodId}
           onChange={(e) => setSelectedFoodId(e.target.value)}
-          className="flex-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+          className={`flex-1 ${inputSm}`}
         >
           <option value="">Select food...</option>
           {foods.map((f) => (
@@ -336,12 +335,12 @@ function TaskFoodManager({
           min="0.5"
           value={quantity}
           onChange={(e) => setQuantity(e.target.value)}
-          className="w-16 rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+          className={`w-16 ${inputSm}`}
         />
         <button
           onClick={addFood}
           disabled={!selectedFoodId}
-          className="rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+          className="rounded-md bg-success px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
         >
           Add
         </button>
@@ -396,23 +395,21 @@ function TaskMedManager({
 
   return (
     <div>
-      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-        Medications
-      </h3>
+      <h3 className="text-sm font-medium text-body">Medications</h3>
       {taskMeds.map((tm) => (
         <div
           key={tm.id}
-          className="group mt-1 flex items-center justify-between rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-gray-700"
+          className="group mt-1 flex items-center justify-between rounded-md px-2 py-1 hover:bg-elevated"
         >
-          <span className="text-sm text-gray-700 dark:text-gray-300">
+          <span className="text-sm text-body">
             {tm.medicationItem.name}{" "}
             {tm.dosage && (
-              <span className="text-xs text-gray-400">{tm.dosage}</span>
+              <span className="text-xs text-muted">{tm.dosage}</span>
             )}
           </span>
           <button
             onClick={() => removeMed(tm.id)}
-            className="text-gray-300 opacity-0 hover:text-red-500 group-hover:opacity-100"
+            className="text-faint opacity-0 hover:text-danger group-hover:opacity-100"
           >
             <svg
               className="h-3.5 w-3.5"
@@ -434,7 +431,7 @@ function TaskMedManager({
         <select
           value={selectedMedId}
           onChange={(e) => setSelectedMedId(e.target.value)}
-          className="flex-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+          className={`flex-1 ${inputSm}`}
         >
           <option value="">Select medication...</option>
           {meds.map((m) => (
@@ -449,12 +446,12 @@ function TaskMedManager({
           value={dosage}
           onChange={(e) => setDosage(e.target.value)}
           placeholder="Dosage"
-          className="w-24 rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+          className={`w-24 ${inputSm}`}
         />
         <button
           onClick={addMed}
           disabled={!selectedMedId}
-          className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-white hover:bg-accent-hover disabled:opacity-50"
         >
           Add
         </button>

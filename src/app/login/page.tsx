@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import {
+  input,
+  btnPrimary,
+  btnSecondary,
+  label as labelStyle,
+} from "@/lib/styles";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -84,7 +90,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
       <div className="w-full max-w-sm">
-        <h1 className="mb-6 text-center text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="mb-6 text-center text-2xl font-bold text-heading">
           {isForgot
             ? "Reset Password"
             : isSignUp
@@ -93,17 +99,14 @@ export default function LoginPage() {
         </h1>
 
         {isForgot ? (
-          /* ── Forgot password form ─────────────── */
+          /* -- Forgot password form -- */
           <>
-            <p className="mb-4 text-center text-sm text-gray-500 dark:text-gray-400">
+            <p className="mb-4 text-center text-sm text-muted">
               Enter your email and we&apos;ll send you a reset link.
             </p>
             <form onSubmit={handleForgotPassword} className="space-y-4">
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
+                <label htmlFor="email" className={labelStyle}>
                   Email
                 </label>
                 <input
@@ -112,41 +115,45 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                  className={input}
                 />
               </div>
 
-              {error && <p className="text-sm text-red-600">{error}</p>}
-              {message && <p className="text-sm text-green-600">{message}</p>}
+              {error && (
+                <p className="text-sm text-danger-text">{error}</p>
+              )}
+              {message && (
+                <p className="text-sm text-success-text">{message}</p>
+              )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+                className={`w-full ${btnPrimary}`}
               >
                 {loading ? "Sending..." : "Send Reset Link"}
               </button>
             </form>
 
-            <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-4 text-center text-sm text-muted">
               <button
                 onClick={() => {
                   setIsForgot(false);
                   setError("");
                   setMessage("");
                 }}
-                className="font-medium text-blue-600 hover:text-blue-500"
+                className="font-medium text-accent-text hover:text-accent-hover"
               >
                 Back to Sign In
               </button>
             </p>
           </>
         ) : (
-          /* ── Normal sign-in / sign-up form ───── */
+          /* -- Normal sign-in / sign-up form -- */
           <>
             <button
               onClick={handleGoogleSignIn}
-              className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              className={`flex w-full items-center justify-center gap-2 ${btnSecondary}`}
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
@@ -171,21 +178,16 @@ export default function LoginPage() {
 
             <div className="relative my-4">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+                <div className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-gray-50 px-2 text-gray-500 dark:bg-gray-900 dark:text-gray-400">
-                  or
-                </span>
+                <span className="bg-surface px-2 text-muted">or</span>
               </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
+                <label htmlFor="email" className={labelStyle}>
                   Email
                 </label>
                 <input
@@ -194,15 +196,12 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                  className={input}
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
+                <label htmlFor="password" className={labelStyle}>
                   Password
                 </label>
                 <input
@@ -212,17 +211,21 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                  className={input}
                 />
               </div>
 
-              {error && <p className="text-sm text-red-600">{error}</p>}
-              {message && <p className="text-sm text-green-600">{message}</p>}
+              {error && (
+                <p className="text-sm text-danger-text">{error}</p>
+              )}
+              {message && (
+                <p className="text-sm text-success-text">{message}</p>
+              )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+                className={`w-full ${btnPrimary}`}
               >
                 {loading ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
               </button>
@@ -236,14 +239,14 @@ export default function LoginPage() {
                     setError("");
                     setMessage("");
                   }}
-                  className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                  className="text-sm text-muted hover:text-body"
                 >
                   Forgot password?
                 </button>
               </p>
             )}
 
-            <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-4 text-center text-sm text-muted">
               {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
               <button
                 onClick={() => {
@@ -251,7 +254,7 @@ export default function LoginPage() {
                   setError("");
                   setMessage("");
                 }}
-                className="font-medium text-blue-600 hover:text-blue-500"
+                className="font-medium text-accent-text hover:text-accent-hover"
               >
                 {isSignUp ? "Sign In" : "Sign Up"}
               </button>

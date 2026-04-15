@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { TaskData } from "@/components/TaskCard";
+import { panel, emptyState } from "@/lib/styles";
 
 function calcStreak(completions: Set<string>): {
   current: number;
@@ -150,11 +151,11 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
 
   if (habitMap.length === 0) {
     return (
-      <div className="rounded-lg border-2 border-dashed border-gray-300 py-16 text-center dark:border-gray-600">
-        <p className="text-lg font-medium text-gray-500 dark:text-gray-400">
+      <div className={emptyState}>
+        <p className="text-lg font-medium text-muted">
           No habits tracked yet
         </p>
-        <p className="mt-2 text-sm text-gray-400 dark:text-gray-500">
+        <p className="mt-2 text-sm text-faint">
           Create a recurring task and check &quot;Track as habit on
           dashboard&quot; to see it here.
         </p>
@@ -170,7 +171,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
         <div className="flex items-center gap-3">
           <button
             onClick={prevMonth}
-            className="rounded-md p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="rounded-md p-1.5 text-muted hover:bg-elevated"
           >
             <svg
               className="h-5 w-5"
@@ -186,12 +187,12 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
               />
             </svg>
           </button>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+          <h2 className="text-lg font-bold text-heading">
             {monthName}
           </h2>
           <button
             onClick={nextMonth}
-            className="rounded-md p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="rounded-md p-1.5 text-muted hover:bg-elevated"
           >
             <svg
               className="h-5 w-5"
@@ -211,17 +212,17 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
 
         {/* Stats cards */}
         <div className="flex gap-3">
-          <div className="flex-1 rounded-lg border border-gray-200 bg-white p-3 text-center dark:border-gray-700 dark:bg-gray-800">
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <div className={`flex-1 p-3 text-center ${panel}`}>
+            <p className="text-2xl font-bold text-heading">
               {habitMap.length}
             </p>
-            <p className="text-xs text-gray-400">Habits</p>
+            <p className="text-xs text-muted">Habits</p>
           </div>
-          <div className="flex-1 rounded-lg border border-gray-200 bg-white p-3 text-center dark:border-gray-700 dark:bg-gray-800">
-            <p className="text-2xl font-bold text-green-600">
+          <div className={`flex-1 p-3 text-center ${panel}`}>
+            <p className="text-2xl font-bold text-success-text">
               {totalCompleted}
             </p>
-            <p className="text-xs text-gray-400">Completed</p>
+            <p className="text-xs text-muted">Completed</p>
           </div>
         </div>
 
@@ -232,7 +233,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
               <path
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                 fill="none"
-                className="stroke-gray-200 dark:stroke-gray-700"
+                className="stroke-border"
                 strokeWidth="3"
               />
               <path
@@ -245,7 +246,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+              <span className="text-lg font-bold text-heading">
                 {overallPct}%
               </span>
             </div>
@@ -254,8 +255,8 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
       </div>
 
       {/* Weekly progress bars */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-        <p className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+      <div className={`p-4 ${panel}`}>
+        <p className="mb-3 text-sm font-medium text-body">
           Weekly Progress
         </p>
         <div className="grid gap-2 sm:grid-cols-5">
@@ -279,14 +280,14 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
             return (
               <div key={week.label}>
                 <div className="mb-1 flex items-center justify-between text-xs">
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="text-muted">
                     {week.label}
                   </span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                  <span className="font-medium text-heading">
                     {weekPct}%
                   </span>
                 </div>
-                <div className="h-3 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+                <div className="h-3 overflow-hidden rounded-full bg-elevated">
                   <div
                     className="h-full rounded-full bg-green-500 transition-all"
                     style={{ width: `${weekPct}%` }}
@@ -299,8 +300,8 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
       </div>
 
       {/* Habit grid — daily completions */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-        <p className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+      <div className={`overflow-x-auto p-4 ${panel}`}>
+        <p className="mb-3 text-sm font-medium text-body">
           Daily Habits
         </p>
         <div className="min-w-[600px]">
@@ -309,8 +310,8 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
             <div className="w-32 shrink-0" />
             {Array.from({ length: daysInMonth }, (_, i) => (
               <div key={i} className="flex w-7 shrink-0 flex-col items-center">
-                <span className="text-[9px] text-gray-400">{dayLabels[i]}</span>
-                <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                <span className="text-[9px] text-muted">{dayLabels[i]}</span>
+                <span className="text-[10px] text-muted">
                   {i + 1}
                 </span>
               </div>

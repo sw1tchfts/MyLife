@@ -116,19 +116,19 @@ function ToastItem({
   }, [toast.duration, onDismiss]);
 
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-gray-900 px-4 py-3 text-sm text-white shadow-lg dark:bg-gray-700">
+    <div className="flex items-center gap-3 rounded-lg bg-elevated px-4 py-3 text-sm text-white shadow-lg">
       <span>{toast.message}</span>
       {toast.onUndo && (
         <button
           onClick={onUndo}
-          className="font-medium text-blue-400 hover:text-blue-300"
+          className="font-medium text-accent-text hover:text-blue-300"
         >
           Undo
         </button>
       )}
       <button
         onClick={onDismiss}
-        className="ml-1 text-gray-400 hover:text-gray-200"
+        className="ml-1 text-muted hover:text-body"
       >
         <svg
           className="h-4 w-4"
