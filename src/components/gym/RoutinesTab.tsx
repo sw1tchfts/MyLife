@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/components/ToastProvider";
+import { WEEKDAYS, WEEKDAY_LABELS_SHORT, MODAL_TITLES } from "@/lib/screens";
 
 /* ── Types ─────────────────────────────────────────── */
 
@@ -52,16 +53,8 @@ interface Routine {
 
 /* ── Constants ────────────────────────────────────── */
 
-const WEEKDAYS_GYM = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
-const WEEKDAY_LABELS_GYM: Record<string, string> = {
-  mon: "Mon",
-  tue: "Tue",
-  wed: "Wed",
-  thu: "Thu",
-  fri: "Fri",
-  sat: "Sat",
-  sun: "Sun",
-};
+const WEEKDAYS_GYM = WEEKDAYS;
+const WEEKDAY_LABELS_GYM = WEEKDAY_LABELS_SHORT;
 
 /* ── Routines Tab ──────────────────────────────────── */
 
@@ -287,7 +280,7 @@ export default function RoutinesTab() {
       {showCreate && (
         <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
           <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
-            New Workout Routine
+            {MODAL_TITLES.newWorkoutRoutine}
           </h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">

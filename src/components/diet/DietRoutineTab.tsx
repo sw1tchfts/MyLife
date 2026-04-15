@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  MEAL_TYPES,
+  MEAL_LABELS,
+  WEEKDAYS,
+  WEEKDAY_LABELS_FULL,
+  MODAL_TITLES,
+} from "@/lib/screens";
 
 interface FoodItem {
   id: string;
@@ -17,24 +24,7 @@ interface FoodItem {
   sodium: number;
 }
 
-const MEAL_TYPES = ["BREAKFAST", "LUNCH", "DINNER", "SNACK"] as const;
-const MEAL_LABELS: Record<string, string> = {
-  BREAKFAST: "Breakfast",
-  LUNCH: "Lunch",
-  DINNER: "Dinner",
-  SNACK: "Snack",
-};
-
-const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
-const WEEKDAY_LABELS: Record<string, string> = {
-  mon: "Monday",
-  tue: "Tuesday",
-  wed: "Wednesday",
-  thu: "Thursday",
-  fri: "Friday",
-  sat: "Saturday",
-  sun: "Sunday",
-};
+const WEEKDAY_LABELS = WEEKDAY_LABELS_FULL;
 
 interface MealPlan {
   mealType: string;
@@ -191,7 +181,7 @@ export default function DietRoutineTab() {
       {showAdd && (
         <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
           <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
-            Add Meal to Plan
+            {MODAL_TITLES.addMealToPlan}
           </h3>
           <div className="grid gap-3 sm:grid-cols-3">
             <div>

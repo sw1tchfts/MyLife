@@ -3,6 +3,14 @@
 import { useEffect, useState, useCallback, Suspense } from "react";
 import { useToast } from "@/components/ToastProvider";
 import { useSearchParams, useRouter } from "next/navigation";
+import {
+  SCREEN_NAMES,
+  MEDICATION_TABS,
+  MODAL_TITLES,
+  SECTION_HEADINGS,
+  WEEKDAYS,
+  WEEKDAY_LABELS_SHORT,
+} from "@/lib/screens";
 
 interface MedicationItem {
   id: string;
@@ -22,7 +30,7 @@ interface SearchResult {
   externalId: string;
 }
 
-type Tab = "medications" | "schedule";
+type Tab = (typeof MEDICATION_TABS)[number]["key"];
 
 export default function MedicationsPage() {
   return (
@@ -41,19 +49,14 @@ function MedicationsContent() {
 
   const setTab = (t: Tab) => router.push(`/medications?tab=${t}`);
 
-  const TABS: { key: Tab; label: string }[] = [
-    { key: "medications", label: "Medications" },
-    { key: "schedule", label: "Medication Schedule" },
-  ];
-
   return (
     <div>
       <h1 className="mb-4 text-xl font-bold text-gray-900 dark:text-gray-100">
-        Medications
+        {SCREEN_NAMES.medications}
       </h1>
 
       <div className="mb-6 flex gap-1 border-b border-gray-200 dark:border-gray-700">
-        {TABS.map((t) => (
+        {MEDICATION_TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
@@ -140,7 +143,7 @@ function MedicationsTab() {
       {/* Search */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
         <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          Search Medications (OpenFDA)
+          {SECTION_HEADINGS.searchMedications}
         </h3>
         <div className="flex gap-3">
           <input
@@ -197,7 +200,7 @@ function MedicationsTab() {
       {/* Saved medications */}
       <div>
         <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          Your Medications ({meds.length})
+          {SECTION_HEADINGS.yourMedications} ({meds.length})
         </h3>
         {meds.length === 0 ? (
           <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
@@ -254,17 +257,6 @@ function MedicationsTab() {
 }
 
 /* ── Schedule Tab ─────────────────────────────────── */
-
-const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
-const WEEKDAY_LABELS: Record<string, string> = {
-  mon: "Mon",
-  tue: "Tue",
-  wed: "Wed",
-  thu: "Thu",
-  fri: "Fri",
-  sat: "Sat",
-  sun: "Sun",
-};
 
 interface ScheduleEntry {
   id: string;
@@ -391,7 +383,7 @@ function ScheduleTab() {
       {showForm && (
         <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
           <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
-            New Medication Schedule
+            {MODAL_TITLES.newMedSchedule}
           </h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
@@ -478,7 +470,7 @@ function ScheduleTab() {
                             : "border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400"
                         }`}
                       >
-                        {WEEKDAY_LABELS[day]}
+                        {WEEKDAY_LABELS_SHORT[day]}
                       </button>
                     );
                   })}
@@ -541,7 +533,10 @@ function ScheduleTab() {
                     ? "Every day"
                     : `Every ${s.recurrenceDays
                         .split(",")
-                        .map((d) => WEEKDAY_LABELS[d.trim().toLowerCase()] || d)
+                        .map(
+                          (d) =>
+                            WEEKDAY_LABELS_SHORT[d.trim().toLowerCase()] || d,
+                        )
                         .join(", ")}`}
                   {s.recurrenceTime ? ` at ${s.recurrenceTime}` : ""}
                 </p>

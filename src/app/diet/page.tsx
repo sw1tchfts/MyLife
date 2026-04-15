@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { SCREEN_NAMES, DIET_TABS } from "@/lib/screens";
 
 const FoodLibraryTab = dynamic(
   () => import("@/components/diet/FoodLibraryTab"),
@@ -13,7 +14,7 @@ const DietRoutineTab = dynamic(
 
 /* ── Types ─────────────────────────────────────────── */
 
-type Tab = "library" | "diet";
+type Tab = (typeof DIET_TABS)[number]["key"];
 
 /* ── Page wrapper ──────────────────────────────────── */
 
@@ -36,19 +37,14 @@ function DietContent() {
 
   const setTab = (t: Tab) => router.push(`/diet?tab=${t}`);
 
-  const TABS: { key: Tab; label: string }[] = [
-    { key: "library", label: "Food Library" },
-    { key: "diet", label: "Diet" },
-  ];
-
   return (
     <div>
       <h1 className="mb-4 text-xl font-bold text-gray-900 dark:text-gray-100">
-        Diet & Nutrition
+        {SCREEN_NAMES.diet}
       </h1>
 
       <div className="mb-6 flex gap-1 border-b border-gray-200 dark:border-gray-700">
-        {TABS.map((t) => (
+        {DIET_TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}

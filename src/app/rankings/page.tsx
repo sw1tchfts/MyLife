@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
+import { SCREEN_NAMES, RANKING_TABS, MODAL_TITLES } from "@/lib/screens";
 
 const ItemsTab = dynamic(() => import("@/components/rankings/ItemsTab"));
 const CompareTab = dynamic(() => import("@/components/rankings/CompareTab"));
@@ -37,7 +38,7 @@ interface RankingItem {
   categoryId: string;
 }
 
-type Tab = "items" | "compare" | "rankings" | "stats";
+type Tab = (typeof RANKING_TABS)[number]["key"];
 
 /* ── Main page wrapper with Suspense ───────────────── */
 
@@ -111,18 +112,11 @@ function RankingsContent() {
     if (listId) fetchList(listId);
   };
 
-  const TABS: { key: Tab; label: string }[] = [
-    { key: "items", label: "Items" },
-    { key: "compare", label: "Compare" },
-    { key: "rankings", label: "Rankings" },
-    { key: "stats", label: "Stats" },
-  ];
-
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-          Pairwise Ranker
+          {SCREEN_NAMES.rankings}
         </h1>
         <button
           onClick={() => setShowManage(!showManage)}
@@ -176,7 +170,7 @@ function RankingsContent() {
 
             {listId && (
               <div className="flex gap-1">
-                {TABS.map((t) => (
+                {RANKING_TABS.map((t) => (
                   <button
                     key={t.key}
                     onClick={() => navigate(t.key)}
@@ -266,7 +260,7 @@ function ManageListsPanel({
   return (
     <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
       <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-        Manage Ranking Lists
+        {MODAL_TITLES.manageRankingLists}
       </h3>
 
       {/* Create form */}

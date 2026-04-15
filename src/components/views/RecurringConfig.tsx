@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/components/ToastProvider";
+import { WEEKDAYS, WEEKDAY_LABELS_SHORT, MODAL_TITLES } from "@/lib/screens";
 
 interface RecurringTask {
   id: string;
@@ -23,17 +24,7 @@ const RECURRENCE_LABELS: Record<string, string> = {
   MONTHLY: "Monthly",
 };
 
-const WEEKDAY_LABELS: Record<string, string> = {
-  mon: "Mon",
-  tue: "Tue",
-  wed: "Wed",
-  thu: "Thu",
-  fri: "Fri",
-  sat: "Sat",
-  sun: "Sun",
-};
-
-const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+const WEEKDAY_LABELS = WEEKDAY_LABELS_SHORT;
 
 const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   TASK: {
@@ -211,7 +202,7 @@ export default function RecurringConfig() {
       {showCreate && (
         <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
           <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-            New Recurring Task
+            {MODAL_TITLES.newRecurringTask}
           </h3>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
