@@ -93,7 +93,8 @@ src/
     api/tracker/route.ts               # GET tracker dashboard data + POST daily log
     api/journal/route.ts               # GET (paginated) + POST journal entries
     api/journal/[id]/route.ts          # GET + PUT + DELETE single journal entry
-    api/gym/exercises/route.ts         # GET + POST exercises
+    api/gym/exercises/route.ts         # GET + POST exercises (filter by muscleGroup, category, search)
+    api/gym/exercises/seed/route.ts    # POST — import exercises from free-exercise-db (~870 exercises)
     api/gym/routines/route.ts          # GET + POST workout routines
     api/gym/routines/[id]/route.ts     # GET + DELETE single routine
     api/gym/logs/route.ts              # GET + POST workout logs
@@ -194,6 +195,7 @@ src/
 
 ## Gym & Workout Logs
 
+- **Exercise library**: Seeded from [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (~870 exercises). Each exercise has: `muscleGroup` (specific: quadriceps, lats, abdominals, etc.), `secondaryMuscles`, `equipment`, `difficulty`, `category` (strength/stretching/plyometrics/etc.), `force` (push/pull/static), `mechanic` (compound/isolation). Seed via `POST /api/gym/exercises/seed`.
 - **Routine creation**: Each `WorkoutRoutineDay` has an optional `scheduledDay` field (mon/tue/wed/thu/fri/sat/sun) so weekdays can be assigned during routine building
 - **Activation**: Creates recurring tasks from routine days; pre-populates weekday assignments from saved `scheduledDay` values
 - **Workout log persistence**: `WorkoutLog.routineId` and `routineDayId` use `onDelete: SetNull` — deleting a routine preserves all logged workouts

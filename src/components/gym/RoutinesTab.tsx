@@ -13,6 +13,9 @@ interface Exercise {
   secondaryMuscles: string;
   equipment: string;
   difficulty: string;
+  category: string;
+  force: string;
+  mechanic: string;
   instructions: string;
   tips: string;
 }
