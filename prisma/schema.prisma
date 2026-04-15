@@ -59,7 +59,6 @@ model Task {
   updatedAt         DateTime   @updatedAt
   parentTask        Task?      @relation("TaskInstances", fields: [parentTaskId], references: [id], onDelete: SetNull)
   instances         Task[]     @relation("TaskInstances")
-  categories        TaskCategory[]
   subtasks          Subtask[]
   taskFoods         TaskFood[]
   taskMeds          TaskMedication[]
@@ -100,28 +99,6 @@ model Subtask {
   createdAt DateTime @default(now())
 
   @@index([taskId])
-}
-
-model Category {
-  id        String   @id @default(cuid())
-  name      String
-  color     String   @default("#6B7280")
-  createdAt DateTime @default(now())
-  tasks     TaskCategory[]
-}
-
-model TaskCategory {
-  taskId     String
-  categoryId String
-  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  @@id([taskId, categoryId])
-}
-
-model AppSettings {
-  key   String @id
-  value String
 }
 
 model UserSettings {

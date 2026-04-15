@@ -74,9 +74,6 @@ src/
     api/tasks/[id]/dependencies/route.ts # GET + POST + DELETE task dependencies
     api/tasks/generate-instances/route.ts # POST — generate recurring task instances (called on app startup)
     api/tasks/notifications/route.ts     # GET — lightweight overdue/due-today counts
-    api/export/route.ts            # GET data export (CSV/JSON for tasks, journal, metrics)
-    api/categories/route.ts    # GET + POST categories
-    api/categories/[id]/route.ts # PUT + DELETE single category
     api/rankings/categories/route.ts     # GET + POST ranking categories
     api/rankings/categories/[id]/route.ts # GET + PUT + DELETE ranking category
     api/rankings/items/route.ts          # POST ranking items
@@ -102,7 +99,6 @@ src/
     api/gym/routines/[id]/route.ts     # GET + DELETE single routine
     api/gym/logs/route.ts              # GET + POST workout logs
     api/gym/logs/[id]/route.ts         # DELETE single workout log
-    api/settings/app/route.ts  # GET + PUT app-wide settings
     api/settings/user/route.ts # GET + PUT user preferences
     tasks/page.tsx             # Tasks (tabs: dashboard, tasks, adhoc-config, recurring-config)
     tasks/loading.tsx          # Skeleton loading state for tasks page
@@ -117,7 +113,6 @@ src/
     gym/page.tsx               # Gym (exercises, routines)
     diagrams/page.tsx          # Diagram creator (flowcharts, process, swim lane, ER)
     auth/reset-password/page.tsx # Password reset page
-    admin/page.tsx             # Admin settings (categories, defaults, data export)
     settings/page.tsx          # User settings (theme, account, notifications, tracker config)
   components/
     Sidebar.tsx                # Left navigation sidebar (Notion-style)
@@ -158,7 +153,7 @@ src/
 
 - Left sidebar (Notion-style) with section links and manage links
 - Sidebar links: Tasks, Diet, Gym, Medications, Journal, Rankings, Diagrams
-- Manage section: Admin, Settings
+- Manage section: Settings
 - `/` redirects to `/tasks`
 - Sidebar only shown for authenticated users; login page gets plain layout
 - Tasks page uses `?tab=` param: `dashboard`, `tasks`, `adhoc-config`, `recurring-config` (default: `tasks`)
@@ -239,14 +234,14 @@ src/
 ## Feature Backlog (GitHub Issues)
 
 - #1 Authentication (Supabase Auth) — DONE
-- #2 Categories/Tags — DONE
+- #2 Categories/Tags — REMOVED
 - #3 Subtasks/Checklists — DONE
 - #4 Highlight overdue tasks — DONE
 - #5 Search and sort — DONE
 - #6 Recurring tasks — DONE
 - #7 Dark mode — DONE
 - #8 Calendar view — DONE
-- #9 Admin settings page — DONE
+- #9 Admin settings page — REMOVED (categories, default task settings, data export)
 - #10 User settings page — DONE
 - #12 Pairwise ranking system — DONE
 - #14 Diet and medication tracking — DONE

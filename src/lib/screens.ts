@@ -15,7 +15,6 @@ export const SCREEN_NAMES = {
   journal: "Journal",
   rankings: "Pairwise Ranker",
   diagrams: "Diagram Creator",
-  admin: "Admin",
   settings: "Settings",
 } as const;
 
@@ -79,11 +78,6 @@ export const MODAL_TITLES = {
 export const SECTION_HEADINGS = {
   // Tasks page
   taskStats: "Task Stats",
-
-  // Admin page
-  categories: "Categories",
-  defaultTaskSettings: "Default Task Settings",
-  dataExport: "Data Export",
 
   // Settings page
   appearance: "Appearance",
