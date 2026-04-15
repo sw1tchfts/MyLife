@@ -1,6 +1,6 @@
 "use client";
 
-import { panel, sectionTitle } from "@/lib/styles";
+import { panel } from "@/lib/styles";
 
 interface RankingItem {
   id: string;
@@ -36,42 +36,26 @@ export default function StatsTab({
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-2xl font-bold text-heading">
-            {totalItems}
-          </p>
+          <p className="text-2xl font-bold text-heading">{totalItems}</p>
           <p className="text-xs text-faint">Items</p>
         </div>
         <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-2xl font-bold text-heading">
-            {totalComparisons}
-          </p>
-          <p className="text-xs text-faint">
-            Comparisons
-          </p>
+          <p className="text-2xl font-bold text-heading">{totalComparisons}</p>
+          <p className="text-xs text-faint">Comparisons</p>
         </div>
         <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-2xl font-bold text-heading">
-            {maxPossiblePairs}
-          </p>
-          <p className="text-xs text-faint">
-            Possible Pairs
-          </p>
+          <p className="text-2xl font-bold text-heading">{maxPossiblePairs}</p>
+          <p className="text-xs text-faint">Possible Pairs</p>
         </div>
         <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-2xl font-bold text-heading">
-            {avgComparisons}
-          </p>
-          <p className="text-xs text-faint">
-            Avg per Item
-          </p>
+          <p className="text-2xl font-bold text-heading">{avgComparisons}</p>
+          <p className="text-xs text-faint">Avg per Item</p>
         </div>
       </div>
 
       <div className={panel}>
         <div className="border-b border-border px-4 py-3">
-          <h3 className="text-sm font-semibold text-body">
-            Item Statistics
-          </h3>
+          <h3 className="text-sm font-semibold text-body">Item Statistics</h3>
         </div>
         <div className="divide-y divide-border">
           {items.map((item) => {

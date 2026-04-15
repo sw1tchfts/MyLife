@@ -73,9 +73,7 @@ export default function DailyLogSection() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-muted">
-          Loading daily log...
-        </p>
+        <p className="text-muted">Loading daily log...</p>
       </div>
     );
   }
@@ -122,9 +120,7 @@ export default function DailyLogSection() {
             </p>
             <p className="mt-1 text-4xl font-bold text-heading">
               {tdee.estimatedTDEE.toLocaleString()}{" "}
-              <span className="text-lg font-normal text-muted">
-                cal/day
-              </span>
+              <span className="text-lg font-normal text-muted">cal/day</span>
             </p>
             <div className="mt-2 flex items-center gap-2">
               <span
@@ -132,9 +128,7 @@ export default function DailyLogSection() {
               >
                 {conf.label} Confidence
               </span>
-              <span className="text-xs text-muted">
-                {conf.desc}
-              </span>
+              <span className="text-xs text-muted">{conf.desc}</span>
             </div>
           </div>
 
@@ -179,19 +173,18 @@ export default function DailyLogSection() {
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Weight Trend Chart */}
         <div className="rounded-lg border border-border bg-card p-4">
-          <h2 className="text-sm font-semibold text-heading">
-            Weight Trend
-          </h2>
-          <p className="text-xs text-muted">
-            Last 30 days
-          </p>
+          <h2 className="text-sm font-semibold text-heading">Weight Trend</h2>
+          <p className="text-xs text-muted">Last 30 days</p>
           {weightEntries.length < 2 ? (
             <div className="mt-4 flex h-32 items-center justify-center text-sm text-faint">
               Log at least 2 days of weight data to see your trend
             </div>
           ) : (
             <div className="mt-4">
-              <svg viewBox={`0 0 ${weightEntries.length * 20} 120`} className="h-32 w-full">
+              <svg
+                viewBox={`0 0 ${weightEntries.length * 20} 120`}
+                className="h-32 w-full"
+              >
                 {/* TDEE trend line reference */}
                 {tdee.trendWeight !== null && (
                   <line
@@ -231,8 +224,7 @@ export default function DailyLogSection() {
               <div className="mt-1 flex justify-between text-[10px] text-faint">
                 <span>{weightEntries[0]?.date}</span>
                 <span>
-                  Range: {minW.toFixed(1)} – {maxW.toFixed(1)}{" "}
-                  {tdee.weightUnit}
+                  Range: {minW.toFixed(1)} – {maxW.toFixed(1)} {tdee.weightUnit}
                 </span>
                 <span>{weightEntries[weightEntries.length - 1]?.date}</span>
               </div>
@@ -254,7 +246,10 @@ export default function DailyLogSection() {
             </div>
           ) : (
             <div className="mt-4">
-              <svg viewBox={`0 0 ${calorieEntries.length * 16} 120`} className="h-32 w-full">
+              <svg
+                viewBox={`0 0 ${calorieEntries.length * 16} 120`}
+                className="h-32 w-full"
+              >
                 {/* TDEE reference line */}
                 <line
                   x1="0"
@@ -300,17 +295,13 @@ export default function DailyLogSection() {
             Today&apos;s Nutrition
           </h2>
           {todayNutrition.calories === 0 ? (
-            <p className="mt-2 text-sm text-faint">
-              No meals logged today yet
-            </p>
+            <p className="mt-2 text-sm text-faint">No meals logged today yet</p>
           ) : (
             <div className="mt-3 space-y-3">
               {/* Calorie progress bar */}
               <div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted">
-                    Calories
-                  </span>
+                  <span className="text-muted">Calories</span>
                   <span className="font-medium text-heading">
                     {Math.round(todayNutrition.calories)} /{" "}
                     {tdee.calorieTarget.toLocaleString()}
@@ -433,9 +424,7 @@ export default function DailyLogSection() {
               <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-teal-900/30 text-xs font-bold text-teal-400">
                 {tdee.weeksOfData}
               </span>
-              <span className="text-sm text-body">
-                weeks of tracking data
-              </span>
+              <span className="text-sm text-body">weeks of tracking data</span>
             </div>
           </div>
         </div>
@@ -455,12 +444,8 @@ function StatCard({
 }) {
   return (
     <div>
-      <p className="text-[10px] uppercase tracking-wide text-muted">
-        {label}
-      </p>
-      <p
-        className={`text-sm font-semibold ${color || "text-heading"}`}
-      >
+      <p className="text-[10px] uppercase tracking-wide text-muted">{label}</p>
+      <p className={`text-sm font-semibold ${color || "text-heading"}`}>
         {value}
       </p>
     </div>

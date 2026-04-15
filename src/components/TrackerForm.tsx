@@ -107,16 +107,28 @@ export default function TrackerForm({
 
     const metrics: { type: string; value: number; unit: string }[] = [];
     if (config.metrics.weight && weight) {
-      metrics.push({ type: "WEIGHT", value: Number(weight), unit: config.units.weight });
+      metrics.push({
+        type: "WEIGHT",
+        value: Number(weight),
+        unit: config.units.weight,
+      });
     }
     if (config.metrics.bodyFat && bodyFat) {
       metrics.push({ type: "BODY_FAT", value: Number(bodyFat), unit: "%" });
     }
     if (config.metrics.waist && waist) {
-      metrics.push({ type: "WAIST", value: Number(waist), unit: config.units.measurements });
+      metrics.push({
+        type: "WAIST",
+        value: Number(waist),
+        unit: config.units.measurements,
+      });
     }
     if (config.metrics.chest && chest) {
-      metrics.push({ type: "CHEST", value: Number(chest), unit: config.units.measurements });
+      metrics.push({
+        type: "CHEST",
+        value: Number(chest),
+        unit: config.units.measurements,
+      });
     }
 
     await fetch("/api/tracker", {
@@ -125,7 +137,10 @@ export default function TrackerForm({
       body: JSON.stringify({
         metrics,
         taskId,
-        manualCalories: config.metrics.manualCalories && manualCal ? Number(manualCal) : undefined,
+        manualCalories:
+          config.metrics.manualCalories && manualCal
+            ? Number(manualCal)
+            : undefined,
       }),
     });
 

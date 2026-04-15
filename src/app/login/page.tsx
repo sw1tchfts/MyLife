@@ -119,9 +119,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              {error && (
-                <p className="text-sm text-danger-text">{error}</p>
-              )}
+              {error && <p className="text-sm text-danger-text">{error}</p>}
               {message && (
                 <p className="text-sm text-success-text">{message}</p>
               )}
@@ -215,9 +213,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              {error && (
-                <p className="text-sm text-danger-text">{error}</p>
-              )}
+              {error && <p className="text-sm text-danger-text">{error}</p>}
               {message && (
                 <p className="text-sm text-success-text">{message}</p>
               )}

@@ -4,18 +4,12 @@ export default function Loading() {
       <div className="h-7 w-36 rounded bg-elevated" />
       <div className="flex gap-1 border-b border-border">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-9 w-28 rounded-t-md bg-elevated"
-          />
+          <div key={i} className="h-9 w-28 rounded-t-md bg-elevated" />
         ))}
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-32 rounded-lg bg-elevated"
-          />
+          <div key={i} className="h-32 rounded-lg bg-elevated" />
         ))}
       </div>
     </div>

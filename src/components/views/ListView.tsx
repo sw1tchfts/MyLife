@@ -183,9 +183,7 @@ export default function ListView({
           <button
             onClick={() => setGroupByDate((v) => !v)}
             className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
-              groupByDate
-                ? `${pillActive}`
-                : `${pillInactive}`
+              groupByDate ? `${pillActive}` : `${pillInactive}`
             }`}
           >
             <svg
@@ -435,22 +433,30 @@ function TaskTable({
                     <StatusBadge status={task.status} />
                     <PriorityBadge priority={task.priority} />
                     {task.taskType === "MEAL" && (
-                      <span className={`${badgeSm} bg-success-soft text-success-text`}>
+                      <span
+                        className={`${badgeSm} bg-success-soft text-success-text`}
+                      >
                         Meal
                       </span>
                     )}
                     {task.taskType === "MEDICATION" && (
-                      <span className={`${badgeSm} bg-accent-soft text-accent-text`}>
+                      <span
+                        className={`${badgeSm} bg-accent-soft text-accent-text`}
+                      >
                         Med
                       </span>
                     )}
                     {task.taskType === "TRACKER" && (
-                      <span className={`${badgeSm} bg-info-soft text-info-text`}>
+                      <span
+                        className={`${badgeSm} bg-info-soft text-info-text`}
+                      >
                         Tracker
                       </span>
                     )}
                     {task.recurrence && task.recurrence !== "NONE" && (
-                      <span className={`${badgeSm} bg-purple-soft text-purple-text`}>
+                      <span
+                        className={`${badgeSm} bg-purple-soft text-purple-text`}
+                      >
                         ↻{" "}
                         {task.recurrence.charAt(0) +
                           task.recurrence.slice(1).toLowerCase()}
@@ -460,7 +466,9 @@ function TaskTable({
                       task.blockedBy.some(
                         (d) => d.blocker.status !== "DONE",
                       ) && (
-                        <span className={`${badgeSm} bg-danger-soft text-danger-text`}>
+                        <span
+                          className={`${badgeSm} bg-danger-soft text-danger-text`}
+                        >
                           Blocked
                         </span>
                       )}
@@ -570,17 +578,23 @@ function TaskTable({
                         {task.title}
                       </span>
                       {task.taskType === "MEAL" && (
-                        <span className={`${badgeSm} bg-success-soft text-success-text`}>
+                        <span
+                          className={`${badgeSm} bg-success-soft text-success-text`}
+                        >
                           Meal
                         </span>
                       )}
                       {task.taskType === "MEDICATION" && (
-                        <span className={`${badgeSm} bg-accent-soft text-accent-text`}>
+                        <span
+                          className={`${badgeSm} bg-accent-soft text-accent-text`}
+                        >
                           Med
                         </span>
                       )}
                       {task.taskType === "TRACKER" && (
-                        <span className={`${badgeSm} bg-info-soft text-info-text`}>
+                        <span
+                          className={`${badgeSm} bg-info-soft text-info-text`}
+                        >
                           Tracker
                         </span>
                       )}
@@ -685,9 +699,7 @@ function TaskTable({
                             : formatDate(task.dueDate)}
                       </span>
                     ) : (
-                      <span className="text-sm text-faint">
-                        —
-                      </span>
+                      <span className="text-sm text-faint">—</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-sm text-faint">

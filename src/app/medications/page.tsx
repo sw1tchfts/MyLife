@@ -36,9 +36,7 @@ type Tab = "medications" | "schedule";
 
 export default function MedicationsPage() {
   return (
-    <Suspense
-      fallback={<p className="text-center text-muted">Loading...</p>}
-    >
+    <Suspense fallback={<p className="text-center text-muted">Loading...</p>}>
       <MedicationsContent />
     </Suspense>
   );
@@ -58,9 +56,7 @@ function MedicationsContent() {
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-bold text-heading">
-        Medications
-      </h1>
+      <h1 className="mb-4 text-xl font-bold text-heading">Medications</h1>
 
       <div className="mb-6 flex gap-1 border-b border-border">
         {TABS.map((t) => (
@@ -172,18 +168,14 @@ function MedicationsTab() {
 
         {searchResults.length > 0 && (
           <div className="mt-4 space-y-2">
-            <p className={labelSm}>
-              {searchResults.length} results
-            </p>
+            <p className={labelSm}>{searchResults.length} results</p>
             {searchResults.map((r) => (
               <div
                 key={r.externalId}
                 className="flex items-center justify-between rounded-md border border-border p-3"
               >
                 <div>
-                  <p className="text-sm font-medium text-heading">
-                    {r.name}
-                  </p>
+                  <p className="text-sm font-medium text-heading">{r.name}</p>
                   {r.genericName && (
                     <p className="text-xs text-faint">{r.genericName}</p>
                   )}
@@ -211,9 +203,7 @@ function MedicationsTab() {
         </h3>
         {meds.length === 0 ? (
           <div className={emptyState}>
-            <p className="text-muted">
-              No medications saved yet
-            </p>
+            <p className="text-muted">No medications saved yet</p>
             <p className="mt-1 text-sm text-faint">
               Search above to find and save medications
             </p>
@@ -226,9 +216,7 @@ function MedicationsTab() {
                 className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
               >
                 <div>
-                  <p className="text-sm font-medium text-heading">
-                    {m.name}
-                  </p>
+                  <p className="text-sm font-medium text-heading">{m.name}</p>
                   {m.genericName && (
                     <p className="text-xs text-faint">{m.genericName}</p>
                   )}
@@ -236,10 +224,7 @@ function MedicationsTab() {
                     {[m.dosageForm, m.strength].filter(Boolean).join(" · ")}
                   </p>
                 </div>
-                <button
-                  onClick={() => deleteMed(m.id)}
-                  className={deleteBtn}
-                >
+                <button onClick={() => deleteMed(m.id)} className={deleteBtn}>
                   <svg
                     className="h-4 w-4"
                     fill="none"
@@ -405,9 +390,7 @@ function ScheduleTab() {
           </h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label className={labelSm}>
-                Medication
-              </label>
+              <label className={labelSm}>Medication</label>
               <select
                 value={selectedMedId}
                 onChange={(e) => setSelectedMedId(e.target.value)}
@@ -429,9 +412,7 @@ function ScheduleTab() {
               )}
             </div>
             <div>
-              <label className={labelSm}>
-                Dosage
-              </label>
+              <label className={labelSm}>Dosage</label>
               <input
                 type="text"
                 value={dosage}
@@ -441,9 +422,7 @@ function ScheduleTab() {
               />
             </div>
             <div>
-              <label className={labelSm}>
-                Frequency
-              </label>
+              <label className={labelSm}>Frequency</label>
               <select
                 value={frequency}
                 onChange={(e) => {
@@ -458,9 +437,7 @@ function ScheduleTab() {
             </div>
             {frequency === "WEEKLY" && (
               <div className="sm:col-span-2">
-                <label className={labelSm}>
-                  Days
-                </label>
+                <label className={labelSm}>Days</label>
                 <div className="mt-1 flex gap-1">
                   {WEEKDAYS.map((day) => {
                     const active = days
@@ -496,9 +473,7 @@ function ScheduleTab() {
               </div>
             )}
             <div>
-              <label className={labelSm}>
-                Time
-              </label>
+              <label className={labelSm}>Time</label>
               <input
                 type="time"
                 value={time}
@@ -508,10 +483,7 @@ function ScheduleTab() {
             </div>
           </div>
           <div className="mt-3 flex justify-end gap-2">
-            <button
-              onClick={() => setShowForm(false)}
-              className={btnSecondary}
-            >
+            <button onClick={() => setShowForm(false)} className={btnSecondary}>
               Cancel
             </button>
             <button
@@ -529,9 +501,7 @@ function ScheduleTab() {
       <div className="mt-4 space-y-2">
         {schedules.length === 0 && !showForm ? (
           <div className={emptyState}>
-            <p className="text-muted">
-              No medication schedules yet
-            </p>
+            <p className="text-muted">No medication schedules yet</p>
             <p className="mt-1 text-sm text-faint">
               Add a schedule to create recurring medication tasks
             </p>
@@ -543,9 +513,7 @@ function ScheduleTab() {
               className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
             >
               <div>
-                <p className="text-sm font-medium text-heading">
-                  {s.title}
-                </p>
+                <p className="text-sm font-medium text-heading">{s.title}</p>
                 <p className="mt-0.5 text-xs text-muted">
                   {s.recurrence === "DAILY"
                     ? "Every day"

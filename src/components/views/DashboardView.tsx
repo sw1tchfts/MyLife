@@ -152,9 +152,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
   if (habitMap.length === 0) {
     return (
       <div className={emptyState}>
-        <p className="text-lg font-medium text-muted">
-          No habits tracked yet
-        </p>
+        <p className="text-lg font-medium text-muted">No habits tracked yet</p>
         <p className="mt-2 text-sm text-faint">
           Create a recurring task and check &quot;Track as habit on
           dashboard&quot; to see it here.
@@ -187,9 +185,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
               />
             </svg>
           </button>
-          <h2 className="text-lg font-bold text-heading">
-            {monthName}
-          </h2>
+          <h2 className="text-lg font-bold text-heading">{monthName}</h2>
           <button
             onClick={nextMonth}
             className="rounded-md p-1.5 text-muted hover:bg-elevated"
@@ -213,9 +209,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
         {/* Stats cards */}
         <div className="flex gap-3">
           <div className={`flex-1 p-3 text-center ${panel}`}>
-            <p className="text-2xl font-bold text-heading">
-              {habitMap.length}
-            </p>
+            <p className="text-2xl font-bold text-heading">{habitMap.length}</p>
             <p className="text-xs text-muted">Habits</p>
           </div>
           <div className={`flex-1 p-3 text-center ${panel}`}>
@@ -256,9 +250,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
 
       {/* Weekly progress bars */}
       <div className={`p-4 ${panel}`}>
-        <p className="mb-3 text-sm font-medium text-body">
-          Weekly Progress
-        </p>
+        <p className="mb-3 text-sm font-medium text-body">Weekly Progress</p>
         <div className="grid gap-2 sm:grid-cols-5">
           {weeks.map((week) => {
             const weekDays: string[] = [];
@@ -280,12 +272,8 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
             return (
               <div key={week.label}>
                 <div className="mb-1 flex items-center justify-between text-xs">
-                  <span className="text-muted">
-                    {week.label}
-                  </span>
-                  <span className="font-medium text-heading">
-                    {weekPct}%
-                  </span>
+                  <span className="text-muted">{week.label}</span>
+                  <span className="font-medium text-heading">{weekPct}%</span>
                 </div>
                 <div className="h-3 overflow-hidden rounded-full bg-elevated">
                   <div
@@ -301,9 +289,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
 
       {/* Habit grid — daily completions */}
       <div className={`overflow-x-auto p-4 ${panel}`}>
-        <p className="mb-3 text-sm font-medium text-body">
-          Daily Habits
-        </p>
+        <p className="mb-3 text-sm font-medium text-body">Daily Habits</p>
         <div className="min-w-[600px]">
           {/* Day numbers header */}
           <div className="mb-1 flex">
@@ -311,9 +297,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
             {Array.from({ length: daysInMonth }, (_, i) => (
               <div key={i} className="flex w-7 shrink-0 flex-col items-center">
                 <span className="text-[9px] text-muted">{dayLabels[i]}</span>
-                <span className="text-[10px] text-muted">
-                  {i + 1}
-                </span>
+                <span className="text-[10px] text-muted">{i + 1}</span>
               </div>
             ))}
             <div className="ml-2 w-16 shrink-0 text-center text-[10px] font-medium text-muted">
@@ -368,9 +352,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
 
       {/* Habit stats table */}
       <div className={`p-4 ${panel}`}>
-        <p className="mb-3 text-sm font-medium text-body">
-          Habit Stats
-        </p>
+        <p className="mb-3 text-sm font-medium text-body">Habit Stats</p>
         <div className="space-y-2">
           {habitMap.map((habit) => {
             const { current, longest } = calcStreak(habit.completions);
@@ -405,11 +387,15 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
                     <p className="text-[10px] text-muted">Done</p>
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-success-text">{pct}%</p>
+                    <p className="text-sm font-bold text-success-text">
+                      {pct}%
+                    </p>
                     <p className="text-[10px] text-muted">Rate</p>
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-accent-text">{current}</p>
+                    <p className="text-sm font-bold text-accent-text">
+                      {current}
+                    </p>
                     <p className="text-[10px] text-muted">Streak</p>
                   </div>
                   <div>

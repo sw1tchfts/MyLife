@@ -6,10 +6,8 @@ import { useToast } from "@/components/ToastProvider";
 import {
   pageTitle,
   sectionTitle,
-  input,
   select,
   btnPrimary,
-  btnSecondary,
   label as labelStyle,
 } from "@/lib/styles";
 
@@ -108,19 +106,18 @@ export default function AdminPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className={pageTitle}>
-          Admin Settings
-        </h1>
-        <Link href="/" className="text-sm text-accent-text hover:text-accent-hover">
+        <h1 className={pageTitle}>Admin Settings</h1>
+        <Link
+          href="/"
+          className="text-sm text-accent-text hover:text-accent-hover"
+        >
           Back to Tasks
         </Link>
       </div>
 
       {/* Categories */}
       <div className="mt-8">
-        <h2 className={sectionTitle}>
-          Categories
-        </h2>
+        <h2 className={sectionTitle}>Categories</h2>
         <div className="mt-4 flex gap-2">
           <input
             type="text"
@@ -140,10 +137,7 @@ export default function AdminPage() {
               />
             ))}
           </div>
-          <button
-            onClick={addCategory}
-            className={btnPrimary}
-          >
+          <button onClick={addCategory} className={btnPrimary}>
             Add
           </button>
         </div>
@@ -214,23 +208,17 @@ export default function AdminPage() {
             </li>
           ))}
           {categories.length === 0 && (
-            <p className="text-sm text-muted">
-              No categories yet.
-            </p>
+            <p className="text-sm text-muted">No categories yet.</p>
           )}
         </ul>
       </div>
 
       {/* Default Settings */}
       <div className="mt-8">
-        <h2 className={sectionTitle}>
-          Default Task Settings
-        </h2>
+        <h2 className={sectionTitle}>Default Task Settings</h2>
         <div className="mt-4 space-y-4">
           <div>
-            <label className={labelStyle}>
-              Default Priority
-            </label>
+            <label className={labelStyle}>Default Priority</label>
             <select
               value={appSettings.defaultPriority || "MEDIUM"}
               onChange={(e) =>
@@ -247,9 +235,7 @@ export default function AdminPage() {
             </select>
           </div>
           <div>
-            <label className={labelStyle}>
-              Default Status
-            </label>
+            <label className={labelStyle}>Default Status</label>
             <select
               value={appSettings.defaultStatus || "TODO"}
               onChange={(e) =>
@@ -276,9 +262,7 @@ export default function AdminPage() {
 
       {/* Data Export */}
       <div className="mt-8">
-        <h2 className={sectionTitle}>
-          Data Export
-        </h2>
+        <h2 className={sectionTitle}>Data Export</h2>
         <p className="mt-1 text-sm text-muted">
           Download your data as CSV or JSON files.
         </p>

@@ -26,7 +26,5 @@ export default memo(function PriorityBadge({
   priority: Priority;
 }) {
   const config = PRIORITY_CONFIG[priority];
-  return (
-    <span className={`${badge} ${config.className}`}>{config.label}</span>
-  );
+  return <span className={`${badge} ${config.className}`}>{config.label}</span>;
 });

@@ -9,11 +9,9 @@ import type { Status, Priority } from "@/generated/prisma/client";
 import ListView from "@/components/views/ListView";
 import TaskModal from "@/components/TaskModal";
 import {
-  pageTitle,
   sectionTitle,
   btnPrimary,
   btnSecondary,
-  input,
   pillActive,
   pillInactive,
   emptyState,
@@ -168,9 +166,7 @@ function TasksContent() {
     <div>
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-heading">
-          Tasks
-        </h1>
+        <h1 className="text-xl font-bold text-heading">Tasks</h1>
         {tab === "tasks" && (
           <button
             onClick={() => setModalMode("create")}
@@ -205,9 +201,7 @@ function TasksContent() {
         <div className="space-y-8">
           <DailyLogSection />
           <div className="border-t border-border pt-6">
-            <h2 className={`mb-4 ${sectionTitle}`}>
-              Task Stats
-            </h2>
+            <h2 className={`mb-4 ${sectionTitle}`}>Task Stats</h2>
             <DashboardView tasks={tasks} />
           </div>
         </div>
@@ -248,9 +242,7 @@ function TasksContent() {
                     key={f.value}
                     onClick={() => setTypeFilter(f.value)}
                     className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
-                      typeFilter === f.value
-                        ? pillActive
-                        : pillInactive
+                      typeFilter === f.value ? pillActive : pillInactive
                     }`}
                   >
                     {f.label}
@@ -266,9 +258,7 @@ function TasksContent() {
                       )
                     }
                     className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
-                      statusFilter === f.value
-                        ? pillActive
-                        : pillInactive
+                      statusFilter === f.value ? pillActive : pillInactive
                     }`}
                   >
                     {f.label}
@@ -284,9 +274,7 @@ function TasksContent() {
                       )
                     }
                     className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
-                      priorityFilter === f.value
-                        ? pillActive
-                        : pillInactive
+                      priorityFilter === f.value ? pillActive : pillInactive
                     }`}
                   >
                     {f.label}

@@ -19,9 +19,7 @@ type Tab = "library" | "diet";
 
 export default function DietPage() {
   return (
-    <Suspense
-      fallback={<p className="text-center text-muted">Loading...</p>}
-    >
+    <Suspense fallback={<p className="text-center text-muted">Loading...</p>}>
       <DietContent />
     </Suspense>
   );
@@ -43,9 +41,7 @@ function DietContent() {
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-bold text-heading">
-        Diet & Nutrition
-      </h1>
+      <h1 className="mb-4 text-xl font-bold text-heading">Diet & Nutrition</h1>
 
       <div className="mb-6 flex gap-1 border-b border-border">
         {TABS.map((t) => (

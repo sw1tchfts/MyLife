@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  panel,
   inputSm,
   select,
   btnPrimary,
@@ -206,9 +205,7 @@ export default function DietRoutineTab() {
           </h3>
           <div className="grid gap-3 sm:grid-cols-3">
             <div>
-              <label className={labelSm}>
-                Meal Type
-              </label>
+              <label className={labelSm}>Meal Type</label>
               <select
                 value={newMealType}
                 onChange={(e) => setNewMealType(e.target.value)}
@@ -222,9 +219,7 @@ export default function DietRoutineTab() {
               </select>
             </div>
             <div>
-              <label className={labelSm}>
-                Time
-              </label>
+              <label className={labelSm}>Time</label>
               <input
                 type="time"
                 value={newTime}
@@ -233,9 +228,7 @@ export default function DietRoutineTab() {
               />
             </div>
             <div>
-              <label className={labelSm}>
-                Days
-              </label>
+              <label className={labelSm}>Days</label>
               <div className="mt-1 flex gap-1">
                 {WEEKDAYS.map((day) => {
                   const active = newDays.includes(day);
@@ -260,9 +253,7 @@ export default function DietRoutineTab() {
           </div>
 
           <div className="mt-3">
-            <label className={labelSm}>
-              Foods
-            </label>
+            <label className={labelSm}>Foods</label>
             {newFoods.length > 0 && (
               <div className="mt-1 space-y-1">
                 {newFoods.map((f, i) => {
@@ -349,9 +340,7 @@ export default function DietRoutineTab() {
       <div className="mt-4 space-y-2">
         {meals.length === 0 && !showAdd ? (
           <div className={emptyState}>
-            <p className="text-muted">
-              No meals in your plan yet
-            </p>
+            <p className="text-muted">No meals in your plan yet</p>
             <p className="mt-1 text-sm text-faint">
               Add meals to build your weekly diet routine
             </p>
@@ -378,9 +367,7 @@ export default function DietRoutineTab() {
                       {Math.round(mealCal)} cal
                     </span>
                   </div>
-                  <p className="mt-0.5 text-xs text-muted">
-                    {daysList}
-                  </p>
+                  <p className="mt-0.5 text-xs text-muted">{daysList}</p>
                   <p className="mt-0.5 text-xs text-faint">
                     {meal.foods
                       .map((f) => `${f.name} ×${f.quantity}`)

@@ -126,10 +126,7 @@ function ToastItem({
           Undo
         </button>
       )}
-      <button
-        onClick={onDismiss}
-        className="ml-1 text-muted hover:text-body"
-      >
+      <button onClick={onDismiss} className="ml-1 text-muted hover:text-body">
         <svg
           className="h-4 w-4"
           fill="none"

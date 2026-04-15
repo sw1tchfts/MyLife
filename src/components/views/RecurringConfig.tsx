@@ -7,9 +7,7 @@ import {
   select,
   btnPrimary,
   btnSecondary,
-  badgeSm,
   emptyState,
-  pillActive,
   pillInactive,
 } from "@/lib/styles";
 
@@ -372,12 +370,8 @@ export default function RecurringConfig() {
       {/* Recurring tasks list */}
       {tasks.length === 0 && !showCreate ? (
         <div className={`mt-8 ${emptyState}`}>
-          <p className="text-muted">
-            No recurring tasks yet
-          </p>
-          <p className="mt-1 text-sm text-faint">
-            Create one to get started
-          </p>
+          <p className="text-muted">No recurring tasks yet</p>
+          <p className="mt-1 text-sm text-faint">Create one to get started</p>
         </div>
       ) : (
         <div className="mt-4 space-y-2">
@@ -389,9 +383,7 @@ export default function RecurringConfig() {
               <div
                 key={task.id}
                 className={`rounded-lg border bg-card p-4 ${
-                  isEditing
-                    ? "border-accent"
-                    : "border-border"
+                  isEditing ? "border-accent" : "border-border"
                 }`}
               >
                 {isEditing ? (
@@ -467,9 +459,7 @@ export default function RecurringConfig() {
                         </div>
                       )}
                       <div>
-                        <label className="block text-xs text-muted">
-                          Time
-                        </label>
+                        <label className="block text-xs text-muted">Time</label>
                         <input
                           type="time"
                           value={editTarget.recurrenceTime}

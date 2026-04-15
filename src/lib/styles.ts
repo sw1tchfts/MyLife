@@ -18,8 +18,7 @@ export const badgeSm =
 export const card =
   "rounded-lg border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md";
 
-export const panel =
-  "rounded-lg border border-border bg-card";
+export const panel = "rounded-lg border border-border bg-card";
 
 /* ── Form Inputs ────────────────────────────────────────────────── */
 
@@ -48,11 +47,9 @@ export const btnGhost =
 
 /* ── Toggle / Pill Button ───────────────────────────────────────── */
 
-export const pillActive =
-  "border-accent bg-accent-soft text-accent-text";
+export const pillActive = "border-accent bg-accent-soft text-accent-text";
 
-export const pillInactive =
-  "border-input-border text-muted hover:bg-elevated";
+export const pillInactive = "border-input-border text-muted hover:bg-elevated";
 
 /* ── Typography ─────────────────────────────────────────────────── */
 
@@ -71,11 +68,9 @@ export const hint = "text-xs text-faint";
 export const navLinkBase =
   "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors";
 
-export const navLinkActive =
-  "bg-accent-soft font-medium text-accent-text";
+export const navLinkActive = "bg-accent-soft font-medium text-accent-text";
 
-export const navLinkInactive =
-  "text-muted hover:bg-elevated hover:text-body";
+export const navLinkInactive = "text-muted hover:bg-elevated hover:text-body";
 
 /* ── Misc ───────────────────────────────────────────────────────── */
 

@@ -129,9 +129,7 @@ function RankingsContent() {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h1 className={pageTitle}>
-          Pairwise Ranker
-        </h1>
+        <h1 className={pageTitle}>Pairwise Ranker</h1>
         <button
           onClick={() => setShowManage(!showManage)}
           className="rounded-md border border-input-border px-3 py-1.5 text-xs font-medium text-muted hover:bg-elevated"
@@ -158,9 +156,7 @@ function RankingsContent() {
         <p className="text-center text-muted">Loading...</p>
       ) : lists.length === 0 ? (
         <div className={emptyState}>
-          <p className="text-muted">
-            No ranking lists yet
-          </p>
+          <p className="text-muted">No ranking lists yet</p>
           <p className="mt-1 text-sm text-faint">
             Click &quot;Manage Lists&quot; above to create one
           </p>
@@ -310,9 +306,7 @@ function ManageListsPanel({
             <div
               key={l.id}
               className={`flex items-center justify-between rounded-md px-3 py-2 ${
-                l.id === currentListId
-                  ? "bg-accent-soft"
-                  : "hover:bg-elevated"
+                l.id === currentListId ? "bg-accent-soft" : "hover:bg-elevated"
               }`}
             >
               <button

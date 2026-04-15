@@ -114,9 +114,7 @@ export default function CompareTab({
             {left.title}
           </h3>
           {left.description && (
-            <p className="mt-2 text-sm text-muted">
-              {left.description}
-            </p>
+            <p className="mt-2 text-sm text-muted">{left.description}</p>
           )}
           {left.tags && (
             <div className="mt-3 flex flex-wrap gap-1">
@@ -137,9 +135,7 @@ export default function CompareTab({
 
         {/* VS divider */}
         <div className="flex items-center justify-center">
-          <span className="text-2xl font-black text-faint">
-            VS
-          </span>
+          <span className="text-2xl font-black text-faint">VS</span>
         </div>
 
         {/* Right item */}
@@ -151,9 +147,7 @@ export default function CompareTab({
             {right.title}
           </h3>
           {right.description && (
-            <p className="mt-2 text-sm text-muted">
-              {right.description}
-            </p>
+            <p className="mt-2 text-sm text-muted">{right.description}</p>
           )}
           {right.tags && (
             <div className="mt-3 flex flex-wrap gap-1">
@@ -175,16 +169,10 @@ export default function CompareTab({
 
       {/* Secondary actions */}
       <div className="flex justify-center gap-3">
-        <button
-          onClick={() => submitChoice("TIE")}
-          className={btnSecondary}
-        >
+        <button onClick={() => submitChoice("TIE")} className={btnSecondary}>
           Tie / Equal
         </button>
-        <button
-          onClick={() => submitChoice("SKIP")}
-          className={btnSecondary}
-        >
+        <button onClick={() => submitChoice("SKIP")} className={btnSecondary}>
           Skip
         </button>
       </div>

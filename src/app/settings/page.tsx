@@ -140,9 +140,7 @@ export default function SettingsPage() {
         </Link>
       </div>
 
-      {message && (
-        <p className="mt-4 text-sm text-success-text">{message}</p>
-      )}
+      {message && <p className="mt-4 text-sm text-success-text">{message}</p>}
       {error && <p className="mt-4 text-sm text-danger-text">{error}</p>}
 
       {/* Account */}
@@ -227,8 +225,8 @@ export default function SettingsPage() {
       <div className="mt-8">
         <h2 className={sectionTitle}>Daily Tracker</h2>
         <p className="mt-1 text-sm text-muted">
-          Configure the daily &quot;Log Your Data&quot; task that appears in your
-          task list.
+          Configure the daily &quot;Log Your Data&quot; task that appears in
+          your task list.
         </p>
 
         {/* Master toggle */}
@@ -260,7 +258,10 @@ export default function SettingsPage() {
                     ["bodyFat", "Body fat %"],
                     ["waist", "Waist circumference"],
                     ["chest", "Chest circumference"],
-                    ["manualCalories", "Manual calorie entry (instead of meal tasks)"],
+                    [
+                      "manualCalories",
+                      "Manual calorie entry (instead of meal tasks)",
+                    ],
                   ] as const
                 ).map(([key, lbl]) => (
                   <label key={key} className="flex items-center gap-3">
@@ -388,8 +389,7 @@ export default function SettingsPage() {
                                 ...s.trackerConfig,
                                 profile: {
                                   ...s.trackerConfig.profile,
-                                  height:
-                                    feet * 12 + Math.round(currentInches),
+                                  height: feet * 12 + Math.round(currentInches),
                                 },
                               },
                             }));
@@ -480,9 +480,7 @@ export default function SettingsPage() {
                           ...s.trackerConfig,
                           profile: {
                             ...s.trackerConfig.profile,
-                            age: e.target.value
-                              ? Number(e.target.value)
-                              : null,
+                            age: e.target.value ? Number(e.target.value) : null,
                           },
                         },
                       }))

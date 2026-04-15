@@ -49,7 +49,8 @@ export async function GET(request: NextRequest) {
       where: { userId: user.id },
     });
 
-    const trackerConfig = (settings?.trackerConfig as Record<string, unknown>) || {};
+    const trackerConfig =
+      (settings?.trackerConfig as Record<string, unknown>) || {};
     const profile = (trackerConfig.profile || {}) as TrackerProfile;
     const goal = (trackerConfig.goal || {
       goalWeight: null,
@@ -60,61 +61,67 @@ export async function GET(request: NextRequest) {
     };
 
     // Fetch weight data and nutrition logs in parallel
-    const [weights, nutritionLogs, todayMetrics, todayNutrition, todayMedTasks, trackerTask] =
-      await Promise.all([
-        // All weight entries for TDEE calculation
-        prisma.bodyMetric.findMany({
-          where: { type: "WEIGHT", date: { gte: since } },
-          orderBy: { date: "asc" },
-          select: { date: true, value: true },
-        }),
-        // All nutrition logs for TDEE calculation
-        prisma.nutritionLog.findMany({
-          where: { date: { gte: since } },
-          orderBy: { date: "asc" },
-          select: {
-            date: true,
-            calories: true,
-            protein: true,
-            carbs: true,
-            fat: true,
-          },
-        }),
-        // Today's body metrics
-        prisma.bodyMetric.findMany({
-          where: { date: { gte: today, lt: tomorrow } },
-          orderBy: { type: "asc" },
-        }),
-        // Today's nutrition from meal tasks
-        prisma.nutritionLog.findMany({
-          where: { date: { gte: today, lt: tomorrow } },
-          select: {
-            calories: true,
-            protein: true,
-            carbs: true,
-            fat: true,
-            fiber: true,
-            sugar: true,
-            sodium: true,
-          },
-        }),
-        // Today's completed medication tasks
-        prisma.task.findMany({
-          where: {
-            taskType: "MEDICATION",
-            status: "DONE",
-            updatedAt: { gte: today, lt: tomorrow },
-          },
-          include: { taskMeds: { include: { medicationItem: true } } },
-        }),
-        // Today's tracker task
-        prisma.task.findFirst({
-          where: {
-            taskType: "TRACKER",
-            dueDate: { gte: today, lt: tomorrow },
-          },
-        }),
-      ]);
+    const [
+      weights,
+      nutritionLogs,
+      todayMetrics,
+      todayNutrition,
+      todayMedTasks,
+      trackerTask,
+    ] = await Promise.all([
+      // All weight entries for TDEE calculation
+      prisma.bodyMetric.findMany({
+        where: { type: "WEIGHT", date: { gte: since } },
+        orderBy: { date: "asc" },
+        select: { date: true, value: true },
+      }),
+      // All nutrition logs for TDEE calculation
+      prisma.nutritionLog.findMany({
+        where: { date: { gte: since } },
+        orderBy: { date: "asc" },
+        select: {
+          date: true,
+          calories: true,
+          protein: true,
+          carbs: true,
+          fat: true,
+        },
+      }),
+      // Today's body metrics
+      prisma.bodyMetric.findMany({
+        where: { date: { gte: today, lt: tomorrow } },
+        orderBy: { type: "asc" },
+      }),
+      // Today's nutrition from meal tasks
+      prisma.nutritionLog.findMany({
+        where: { date: { gte: today, lt: tomorrow } },
+        select: {
+          calories: true,
+          protein: true,
+          carbs: true,
+          fat: true,
+          fiber: true,
+          sugar: true,
+          sodium: true,
+        },
+      }),
+      // Today's completed medication tasks
+      prisma.task.findMany({
+        where: {
+          taskType: "MEDICATION",
+          status: "DONE",
+          updatedAt: { gte: today, lt: tomorrow },
+        },
+        include: { taskMeds: { include: { medicationItem: true } } },
+      }),
+      // Today's tracker task
+      prisma.task.findFirst({
+        where: {
+          taskType: "TRACKER",
+          dueDate: { gte: today, lt: tomorrow },
+        },
+      }),
+    ]);
 
     // Build daily entries and calculate TDEE
     const dailyEntries = buildDailyEntries(weights, nutritionLogs);
@@ -201,7 +208,13 @@ export async function POST(request: NextRequest) {
         const entry = await prisma.bodyMetric.create({
           data: {
             date: now,
-            type: m.type as "WEIGHT" | "BODY_FAT" | "WAIST" | "CHEST" | "HEIGHT" | "BMI",
+            type: m.type as
+              | "WEIGHT"
+              | "BODY_FAT"
+              | "WAIST"
+              | "CHEST"
+              | "HEIGHT"
+              | "BMI",
             value: m.value,
             unit: m.unit || "",
           },

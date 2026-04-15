@@ -102,9 +102,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
             <Link
               href="/tasks"
               className={`${navLinkBase} ${
-                pathname.startsWith("/tasks")
-                  ? navLinkActive
-                  : navLinkInactive
+                pathname.startsWith("/tasks") ? navLinkActive : navLinkInactive
               }`}
             >
               <ListIcon active={pathname.startsWith("/tasks")} />
@@ -120,9 +118,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
             <Link
               href="/diet"
               className={`${navLinkBase} ${
-                pathname.startsWith("/diet")
-                  ? navLinkActive
-                  : navLinkInactive
+                pathname.startsWith("/diet") ? navLinkActive : navLinkInactive
               }`}
             >
               <DietIcon active={pathname.startsWith("/diet")} />
@@ -131,9 +127,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
             <Link
               href="/gym"
               className={`${navLinkBase} ${
-                pathname.startsWith("/gym")
-                  ? navLinkActive
-                  : navLinkInactive
+                pathname.startsWith("/gym") ? navLinkActive : navLinkInactive
               }`}
             >
               <GymIcon active={pathname.startsWith("/gym")} />

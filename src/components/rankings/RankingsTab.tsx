@@ -77,9 +77,7 @@ export default function RankingsTab({
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <p className="text-sm font-medium text-heading">
-                  {item.title}
-                </p>
+                <p className="text-sm font-medium text-heading">{item.title}</p>
                 <span className="font-mono text-xs text-faint">
                   {Math.round(item.elo)}
                 </span>

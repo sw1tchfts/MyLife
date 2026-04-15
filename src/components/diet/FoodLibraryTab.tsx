@@ -158,12 +158,8 @@ export default function FoodLibraryTab() {
                 className="flex items-center justify-between rounded-md border border-border p-3"
               >
                 <div>
-                  <p className="text-sm font-medium text-heading">
-                    {r.name}
-                  </p>
-                  {r.brand && (
-                    <p className="text-xs text-faint">{r.brand}</p>
-                  )}
+                  <p className="text-sm font-medium text-heading">{r.name}</p>
+                  {r.brand && <p className="text-xs text-faint">{r.brand}</p>}
                   <p className="mt-1 text-xs text-muted">
                     {Math.round(r.calories)} cal · {Math.round(r.protein)}g P ·{" "}
                     {Math.round(r.carbs)}g C · {Math.round(r.fat)}g F
@@ -193,9 +189,7 @@ export default function FoodLibraryTab() {
         </h3>
         {foods.length === 0 ? (
           <div className={emptyState}>
-            <p className="text-muted">
-              No saved foods yet
-            </p>
+            <p className="text-muted">No saved foods yet</p>
             <p className="mt-1 text-sm text-faint">
               Search above to find and save foods
             </p>
@@ -225,10 +219,7 @@ export default function FoodLibraryTab() {
               </thead>
               <tbody className="divide-y divide-border">
                 {foods.map((f) => (
-                  <tr
-                    key={f.id}
-                    className="hover:bg-elevated"
-                  >
+                  <tr key={f.id} className="hover:bg-elevated">
                     <td className="px-4 py-3">
                       <p className="text-sm font-medium text-heading">
                         {f.name}

@@ -113,12 +113,7 @@ describe("calculateAdaptiveTDEE", () => {
       }
     }
 
-    const result = calculateAdaptiveTDEE(
-      entries,
-      PROFILE,
-      NO_GOAL,
-      "lbs",
-    );
+    const result = calculateAdaptiveTDEE(entries, PROFILE, NO_GOAL, "lbs");
 
     // With stable weight and ~2500 cal intake, TDEE should be near 2500
     expect(result.estimatedTDEE).toBeGreaterThan(2200);
@@ -142,12 +137,7 @@ describe("calculateAdaptiveTDEE", () => {
       }
     }
 
-    const result = calculateAdaptiveTDEE(
-      entries,
-      PROFILE,
-      NO_GOAL,
-      "lbs",
-    );
+    const result = calculateAdaptiveTDEE(entries, PROFILE, NO_GOAL, "lbs");
 
     // TDEE = 2000 - (-1 * 3500/7) = 2000 + 500 = 2500
     expect(result.estimatedTDEE).toBeGreaterThan(2300);
@@ -160,12 +150,7 @@ describe("calculateAdaptiveTDEE", () => {
       { date: "2024-01-01", weight: 180, caloriesIn: 2500 },
     ];
 
-    const result = calculateAdaptiveTDEE(
-      entries,
-      PROFILE,
-      cutGoal,
-      "lbs",
-    );
+    const result = calculateAdaptiveTDEE(entries, PROFILE, cutGoal, "lbs");
 
     // Goal is 170 lbs, current is 180 — should recommend a deficit
     expect(result.calorieTarget).toBeLessThan(result.estimatedTDEE);
@@ -182,12 +167,7 @@ describe("calculateAdaptiveTDEE", () => {
       { date: "2024-01-01", weight: 82, caloriesIn: 2500 },
     ];
 
-    const result = calculateAdaptiveTDEE(
-      entries,
-      kgProfile,
-      NO_GOAL,
-      "kg",
-    );
+    const result = calculateAdaptiveTDEE(entries, kgProfile, NO_GOAL, "kg");
 
     expect(result.weightUnit).toBe("kg");
     expect(result.estimatedTDEE).toBeGreaterThan(2000);

@@ -174,18 +174,13 @@ export default function ItemsTab({
             </thead>
             <tbody className="divide-y divide-border">
               {items.map((item) => (
-                <tr
-                  key={item.id}
-                  className="hover:bg-elevated"
-                >
+                <tr key={item.id} className="hover:bg-elevated">
                   <td className="px-4 py-3">
                     <p className="text-sm font-medium text-heading">
                       {item.title}
                     </p>
                     {item.description && (
-                      <p className="text-xs text-faint">
-                        {item.description}
-                      </p>
+                      <p className="text-xs text-faint">{item.description}</p>
                     )}
                   </td>
                   <td className="px-4 py-3">

@@ -298,9 +298,7 @@ export default function RoutinesTab() {
           </h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label className={labelSm}>
-                Name
-              </label>
+              <label className={labelSm}>Name</label>
               <input
                 type="text"
                 value={name}
@@ -310,9 +308,7 @@ export default function RoutinesTab() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className={labelSm}>
-                Description
-              </label>
+              <label className={labelSm}>Description</label>
               <input
                 type="text"
                 value={description}
@@ -322,9 +318,7 @@ export default function RoutinesTab() {
               />
             </div>
             <div>
-              <label className={labelSm}>
-                Goal
-              </label>
+              <label className={labelSm}>Goal</label>
               <select
                 value={goal}
                 onChange={(e) => setGoal(e.target.value)}
@@ -337,9 +331,7 @@ export default function RoutinesTab() {
               </select>
             </div>
             <div>
-              <label className={labelSm}>
-                Level
-              </label>
+              <label className={labelSm}>Level</label>
               <select
                 value={level}
                 onChange={(e) => setLevel(e.target.value)}
@@ -354,9 +346,7 @@ export default function RoutinesTab() {
 
           {/* Days builder */}
           <div className="mt-4">
-            <label className={labelSm}>
-              Workout Days ({days.length})
-            </label>
+            <label className={labelSm}>Workout Days ({days.length})</label>
             <div className="mt-2 space-y-3">
               {days.map((day, dayIdx) => (
                 <div
@@ -376,9 +366,7 @@ export default function RoutinesTab() {
                   </div>
                   {/* Weekday selector */}
                   <div className="mt-1.5 flex items-center gap-1.5">
-                    <span className="text-[10px] text-faint">
-                      Day:
-                    </span>
+                    <span className="text-[10px] text-faint">Day:</span>
                     {WEEKDAYS_GYM.map((wd) => (
                       <button
                         key={wd}
@@ -558,10 +546,7 @@ export default function RoutinesTab() {
         </div>
       ) : (
         routines.map((routine) => (
-          <div
-            key={routine.id}
-            className={`${panel} p-4`}
-          >
+          <div key={routine.id} className={`${panel} p-4`}>
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-sm font-semibold text-heading">
@@ -644,9 +629,7 @@ export default function RoutinesTab() {
                   ))}
                 </div>
                 <div className="mt-2 flex items-center gap-3">
-                  <label className="text-xs text-muted">
-                    Time:
-                  </label>
+                  <label className="text-xs text-muted">Time:</label>
                   <input
                     type="time"
                     value={activateTime}
@@ -690,10 +673,7 @@ export default function RoutinesTab() {
                     {day.exercises.length > 0 && (
                       <div className="mt-1 space-y-0.5">
                         {day.exercises.map((re) => (
-                          <p
-                            key={re.id}
-                            className="text-xs text-muted"
-                          >
+                          <p key={re.id} className="text-xs text-muted">
                             {re.exercise.name} — {re.sets}x{re.repsMin}
                             {re.repsMax !== re.repsMin && `-${re.repsMax}`}
                           </p>

@@ -154,14 +154,9 @@ export default function JournalPage() {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h1 className={pageTitle}>
-          Journal
-        </h1>
+        <h1 className={pageTitle}>Journal</h1>
         {!showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            className={btnPrimary}
-          >
+          <button onClick={() => setShowForm(true)} className={btnPrimary}>
             + New Entry
           </button>
         )}
@@ -201,9 +196,7 @@ export default function JournalPage() {
                   }`}
                 >
                   <span>{m.emoji}</span>
-                  <span className="text-muted">
-                    {m.label}
-                  </span>
+                  <span className="text-muted">{m.label}</span>
                 </button>
               ))}
             </div>
@@ -223,10 +216,7 @@ export default function JournalPage() {
               className="w-full rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
             />
             <div className="flex justify-end gap-2">
-              <button
-                onClick={resetForm}
-                className={btnSecondary}
-              >
+              <button onClick={resetForm} className={btnSecondary}>
                 Cancel
               </button>
               <button
@@ -285,9 +275,7 @@ export default function JournalPage() {
         <p className="text-center text-muted">Loading entries...</p>
       ) : entries.length === 0 ? (
         <div className={emptyState}>
-          <p className="text-muted">
-            No journal entries yet
-          </p>
+          <p className="text-muted">No journal entries yet</p>
           <p className="mt-1 text-sm text-faint">
             Click &quot;+ New Entry&quot; to write your first one
           </p>

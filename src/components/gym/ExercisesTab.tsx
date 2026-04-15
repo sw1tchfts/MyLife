@@ -1,13 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import {
-  panel,
-  inputSm,
-  btnPrimary,
-  emptyState,
-  badgeSm,
-} from "@/lib/styles";
+import { panel, inputSm, btnPrimary, emptyState, badgeSm } from "@/lib/styles";
 
 /* ── Types ─────────────────────────────────────────── */
 
@@ -120,10 +114,7 @@ export default function ExercisesTab() {
             </option>
           ))}
         </select>
-        <button
-          onClick={() => setShowAdd(!showAdd)}
-          className={btnPrimary}
-        >
+        <button onClick={() => setShowAdd(!showAdd)} className={btnPrimary}>
           + Add
         </button>
       </div>
@@ -197,9 +188,7 @@ export default function ExercisesTab() {
               className="rounded-lg border border-border bg-card p-3"
             >
               <div className="flex items-start justify-between">
-                <p className="text-sm font-medium text-heading">
-                  {ex.name}
-                </p>
+                <p className="text-sm font-medium text-heading">{ex.name}</p>
                 <MuscleGroupBadge group={ex.muscleGroup} />
               </div>
               <p className="mt-1 text-xs text-faint">

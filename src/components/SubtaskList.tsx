@@ -111,9 +111,7 @@ export default function SubtaskList({
             />
             <span
               className={`flex-1 text-sm ${
-                subtask.done
-                  ? "text-faint line-through"
-                  : "text-body"
+                subtask.done ? "text-faint line-through" : "text-body"
               }`}
             >
               {subtask.title}

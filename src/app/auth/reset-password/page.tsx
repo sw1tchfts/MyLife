@@ -88,9 +88,7 @@ export default function ResetPasswordPage() {
           </div>
 
           {error && <p className="text-sm text-danger-text">{error}</p>}
-          {message && (
-            <p className="text-sm text-success-text">{message}</p>
-          )}
+          {message && <p className="text-sm text-success-text">{message}</p>}
 
           <button
             type="submit"

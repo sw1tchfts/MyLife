@@ -21,7 +21,5 @@ const STATUS_CONFIG: Record<Status, { label: string; className: string }> = {
 
 export default memo(function StatusBadge({ status }: { status: Status }) {
   const config = STATUS_CONFIG[status];
-  return (
-    <span className={`${badge} ${config.className}`}>{config.label}</span>
-  );
+  return <span className={`${badge} ${config.className}`}>{config.label}</span>;
 });

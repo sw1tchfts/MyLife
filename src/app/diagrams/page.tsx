@@ -340,9 +340,7 @@ function DiagramsInner() {
           {saving ? "Saving..." : "Save"}
         </button>
         {saveMsg && (
-          <span className="text-sm text-success-text">
-            {saveMsg}
-          </span>
+          <span className="text-sm text-success-text">{saveMsg}</span>
         )}
         <button
           onClick={newDiagram}
@@ -451,11 +449,7 @@ function DiagramsInner() {
             deleteKeyCode={null}
             className="bg-surface"
           >
-            <Background
-              variant={BackgroundVariant.Dots}
-              gap={15}
-              size={1}
-            />
+            <Background variant={BackgroundVariant.Dots} gap={15} size={1} />
             <Controls className="!rounded !border !border-border !bg-card !shadow-sm [&>button]:!border-border [&>button]:!bg-card [&>button>svg]:!fill-body" />
             <MiniMap
               className="!rounded !border !border-border !bg-card !shadow-sm"

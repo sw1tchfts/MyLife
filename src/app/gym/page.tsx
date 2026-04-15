@@ -13,9 +13,7 @@ type Tab = "exercises" | "routines";
 
 export default function GymPage() {
   return (
-    <Suspense
-      fallback={<p className="text-center text-muted">Loading...</p>}
-    >
+    <Suspense fallback={<p className="text-center text-muted">Loading...</p>}>
       <GymContent />
     </Suspense>
   );
@@ -37,9 +35,7 @@ function GymContent() {
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-bold text-heading">
-        Gym
-      </h1>
+      <h1 className="mb-4 text-xl font-bold text-heading">Gym</h1>
 
       <div className="mb-6 flex gap-1 border-b border-border">
         {TABS.map((t) => (
