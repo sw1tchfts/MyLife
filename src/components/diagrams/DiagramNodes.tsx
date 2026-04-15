@@ -156,7 +156,7 @@ export const TerminalNode = memo(function TerminalNode({ data }: NodeProps) {
 export const DataNode = memo(function DataNode({ data }: NodeProps) {
   const d = data as { label?: string; onLabelChange?: (v: string) => void };
   return (
-    <div className="min-w-[120px] skew-x-[-10deg] border-2 border-purple-500 bg-white px-5 py-3 text-center text-sm shadow-sm dark:border-purple-400 dark:bg-gray-800 dark:text-gray-100">
+    <div className="min-w-[120px] skew-x-[-10deg] border-2 border-purple-500 bg-card px-5 py-3 text-center text-sm text-heading shadow-sm">
       <AllHandles />
       <div className="skew-x-[10deg]">
         <EditableText
@@ -179,7 +179,7 @@ export const StickyNoteNode = memo(function StickyNoteNode({
   const [draft, setDraft] = useState((d.label as string) ?? "");
 
   return (
-    <div className="min-h-[80px] w-[180px] rounded-sm border border-yellow-300 bg-yellow-100 p-3 text-xs shadow-md dark:border-yellow-600 dark:bg-yellow-900/60 dark:text-yellow-100">
+    <div className="min-h-[80px] w-[180px] rounded-sm border border-yellow-600 bg-yellow-900/60 p-3 text-xs text-yellow-100 shadow-md">
       {editing ? (
         <textarea
           autoFocus
@@ -222,16 +222,16 @@ export const EntityNode = memo(function EntityNode({ data }: NodeProps) {
     attributes?: string;
   };
   return (
-    <div className="min-w-[150px] overflow-hidden rounded-md border-2 border-indigo-500 bg-white shadow-sm dark:border-indigo-400 dark:bg-gray-800">
+    <div className="min-w-[150px] overflow-hidden rounded-md border-2 border-indigo-400 bg-card shadow-sm">
       <AllHandles />
-      <div className="border-b border-indigo-300 bg-indigo-50 px-3 py-2 text-center text-sm font-semibold dark:border-indigo-600 dark:bg-indigo-900/40 dark:text-gray-100">
+      <div className="border-b border-indigo-600 bg-indigo-900/40 px-3 py-2 text-center text-sm font-semibold text-heading">
         <EditableText
           value={(d.label as string) ?? ""}
           onChange={(v) => d.onLabelChange?.(v)}
           placeholder="Entity"
         />
       </div>
-      <div className="px-3 py-2 text-xs text-gray-600 dark:text-gray-300">
+      <div className="px-3 py-2 text-xs text-body">
         {(d.attributes as string) || "id, name, ..."}
       </div>
     </div>
