@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SECTION_HEADINGS } from "@/lib/screens";
 
 interface TDEEData {
   estimatedTDEE: number;
@@ -39,20 +38,20 @@ interface TrackerResponse {
 const CONFIDENCE_CONFIG = {
   low: {
     label: "Low",
-    color: "text-red-600 dark:text-red-400",
-    bg: "bg-red-100 dark:bg-red-900/30",
+    color: "text-danger-text",
+    bg: "bg-danger-soft",
     desc: "Less than 2 weeks of data. Estimate based mostly on formula.",
   },
   medium: {
     label: "Medium",
-    color: "text-amber-600 dark:text-amber-400",
-    bg: "bg-amber-100 dark:bg-amber-900/30",
+    color: "text-amber-text",
+    bg: "bg-amber-soft",
     desc: "2-4 weeks of data. Estimate becoming personalized.",
   },
   high: {
     label: "High",
-    color: "text-green-600 dark:text-green-400",
-    bg: "bg-green-100 dark:bg-green-900/30",
+    color: "text-success-text",
+    bg: "bg-success-soft",
     desc: "4+ weeks of data. Estimate driven by your real data.",
   },
 };
@@ -74,7 +73,9 @@ export default function DailyLogSection() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-gray-400 dark:text-gray-500">Loading daily log...</p>
+        <p className="text-muted">
+          Loading daily log...
+        </p>
       </div>
     );
   }
@@ -82,7 +83,7 @@ export default function DailyLogSection() {
   if (!data) {
     return (
       <div className="py-12 text-center">
-        <p className="text-gray-500">Failed to load tracker data.</p>
+        <p className="text-muted">Failed to load tracker data.</p>
       </div>
     );
   }
@@ -113,15 +114,17 @@ export default function DailyLogSection() {
   return (
     <div>
       {/* TDEE Hero Card */}
-      <div className="mt-6 rounded-xl border border-teal-200 bg-gradient-to-br from-teal-50 to-cyan-50 p-6 dark:border-teal-800 dark:from-teal-900/30 dark:to-cyan-900/20">
+      <div className="mt-6 rounded-xl border border-teal-800 bg-gradient-to-br from-teal-900/30 to-cyan-900/20 p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-teal-700 dark:text-teal-400">
+            <p className="text-sm font-medium text-teal-400">
               Estimated Daily Burn (TDEE)
             </p>
-            <p className="mt-1 text-4xl font-bold text-gray-900 dark:text-gray-100">
+            <p className="mt-1 text-4xl font-bold text-heading">
               {tdee.estimatedTDEE.toLocaleString()}{" "}
-              <span className="text-lg font-normal text-gray-500">cal/day</span>
+              <span className="text-lg font-normal text-muted">
+                cal/day
+              </span>
             </p>
             <div className="mt-2 flex items-center gap-2">
               <span
@@ -129,7 +132,7 @@ export default function DailyLogSection() {
               >
                 {conf.label} Confidence
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-muted">
                 {conf.desc}
               </span>
             </div>
@@ -175,23 +178,20 @@ export default function DailyLogSection() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Weight Trend Chart */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-            {SECTION_HEADINGS.weightTrend}
+        <div className="rounded-lg border border-border bg-card p-4">
+          <h2 className="text-sm font-semibold text-heading">
+            Weight Trend
           </h2>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-muted">
             Last 30 days
           </p>
           {weightEntries.length < 2 ? (
-            <div className="mt-4 flex h-32 items-center justify-center text-sm text-gray-400 dark:text-gray-500">
+            <div className="mt-4 flex h-32 items-center justify-center text-sm text-faint">
               Log at least 2 days of weight data to see your trend
             </div>
           ) : (
             <div className="mt-4">
-              <svg
-                viewBox={`0 0 ${weightEntries.length * 20} 120`}
-                className="h-32 w-full"
-              >
+              <svg viewBox={`0 0 ${weightEntries.length * 20} 120`} className="h-32 w-full">
                 {/* TDEE trend line reference */}
                 {tdee.trendWeight !== null && (
                   <line
@@ -228,10 +228,11 @@ export default function DailyLogSection() {
                   />
                 ))}
               </svg>
-              <div className="mt-1 flex justify-between text-[10px] text-gray-400 dark:text-gray-500">
+              <div className="mt-1 flex justify-between text-[10px] text-faint">
                 <span>{weightEntries[0]?.date}</span>
                 <span>
-                  Range: {minW.toFixed(1)} – {maxW.toFixed(1)} {tdee.weightUnit}
+                  Range: {minW.toFixed(1)} – {maxW.toFixed(1)}{" "}
+                  {tdee.weightUnit}
                 </span>
                 <span>{weightEntries[weightEntries.length - 1]?.date}</span>
               </div>
@@ -240,23 +241,20 @@ export default function DailyLogSection() {
         </div>
 
         {/* Calorie Intake vs TDEE */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-            {SECTION_HEADINGS.caloriesVsDailyBurn}
+        <div className="rounded-lg border border-border bg-card p-4">
+          <h2 className="text-sm font-semibold text-heading">
+            Calories vs Daily Burn
           </h2>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-muted">
             Last 30 days — bars = intake, line = TDEE
           </p>
           {calorieEntries.length < 2 ? (
-            <div className="mt-4 flex h-32 items-center justify-center text-sm text-gray-400 dark:text-gray-500">
+            <div className="mt-4 flex h-32 items-center justify-center text-sm text-faint">
               Log at least 2 days of calorie data to see the chart
             </div>
           ) : (
             <div className="mt-4">
-              <svg
-                viewBox={`0 0 ${calorieEntries.length * 16} 120`}
-                className="h-32 w-full"
-              >
+              <svg viewBox={`0 0 ${calorieEntries.length * 16} 120`} className="h-32 w-full">
                 {/* TDEE reference line */}
                 <line
                   x1="0"
@@ -285,9 +283,9 @@ export default function DailyLogSection() {
                   );
                 })}
               </svg>
-              <div className="mt-1 flex justify-between text-[10px] text-gray-400 dark:text-gray-500">
+              <div className="mt-1 flex justify-between text-[10px] text-faint">
                 <span>{calorieEntries[0]?.date}</span>
-                <span className="text-teal-600 dark:text-teal-400">
+                <span className="text-teal-400">
                   — TDEE: {tdee.estimatedTDEE.toLocaleString()} cal
                 </span>
                 <span>{calorieEntries[calorieEntries.length - 1]?.date}</span>
@@ -297,12 +295,12 @@ export default function DailyLogSection() {
         </div>
 
         {/* Today's Nutrition Summary */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-            {SECTION_HEADINGS.todaysNutrition}
+        <div className="rounded-lg border border-border bg-card p-4">
+          <h2 className="text-sm font-semibold text-heading">
+            Today&apos;s Nutrition
           </h2>
           {todayNutrition.calories === 0 ? (
-            <p className="mt-2 text-sm text-gray-400 dark:text-gray-500">
+            <p className="mt-2 text-sm text-faint">
               No meals logged today yet
             </p>
           ) : (
@@ -310,15 +308,15 @@ export default function DailyLogSection() {
               {/* Calorie progress bar */}
               <div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-gray-600 dark:text-gray-400">
+                  <span className="text-muted">
                     Calories
                   </span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                  <span className="font-medium text-heading">
                     {Math.round(todayNutrition.calories)} /{" "}
                     {tdee.calorieTarget.toLocaleString()}
                   </span>
                 </div>
-                <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                <div className="mt-1 h-2 overflow-hidden rounded-full bg-elevated">
                   <div
                     className={`h-full rounded-full transition-all ${
                       todayNutrition.calories > tdee.calorieTarget
@@ -337,17 +335,17 @@ export default function DailyLogSection() {
                 <MacroCard
                   label="Protein"
                   grams={todayNutrition.protein}
-                  color="text-blue-600 dark:text-blue-400"
+                  color="text-accent-text"
                 />
                 <MacroCard
                   label="Carbs"
                   grams={todayNutrition.carbs}
-                  color="text-amber-600 dark:text-amber-400"
+                  color="text-amber-text"
                 />
                 <MacroCard
                   label="Fat"
                   grams={todayNutrition.fat}
-                  color="text-red-600 dark:text-red-400"
+                  color="text-danger-text"
                 />
               </div>
             </div>
@@ -357,7 +355,7 @@ export default function DailyLogSection() {
         {/* Today's Medications */}
         <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
           <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-            {SECTION_HEADINGS.todaysMedications}
+            Today&apos;s Medications
           </h2>
           {todayMedications.length === 0 ? (
             <p className="mt-2 text-sm text-gray-400 dark:text-gray-500">
@@ -396,7 +394,7 @@ export default function DailyLogSection() {
         {/* Logging Status */}
         <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 lg:col-span-2">
           <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-            {SECTION_HEADINGS.trackingStatus}
+            Tracking Status
           </h2>
           <div className="mt-3 flex flex-wrap gap-6">
             <div className="flex items-center gap-2">

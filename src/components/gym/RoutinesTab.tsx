@@ -2,7 +2,16 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/components/ToastProvider";
-import { WEEKDAYS, WEEKDAY_LABELS_SHORT, MODAL_TITLES } from "@/lib/screens";
+import {
+  panel,
+  inputSm,
+  btnPrimary,
+  btnSecondary,
+  emptyState,
+  deleteBtn,
+  labelSm,
+  pillInactive,
+} from "@/lib/styles";
 
 /* ── Types ─────────────────────────────────────────── */
 
@@ -14,9 +23,6 @@ interface Exercise {
   secondaryMuscles: string;
   equipment: string;
   difficulty: string;
-  category: string;
-  force: string;
-  mechanic: string;
   instructions: string;
   tips: string;
 }
@@ -53,8 +59,16 @@ interface Routine {
 
 /* ── Constants ────────────────────────────────────── */
 
-const WEEKDAYS_GYM = WEEKDAYS;
-const WEEKDAY_LABELS_GYM = WEEKDAY_LABELS_SHORT;
+const WEEKDAYS_GYM = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+const WEEKDAY_LABELS_GYM: Record<string, string> = {
+  mon: "Mon",
+  tue: "Tue",
+  wed: "Wed",
+  thu: "Thu",
+  fri: "Fri",
+  sat: "Sat",
+  sun: "Sun",
+};
 
 /* ── Routines Tab ──────────────────────────────────── */
 
@@ -260,7 +274,7 @@ export default function RoutinesTab() {
   };
 
   if (loading)
-    return <p className="text-center text-gray-400">Loading routines...</p>;
+    return <p className="text-center text-muted">Loading routines...</p>;
 
   return (
     <div className="space-y-4">
@@ -269,7 +283,7 @@ export default function RoutinesTab() {
         {!showCreate && (
           <button
             onClick={() => setShowCreate(true)}
-            className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+            className={`inline-flex items-center shadow-sm ${btnPrimary}`}
           >
             + New Routine
           </button>
@@ -280,7 +294,7 @@ export default function RoutinesTab() {
       {showCreate && (
         <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
           <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
-            {MODAL_TITLES.newWorkoutRoutine}
+            New Workout Routine
           </h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">

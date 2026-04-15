@@ -563,7 +563,7 @@ export default function RecurringConfig() {
                       </button>
                       <button
                         onClick={() => handleDelete(task)}
-                        className="rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/30"
+                        className="rounded p-1.5 text-muted hover:bg-danger-soft hover:text-danger-text"
                         title="Delete"
                       >
                         <svg

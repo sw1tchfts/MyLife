@@ -242,21 +242,21 @@ function TasksContent() {
 
             <div className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
               <div className="flex items-center gap-2 whitespace-nowrap pb-1">
-                <span className="text-xs text-gray-400">Type:</span>
+                <span className="text-xs text-muted">Type:</span>
                 {TYPE_FILTERS.map((f) => (
                   <button
                     key={f.value}
                     onClick={() => setTypeFilter(f.value)}
-                    className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                    className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
                       typeFilter === f.value
-                        ? "bg-blue-600 text-white"
-                        : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
+                        ? pillActive
+                        : pillInactive
                     }`}
                   >
                     {f.label}
                   </button>
                 ))}
-                <span className="ml-2 text-xs text-gray-400">Status:</span>
+                <span className="ml-2 text-xs text-muted">Status:</span>
                 {STATUS_FILTERS.map((f) => (
                   <button
                     key={f.value}
@@ -265,16 +265,16 @@ function TasksContent() {
                         prev === f.value ? null : f.value,
                       )
                     }
-                    className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                    className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
                       statusFilter === f.value
-                        ? "bg-blue-600 text-white"
-                        : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
+                        ? pillActive
+                        : pillInactive
                     }`}
                   >
                     {f.label}
                   </button>
                 ))}
-                <span className="ml-2 text-xs text-gray-400">Priority:</span>
+                <span className="ml-2 text-xs text-muted">Priority:</span>
                 {PRIORITY_FILTERS.map((f) => (
                   <button
                     key={f.value}
@@ -283,10 +283,10 @@ function TasksContent() {
                         prev === f.value ? null : f.value,
                       )
                     }
-                    className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                    className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
                       priorityFilter === f.value
-                        ? "bg-blue-600 text-white"
-                        : "border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-800"
+                        ? pillActive
+                        : pillInactive
                     }`}
                   >
                     {f.label}
@@ -300,7 +300,7 @@ function TasksContent() {
                       setPriorityFilter(null);
                       setTypeFilter("ALL");
                     }}
-                    className="ml-1 text-xs text-gray-400 hover:text-gray-600"
+                    className="ml-1 text-xs text-muted hover:text-body"
                   >
                     Clear all
                   </button>
@@ -311,7 +311,7 @@ function TasksContent() {
 
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <p className="text-gray-400">Loading tasks...</p>
+              <p className="text-muted">Loading tasks...</p>
             </div>
           ) : (
             <>
@@ -327,7 +327,7 @@ function TasksContent() {
                   <button
                     onClick={loadMore}
                     disabled={loadingMore}
-                    className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                    className={`disabled:opacity-50 ${btnSecondary}`}
                   >
                     {loadingMore
                       ? "Loading..."
@@ -342,12 +342,12 @@ function TasksContent() {
 
       {tab === "adhoc-config" && (
         <div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-muted">
             Create ad-hoc task templates that you can quickly add to your task
             list.
           </p>
-          <div className="mt-4 rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-            <p className="text-gray-500 dark:text-gray-400">
+          <div className={`mt-4 ${emptyState}`}>
+            <p className="text-muted">
               Coming soon — task templates for quick creation
             </p>
           </div>
@@ -377,7 +377,7 @@ export default function TasksPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center py-20">
-          <p className="text-gray-400">Loading...</p>
+          <p className="text-muted">Loading...</p>
         </div>
       }
     >

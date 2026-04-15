@@ -1,5 +1,7 @@
 "use client";
 
+import { panel, sectionTitle } from "@/lib/styles";
+
 interface RankingItem {
   id: string;
   title: string;
@@ -33,45 +35,45 @@ export default function StatsTab({
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <div className="rounded-lg border border-border bg-card p-4">
+          <p className="text-2xl font-bold text-heading">
             {totalItems}
           </p>
-          <p className="text-xs text-gray-400 dark:text-gray-500">Items</p>
+          <p className="text-xs text-faint">Items</p>
         </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <div className="rounded-lg border border-border bg-card p-4">
+          <p className="text-2xl font-bold text-heading">
             {totalComparisons}
           </p>
-          <p className="text-xs text-gray-400 dark:text-gray-500">
+          <p className="text-xs text-faint">
             Comparisons
           </p>
         </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <div className="rounded-lg border border-border bg-card p-4">
+          <p className="text-2xl font-bold text-heading">
             {maxPossiblePairs}
           </p>
-          <p className="text-xs text-gray-400 dark:text-gray-500">
+          <p className="text-xs text-faint">
             Possible Pairs
           </p>
         </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <div className="rounded-lg border border-border bg-card p-4">
+          <p className="text-2xl font-bold text-heading">
             {avgComparisons}
           </p>
-          <p className="text-xs text-gray-400 dark:text-gray-500">
+          <p className="text-xs text-faint">
             Avg per Item
           </p>
         </div>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-        <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
-          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+      <div className={panel}>
+        <div className="border-b border-border px-4 py-3">
+          <h3 className="text-sm font-semibold text-body">
             Item Statistics
           </h3>
         </div>
-        <div className="divide-y divide-gray-100 dark:divide-gray-700">
+        <div className="divide-y divide-border">
           {items.map((item) => {
             const total = item.wins + item.losses + item.ties;
             const winRate =
@@ -82,18 +84,18 @@ export default function StatsTab({
                 className="flex items-center justify-between px-4 py-3"
               >
                 <div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <p className="text-sm font-medium text-heading">
                     {item.title}
                   </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">
+                  <p className="text-xs text-faint">
                     Elo {Math.round(item.elo)} · {total} matchups
                   </p>
                 </div>
                 <div className="flex items-center gap-4 text-xs">
-                  <span className="text-green-600">{item.wins}W</span>
-                  <span className="text-red-500">{item.losses}L</span>
-                  <span className="text-gray-400">{item.ties}T</span>
-                  <span className="font-mono font-medium text-gray-700 dark:text-gray-300">
+                  <span className="text-success-text">{item.wins}W</span>
+                  <span className="text-danger-text">{item.losses}L</span>
+                  <span className="text-muted">{item.ties}T</span>
+                  <span className="font-mono font-medium text-body">
                     {winRate}%
                   </span>
                 </div>

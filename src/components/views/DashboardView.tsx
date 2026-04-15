@@ -316,7 +316,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
                 </span>
               </div>
             ))}
-            <div className="ml-2 w-16 shrink-0 text-center text-[10px] font-medium text-gray-500 dark:text-gray-400">
+            <div className="ml-2 w-16 shrink-0 text-center text-[10px] font-medium text-muted">
               Rate
             </div>
           </div>
@@ -331,7 +331,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
             return (
               <div key={habit.title} className="flex items-center py-0.5">
                 <div
-                  className="w-32 shrink-0 truncate pr-2 text-xs font-medium text-gray-700 dark:text-gray-300"
+                  className="w-32 shrink-0 truncate pr-2 text-xs font-medium text-body"
                   title={habit.title}
                 >
                   {habit.title}
@@ -352,12 +352,12 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
                       {done ? (
                         <div className="h-4 w-4 rounded-sm bg-green-500" />
                       ) : (
-                        <div className="h-4 w-4 rounded-sm border border-gray-200 dark:border-gray-600" />
+                        <div className="h-4 w-4 rounded-sm border border-input-border" />
                       )}
                     </div>
                   );
                 })}
-                <div className="ml-2 w-16 shrink-0 text-center text-[10px] font-medium text-green-600">
+                <div className="ml-2 w-16 shrink-0 text-center text-[10px] font-medium text-success-text">
                   {pct}%
                 </div>
               </div>
@@ -367,8 +367,8 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
       </div>
 
       {/* Habit stats table */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-        <p className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+      <div className={`p-4 ${panel}`}>
+        <p className="mb-3 text-sm font-medium text-body">
           Habit Stats
         </p>
         <div className="space-y-2">
@@ -382,41 +382,41 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
             return (
               <div
                 key={habit.title}
-                className="flex items-center justify-between rounded-md p-2 hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="flex items-center justify-between rounded-md p-2 hover:bg-elevated"
               >
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <p className="text-sm font-medium text-heading">
                     {habit.title}
                     {habit.recurrenceTime && (
-                      <span className="ml-2 text-xs font-normal text-gray-400">
+                      <span className="ml-2 text-xs font-normal text-muted">
                         {habit.recurrenceTime}
                       </span>
                     )}
                   </p>
-                  <p className="text-xs text-gray-400 capitalize">
+                  <p className="text-xs text-muted capitalize">
                     {habit.recurrence.toLowerCase()}
                   </p>
                 </div>
                 <div className="flex gap-4 text-center">
                   <div>
-                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                    <p className="text-sm font-bold text-heading">
                       {habit.completions.size}
                     </p>
-                    <p className="text-[10px] text-gray-400">Done</p>
+                    <p className="text-[10px] text-muted">Done</p>
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-green-600">{pct}%</p>
-                    <p className="text-[10px] text-gray-400">Rate</p>
+                    <p className="text-sm font-bold text-success-text">{pct}%</p>
+                    <p className="text-[10px] text-muted">Rate</p>
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-blue-600">{current}</p>
-                    <p className="text-[10px] text-gray-400">Streak</p>
+                    <p className="text-sm font-bold text-accent-text">{current}</p>
+                    <p className="text-[10px] text-muted">Streak</p>
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-purple-600">
+                    <p className="text-sm font-bold text-purple-text">
                       {longest}
                     </p>
-                    <p className="text-[10px] text-gray-400">Best</p>
+                    <p className="text-[10px] text-muted">Best</p>
                   </div>
                 </div>
               </div>
