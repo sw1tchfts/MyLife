@@ -8,10 +8,10 @@ import ToastProvider from "@/components/ToastProvider";
 import TaskNotifications from "@/components/TaskNotifications";
 import { createClient } from "@/lib/supabase/server";
 
-const ScreenNameInspector =
-  process.env.NODE_ENV === "development"
-    ? dynamic(() => import("@/components/ScreenNameInspector"), { ssr: false })
-    : () => null;
+const ScreenNameInspector = dynamic(
+  () => import("@/components/ScreenNameInspector"),
+  { ssr: false },
+);
 
 export const metadata: Metadata = {
   title: "MyLife - Task Tracker",

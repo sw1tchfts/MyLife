@@ -42,7 +42,7 @@ Personal task tracking web app. Single user (no sharing/collaboration features).
 - **Dynamic imports**: Large tab components are extracted into `src/components/{feature}/` directories and loaded via `next/dynamic` to enable code splitting.
 - **React.memo**: Applied to frequently-rendered components (`TaskCard`, `StatusBadge`, `PriorityBadge`) to skip unnecessary re-renders.
 - **Centralized screen names**: All user-visible names (page titles, tab labels, modal titles, section headings, shared label maps like weekdays/meals/moods) live in `src/lib/screens.ts`. Import from there instead of hardcoding strings in components. This is the single source of truth for what anything in the UI is called.
-- **Screen Name Inspector** (dev only): Right-click any element in the UI to see its `screens.ts` constant path in a floating badge. Powered by `ScreenNameInspector.tsx`, loaded only when `NODE_ENV === "development"`. The badge auto-dismisses after 4 seconds.
+- **Screen Name Inspector**: Right-click any element in the UI to see its `screens.ts` constant path in a floating badge. Powered by `ScreenNameInspector.tsx`. The badge auto-dismisses after 4 seconds.
 
 ## File Structure
 
