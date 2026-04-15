@@ -4,56 +4,56 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* ── Surfaces ─────────────────────────────────────── */
-  --color-surface: #111827;
-  --color-card: #1f2937;
-  --color-elevated: #374151;
-  --color-inset: rgba(31, 41, 55, 0.5);
+  /* ── Surfaces (Apple HIG dark mode) ──────────────── */
+  --color-surface: #000000;
+  --color-card: #1c1c1e;
+  --color-elevated: #2c2c2e;
+  --color-inset: rgba(28, 28, 30, 0.5);
 
-  /* ── Borders ──────────────────────────────────────── */
-  --color-border: #374151;
-  --color-input-border: #4b5563;
+  /* ── Borders (Apple separators) ──────────────────── */
+  --color-border: #38383a;
+  --color-input-border: #48484a;
 
-  /* ── Text ──────────────────────────────────────────── */
-  --color-heading: #f3f4f6;
-  --color-body: #d1d5db;
-  --color-muted: #9ca3af;
-  --color-faint: #6b7280;
+  /* ── Text (Apple label hierarchy) ────────────────── */
+  --color-heading: #ffffff;
+  --color-body: rgba(235, 235, 245, 0.6);
+  --color-muted: rgba(235, 235, 245, 0.3);
+  --color-faint: rgba(235, 235, 245, 0.18);
 
-  /* ── Primary (blue) ───────────────────────────────── */
-  --color-accent: #2563eb;
-  --color-accent-hover: #1d4ed8;
-  --color-accent-soft: #172554;
-  --color-accent-text: #60a5fa;
+  /* ── Primary / Accent (Apple systemBlue) ─────────── */
+  --color-accent: #0a84ff;
+  --color-accent-hover: #0071e3;
+  --color-accent-soft: rgba(10, 132, 255, 0.15);
+  --color-accent-text: #0a84ff;
 
-  /* ── Success (green) ──────────────────────────────── */
-  --color-success: #16a34a;
-  --color-success-hover: #15803d;
-  --color-success-soft: #14532d;
-  --color-success-text: #86efac;
+  /* ── Success (Apple systemGreen) ─────────────────── */
+  --color-success: #30d158;
+  --color-success-hover: #28a745;
+  --color-success-soft: rgba(48, 209, 88, 0.15);
+  --color-success-text: #30d158;
 
-  /* ── Danger (red) ─────────────────────────────────── */
-  --color-danger: #dc2626;
-  --color-danger-hover: #b91c1c;
-  --color-danger-soft: #7f1d1d;
-  --color-danger-text: #fca5a5;
+  /* ── Danger (Apple systemRed) ────────────────────── */
+  --color-danger: #ff453a;
+  --color-danger-hover: #e0352b;
+  --color-danger-soft: rgba(255, 69, 58, 0.15);
+  --color-danger-text: #ff453a;
 
-  /* ── Warning (yellow/amber) ───────────────────────── */
-  --color-warning: #ca8a04;
-  --color-warning-soft: #713f12;
-  --color-warning-text: #fde047;
+  /* ── Warning (Apple systemYellow) ────────────────── */
+  --color-warning: #ffd60a;
+  --color-warning-soft: rgba(255, 214, 10, 0.15);
+  --color-warning-text: #ffd60a;
 
-  /* ── Info (teal) ──────────────────────────────────── */
-  --color-info: #0d9488;
-  --color-info-hover: #0f766e;
-  --color-info-soft: #134e4a;
-  --color-info-text: #5eead4;
+  /* ── Info (Apple systemCyan) ─────────────────────── */
+  --color-info: #64d2ff;
+  --color-info-hover: #50b8e0;
+  --color-info-soft: rgba(100, 210, 255, 0.15);
+  --color-info-text: #64d2ff;
 
-  /* ── Purple (recurrence, misc) ────────────────────── */
-  --color-purple-soft: #581c87;
-  --color-purple-text: #d8b4fe;
+  /* ── Purple (Apple systemPurple) ─────────────────── */
+  --color-purple-soft: rgba(191, 90, 242, 0.15);
+  --color-purple-text: #bf5af2;
 
-  /* ── Amber accent ─────────────────────────────────── */
-  --color-amber-soft: #78350f;
-  --color-amber-text: #fcd34d;
+  /* ── Amber / Orange (Apple systemOrange) ─────────── */
+  --color-amber-soft: rgba(255, 159, 10, 0.15);
+  --color-amber-text: #ff9f0a;
 }
