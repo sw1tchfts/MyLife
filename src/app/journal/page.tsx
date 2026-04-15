@@ -2,6 +2,17 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useToast } from "@/components/ToastProvider";
+import {
+  pageTitle,
+  panel,
+  input as inputCls,
+  btnPrimary,
+  btnSecondary,
+  emptyState,
+  deleteBtn,
+  pillActive,
+  pillInactive,
+} from "@/lib/styles";
 
 interface JournalEntry {
   id: string;
@@ -147,13 +158,13 @@ export default function JournalPage() {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className={pageTitle}>
           Journal
         </h1>
         {!showForm && (
           <button
             onClick={() => setShowForm(true)}
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+            className={btnPrimary}
           >
             + New Entry
           </button>

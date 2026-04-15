@@ -4,6 +4,17 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
+import {
+  pageTitle,
+  panel,
+  input as inputCls,
+  btnPrimary,
+  btnSecondary,
+  emptyState,
+  deleteBtn,
+  pillActive,
+  pillInactive,
+} from "@/lib/styles";
 
 const ItemsTab = dynamic(() => import("@/components/rankings/ItemsTab"));
 const CompareTab = dynamic(() => import("@/components/rankings/CompareTab"));
@@ -46,7 +57,7 @@ export default function RankingsPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center py-20">
-          <p className="text-gray-400">Loading...</p>
+          <p className="text-muted">Loading...</p>
         </div>
       }
     >
@@ -121,12 +132,12 @@ function RankingsContent() {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className={pageTitle}>
           Pairwise Ranker
         </h1>
         <button
           onClick={() => setShowManage(!showManage)}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"
+          className="rounded-md border border-input-border px-3 py-1.5 text-xs font-medium text-muted hover:bg-elevated"
         >
           {showManage ? "Hide" : "Manage Lists"}
         </button>
@@ -147,24 +158,24 @@ function RankingsContent() {
 
       {/* List selector + tabs */}
       {loading ? (
-        <p className="text-center text-gray-400">Loading...</p>
+        <p className="text-center text-muted">Loading...</p>
       ) : lists.length === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-          <p className="text-gray-500 dark:text-gray-400">
+        <div className={emptyState}>
+          <p className="text-muted">
             No ranking lists yet
           </p>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+          <p className="mt-1 text-sm text-faint">
             Click &quot;Manage Lists&quot; above to create one
           </p>
         </div>
       ) : (
         <>
           {/* List dropdown + tab bar */}
-          <div className="mb-6 flex flex-col gap-3 border-b border-gray-200 pb-3 sm:flex-row sm:items-center dark:border-gray-700">
+          <div className="mb-6 flex flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-center">
             <select
               value={listId}
               onChange={(e) => selectList(e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              className="rounded-md border border-input-border bg-card px-3 py-1.5 text-sm font-medium text-heading"
             >
               <option value="">Select a list...</option>
               {lists.map((l) => (
@@ -182,8 +193,8 @@ function RankingsContent() {
                     onClick={() => navigate(t.key)}
                     className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                       tab === t.key
-                        ? "bg-blue-600 text-white"
-                        : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                        ? "bg-accent text-white"
+                        : "text-muted hover:bg-elevated"
                     }`}
                   >
                     {t.label}
@@ -195,11 +206,11 @@ function RankingsContent() {
 
           {/* Tab content */}
           {!listId ? (
-            <div className="py-12 text-center text-gray-400 dark:text-gray-500">
+            <div className="py-12 text-center text-muted">
               Select a list above to get started
             </div>
           ) : !selectedList ? (
-            <p className="text-center text-gray-400">Loading...</p>
+            <p className="text-center text-muted">Loading...</p>
           ) : (
             <>
               {tab === "items" && (
@@ -264,8 +275,8 @@ function ManageListsPanel({
   };
 
   return (
-    <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
+    <div className={`${panel} mb-6 p-4`}>
+      <h3 className="mb-3 text-sm font-semibold text-body">
         Manage Ranking Lists
       </h3>
 
@@ -277,19 +288,19 @@ function ManageListsPanel({
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && create()}
-          className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+          className={`${inputCls} mt-0 flex-1`}
         />
         <input
           type="text"
           placeholder="Description (optional)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+          className={`${inputCls} mt-0 flex-1`}
         />
         <button
           onClick={create}
           disabled={creating || !name.trim()}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className={btnPrimary}
         >
           Create
         </button>
@@ -303,22 +314,22 @@ function ManageListsPanel({
               key={l.id}
               className={`flex items-center justify-between rounded-md px-3 py-2 ${
                 l.id === currentListId
-                  ? "bg-blue-50 dark:bg-blue-900/20"
-                  : "hover:bg-gray-50 dark:hover:bg-gray-700"
+                  ? "bg-accent-soft"
+                  : "hover:bg-elevated"
               }`}
             >
               <button
                 onClick={() => onSelect(l.id)}
-                className="text-left text-sm text-gray-700 dark:text-gray-300"
+                className="text-left text-sm text-body"
               >
                 <span className="font-medium">{l.name}</span>
-                <span className="ml-2 text-xs text-gray-400 dark:text-gray-500">
+                <span className="ml-2 text-xs text-faint">
                   {l._count.items} items · {l._count.comparisons} comparisons
                 </span>
               </button>
               <button
                 onClick={() => deleteList(l.id)}
-                className="rounded p-1 text-gray-300 hover:text-red-500 dark:text-gray-600"
+                className={deleteBtn}
                 title="Delete list"
               >
                 <svg

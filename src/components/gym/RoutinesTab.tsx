@@ -2,6 +2,16 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/components/ToastProvider";
+import {
+  panel,
+  inputSm,
+  btnPrimary,
+  btnSecondary,
+  emptyState,
+  deleteBtn,
+  labelSm,
+  pillInactive,
+} from "@/lib/styles";
 
 /* ── Types ─────────────────────────────────────────── */
 
@@ -264,7 +274,7 @@ export default function RoutinesTab() {
   };
 
   if (loading)
-    return <p className="text-center text-gray-400">Loading routines...</p>;
+    return <p className="text-center text-muted">Loading routines...</p>;
 
   return (
     <div className="space-y-4">
@@ -273,7 +283,7 @@ export default function RoutinesTab() {
         {!showCreate && (
           <button
             onClick={() => setShowCreate(true)}
-            className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+            className={`inline-flex items-center shadow-sm ${btnPrimary}`}
           >
             + New Routine
           </button>

@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import {
+  panel,
+  inputSm,
+  btnPrimary,
+  emptyState,
+  badgeSm,
+} from "@/lib/styles";
 
 /* ── Types ─────────────────────────────────────────── */
 
@@ -32,21 +39,18 @@ const MUSCLE_GROUPS = [
 
 function MuscleGroupBadge({ group }: { group: string }) {
   const colors: Record<string, string> = {
-    chest: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-    back: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-    shoulders:
-      "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-    biceps:
-      "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-    triceps:
-      "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400",
-    legs: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-    core: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
-    cardio: "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400",
+    chest: "bg-danger-soft text-danger-text",
+    back: "bg-accent-soft text-accent-text",
+    shoulders: "bg-amber-soft text-amber-text",
+    biceps: "bg-purple-soft text-purple-text",
+    triceps: "bg-info-soft text-info-text",
+    legs: "bg-success-soft text-success-text",
+    core: "bg-warning-soft text-warning-text",
+    cardio: "bg-purple-soft text-purple-text",
   };
   return (
     <span
-      className={`inline-flex rounded px-1.5 py-0.5 text-[10px] font-medium capitalize ${colors[group] || "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"}`}
+      className={`${badgeSm} capitalize ${colors[group] || "bg-elevated text-body"}`}
     >
       {group}
     </span>
@@ -102,12 +106,12 @@ export default function ExercisesTab() {
           placeholder="Search exercises..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+          className={inputSm}
         />
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="rounded-md border border-gray-300 px-2 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+          className={`rounded-md border border-input-border bg-card px-2 py-1.5 text-sm text-heading`}
         >
           <option value="">All muscles</option>
           {MUSCLE_GROUPS.map((g) => (
@@ -118,7 +122,7 @@ export default function ExercisesTab() {
         </select>
         <button
           onClick={() => setShowAdd(!showAdd)}
-          className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+          className={btnPrimary}
         >
           + Add
         </button>
@@ -126,7 +130,7 @@ export default function ExercisesTab() {
 
       {/* Add form */}
       {showAdd && (
-        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+        <div className={`${panel} p-4`}>
           <div className="flex flex-wrap gap-2">
             <input
               type="text"
@@ -134,12 +138,12 @@ export default function ExercisesTab() {
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && addExercise()}
-              className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              className="flex-1 rounded-md border border-input-border bg-card px-3 py-2 text-sm text-heading"
             />
             <select
               value={newMuscle}
               onChange={(e) => setNewMuscle(e.target.value)}
-              className="rounded-md border border-gray-300 px-2 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              className="rounded-md border border-input-border bg-card px-2 py-2 text-sm text-heading"
             >
               {MUSCLE_GROUPS.map((g) => (
                 <option key={g} value={g}>
@@ -150,7 +154,7 @@ export default function ExercisesTab() {
             <select
               value={newEquipment}
               onChange={(e) => setNewEquipment(e.target.value)}
-              className="rounded-md border border-gray-300 px-2 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              className="rounded-md border border-input-border bg-card px-2 py-2 text-sm text-heading"
             >
               {[
                 "barbell",
@@ -169,7 +173,7 @@ export default function ExercisesTab() {
             </select>
             <button
               onClick={addExercise}
-              className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+              className="rounded-md bg-success px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
             >
               Save
             </button>
@@ -179,9 +183,9 @@ export default function ExercisesTab() {
 
       {/* Exercise list */}
       {exercises.length === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-          <p className="text-gray-500 dark:text-gray-400">No exercises found</p>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+        <div className={emptyState}>
+          <p className="text-muted">No exercises found</p>
+          <p className="mt-1 text-sm text-faint">
             Add exercises or seed the library from the database
           </p>
         </div>
@@ -190,15 +194,15 @@ export default function ExercisesTab() {
           {exercises.map((ex) => (
             <div
               key={ex.id}
-              className="rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800"
+              className="rounded-lg border border-border bg-card p-3"
             >
               <div className="flex items-start justify-between">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <p className="text-sm font-medium text-heading">
                   {ex.name}
                 </p>
                 <MuscleGroupBadge group={ex.muscleGroup} />
               </div>
-              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+              <p className="mt-1 text-xs text-faint">
                 {ex.equipment}
                 {ex.difficulty !== "beginner" && ` · ${ex.difficulty}`}
               </p>

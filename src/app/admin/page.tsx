@@ -3,6 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useToast } from "@/components/ToastProvider";
+import {
+  pageTitle,
+  sectionTitle,
+  input,
+  select,
+  btnPrimary,
+  btnSecondary,
+  label as labelStyle,
+} from "@/lib/styles";
 
 interface Category {
   id: string;
@@ -99,17 +108,17 @@ export default function AdminPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className={pageTitle}>
           Admin Settings
         </h1>
-        <Link href="/" className="text-sm text-blue-600 hover:text-blue-500">
+        <Link href="/" className="text-sm text-accent-text hover:text-accent-hover">
           Back to Tasks
         </Link>
       </div>
 
       {/* Categories */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h2 className={sectionTitle}>
           Categories
         </h2>
         <div className="mt-4 flex gap-2">
@@ -118,7 +127,7 @@ export default function AdminPage() {
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
             placeholder="New category name"
-            className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 text-sm"
+            className="flex-1 rounded-md border border-input-border bg-card text-heading px-3 py-2 text-sm"
             onKeyDown={(e) => e.key === "Enter" && addCategory()}
           />
           <div className="flex gap-1">
@@ -126,14 +135,14 @@ export default function AdminPage() {
               <button
                 key={c}
                 onClick={() => setNewCategoryColor(c)}
-                className={`h-9 w-9 rounded-full border-2 ${newCategoryColor === c ? "border-gray-900 dark:border-gray-100" : "border-transparent"}`}
+                className={`h-9 w-9 rounded-full border-2 ${newCategoryColor === c ? "border-heading" : "border-transparent"}`}
                 style={{ backgroundColor: c }}
               />
             ))}
           </div>
           <button
             onClick={addCategory}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className={btnPrimary}
           >
             Add
           </button>
@@ -142,7 +151,7 @@ export default function AdminPage() {
           {categories.map((cat) => (
             <li
               key={cat.id}
-              className="flex items-center gap-3 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3"
+              className="flex items-center gap-3 rounded-md border border-border bg-card px-4 py-3"
             >
               {editingId === cat.id ? (
                 <>
@@ -150,27 +159,27 @@ export default function AdminPage() {
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-2 py-1 text-sm"
+                    className="flex-1 rounded-md border border-input-border bg-card text-heading px-2 py-1 text-sm"
                   />
                   <div className="flex gap-1">
                     {COLORS.map((c) => (
                       <button
                         key={c}
                         onClick={() => setEditColor(c)}
-                        className={`h-6 w-6 rounded-full border-2 ${editColor === c ? "border-gray-900 dark:border-gray-100" : "border-transparent"}`}
+                        className={`h-6 w-6 rounded-full border-2 ${editColor === c ? "border-heading" : "border-transparent"}`}
                         style={{ backgroundColor: c }}
                       />
                     ))}
                   </div>
                   <button
                     onClick={() => updateCategory(cat.id)}
-                    className="text-sm text-green-600 hover:text-green-500"
+                    className="text-sm text-success-text hover:text-green-400"
                   >
                     Save
                   </button>
                   <button
                     onClick={() => setEditingId(null)}
-                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-400 dark:hover:text-gray-300"
+                    className="text-sm text-muted hover:text-body"
                   >
                     Cancel
                   </button>
@@ -181,7 +190,7 @@ export default function AdminPage() {
                     className="h-4 w-4 rounded-full"
                     style={{ backgroundColor: cat.color }}
                   />
-                  <span className="flex-1 text-sm font-medium dark:text-gray-100">
+                  <span className="flex-1 text-sm font-medium text-heading">
                     {cat.name}
                   </span>
                   <button
@@ -190,13 +199,13 @@ export default function AdminPage() {
                       setEditName(cat.name);
                       setEditColor(cat.color);
                     }}
-                    className="text-sm text-blue-600 hover:text-blue-500"
+                    className="text-sm text-accent-text hover:text-accent-hover"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => deleteCategory(cat.id)}
-                    className="text-sm text-red-600 hover:text-red-500"
+                    className="text-sm text-danger-text hover:text-red-400"
                   >
                     Delete
                   </button>
@@ -205,7 +214,7 @@ export default function AdminPage() {
             </li>
           ))}
           {categories.length === 0 && (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-muted">
               No categories yet.
             </p>
           )}
@@ -214,12 +223,12 @@ export default function AdminPage() {
 
       {/* Default Settings */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h2 className={sectionTitle}>
           Default Task Settings
         </h2>
         <div className="mt-4 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className={labelStyle}>
               Default Priority
             </label>
             <select
@@ -230,7 +239,7 @@ export default function AdminPage() {
                   defaultPriority: e.target.value,
                 }))
               }
-              className="mt-1 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 text-sm"
+              className={select}
             >
               <option value="LOW">Low</option>
               <option value="MEDIUM">Medium</option>
@@ -238,7 +247,7 @@ export default function AdminPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className={labelStyle}>
               Default Status
             </label>
             <select
@@ -249,7 +258,7 @@ export default function AdminPage() {
                   defaultStatus: e.target.value,
                 }))
               }
-              className="mt-1 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 text-sm"
+              className={select}
             >
               <option value="TODO">To Do</option>
               <option value="IN_PROGRESS">In Progress</option>
@@ -258,7 +267,7 @@ export default function AdminPage() {
           <button
             onClick={saveAppSettings}
             disabled={saving}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className={btnPrimary}
           >
             {saving ? "Saving..." : "Save Defaults"}
           </button>
