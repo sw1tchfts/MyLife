@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useTheme } from "@/components/ThemeProvider";
+import { SCREEN_NAMES, SECTION_HEADINGS } from "@/lib/screens";
 
 interface TrackerConfig {
   metrics: {
@@ -130,7 +131,7 @@ export default function SettingsPage() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          Settings
+          {SCREEN_NAMES.settings}
         </h1>
         <Link href="/" className="text-sm text-blue-600 hover:text-blue-500">
           Back to Tasks
@@ -143,7 +144,7 @@ export default function SettingsPage() {
       {/* Theme */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Appearance
+          {SECTION_HEADINGS.appearance}
         </h2>
         <div className="mt-4">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -170,7 +171,7 @@ export default function SettingsPage() {
       {/* Account */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Account
+          {SECTION_HEADINGS.account}
         </h2>
         <div className="mt-4 space-y-4">
           <div>
@@ -212,7 +213,7 @@ export default function SettingsPage() {
       {/* Notifications */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Notifications
+          {SECTION_HEADINGS.notifications}
         </h2>
         <div className="mt-4 space-y-3">
           <label className="flex items-center gap-3">
@@ -262,11 +263,11 @@ export default function SettingsPage() {
       {/* Daily Tracker */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Daily Tracker
+          {SECTION_HEADINGS.dailyTracker}
         </h2>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Configure the daily &quot;Log Your Data&quot; task that appears in your
-          task list.
+          Configure the daily &quot;Log Your Data&quot; task that appears in
+          your task list.
         </p>
 
         {/* Master toggle */}
@@ -298,7 +299,10 @@ export default function SettingsPage() {
                     ["bodyFat", "Body fat %"],
                     ["waist", "Waist circumference"],
                     ["chest", "Chest circumference"],
-                    ["manualCalories", "Manual calorie entry (instead of meal tasks)"],
+                    [
+                      "manualCalories",
+                      "Manual calorie entry (instead of meal tasks)",
+                    ],
                   ] as const
                 ).map(([key, label]) => (
                   <label key={key} className="flex items-center gap-3">
@@ -438,8 +442,7 @@ export default function SettingsPage() {
                                 ...s.trackerConfig,
                                 profile: {
                                   ...s.trackerConfig.profile,
-                                  height:
-                                    feet * 12 + Math.round(currentInches),
+                                  height: feet * 12 + Math.round(currentInches),
                                 },
                               },
                             }));
@@ -534,9 +537,7 @@ export default function SettingsPage() {
                           ...s.trackerConfig,
                           profile: {
                             ...s.trackerConfig.profile,
-                            age: e.target.value
-                              ? Number(e.target.value)
-                              : null,
+                            age: e.target.value ? Number(e.target.value) : null,
                           },
                         },
                       }))

@@ -5,14 +5,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { SCREEN_NAMES, SIDEBAR_SECTIONS } from "@/lib/screens";
 
 interface SidebarProps {
   userEmail: string;
 }
 
 const MANAGE = [
-  { href: "/admin", label: "Admin", icon: AdminIcon },
-  { href: "/settings", label: "Settings", icon: SettingsIcon },
+  { href: "/admin", label: SCREEN_NAMES.admin, icon: AdminIcon },
+  { href: "/settings", label: SCREEN_NAMES.settings, icon: SettingsIcon },
 ] as const;
 
 export default function Sidebar({ userEmail }: SidebarProps) {
@@ -102,7 +103,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
           {/* Mission Control */}
           <div className="mb-4">
             <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
-              Mission Control
+              {SIDEBAR_SECTIONS.missionControl}
             </p>
             <Link
               href="/tasks"
@@ -113,14 +114,14 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               }`}
             >
               <ListIcon active={pathname.startsWith("/tasks")} />
-              Tasks
+              {SCREEN_NAMES.tasks}
             </Link>
           </div>
 
           {/* Health */}
           <div className="mb-4">
             <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
-              Health
+              {SIDEBAR_SECTIONS.health}
             </p>
             <Link
               href="/diet"
@@ -131,7 +132,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               }`}
             >
               <DietIcon active={pathname.startsWith("/diet")} />
-              Diet & Nutrition
+              {SCREEN_NAMES.diet}
             </Link>
             <Link
               href="/gym"
@@ -142,7 +143,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               }`}
             >
               <GymIcon active={pathname.startsWith("/gym")} />
-              Gym
+              {SCREEN_NAMES.gym}
             </Link>
             <Link
               href="/medications"
@@ -153,14 +154,14 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               }`}
             >
               <MedIcon active={pathname.startsWith("/medications")} />
-              Medications
+              {SCREEN_NAMES.medications}
             </Link>
           </div>
 
           {/* Other Applications */}
           <div className="mb-4">
             <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
-              Other Applications
+              {SIDEBAR_SECTIONS.otherApplications}
             </p>
             <Link
               href="/journal"
@@ -171,7 +172,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               }`}
             >
               <JournalIcon active={pathname.startsWith("/journal")} />
-              Journal
+              {SCREEN_NAMES.journal}
             </Link>
             <Link
               href="/rankings"
@@ -182,7 +183,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               }`}
             >
               <RankingIcon active={pathname.startsWith("/rankings")} />
-              Pairwise Ranker
+              {SCREEN_NAMES.rankings}
             </Link>
             <Link
               href="/diagrams"
@@ -193,14 +194,14 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               }`}
             >
               <DiagramIcon active={pathname.startsWith("/diagrams")} />
-              Diagram Creator
+              {SCREEN_NAMES.diagrams}
             </Link>
           </div>
 
           {/* Manage */}
           <div>
             <p className="mb-1 px-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
-              Manage
+              {SIDEBAR_SECTIONS.manage}
             </p>
             {MANAGE.map((item) => {
               const active = pathname === item.href;

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useToast } from "@/components/ToastProvider";
+import { SCREEN_NAMES, SECTION_HEADINGS } from "@/lib/screens";
 
 interface Category {
   id: string;
@@ -100,7 +101,7 @@ export default function AdminPage() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          Admin Settings
+          {SCREEN_NAMES.admin}
         </h1>
         <Link href="/" className="text-sm text-blue-600 hover:text-blue-500">
           Back to Tasks
@@ -110,7 +111,7 @@ export default function AdminPage() {
       {/* Categories */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Categories
+          {SECTION_HEADINGS.categories}
         </h2>
         <div className="mt-4 flex gap-2">
           <input
@@ -215,7 +216,7 @@ export default function AdminPage() {
       {/* Default Settings */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Default Task Settings
+          {SECTION_HEADINGS.defaultTaskSettings}
         </h2>
         <div className="mt-4 space-y-4">
           <div>
@@ -268,7 +269,7 @@ export default function AdminPage() {
       {/* Data Export */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Data Export
+          {SECTION_HEADINGS.dataExport}
         </h2>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Download your data as CSV or JSON files.

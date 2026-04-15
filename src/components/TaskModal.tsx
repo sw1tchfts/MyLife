@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import TaskForm from "./TaskForm";
 import type { TaskFormData } from "./TaskForm";
 import TrackerForm from "./TrackerForm";
+import { MODAL_TITLES } from "@/lib/screens";
 import SubtaskList from "./SubtaskList";
 import type {
   SubtaskData,
@@ -131,10 +132,10 @@ export default function TaskModal({
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             {mode === "edit" && task?.taskType === "TRACKER"
-              ? "Daily Log"
+              ? MODAL_TITLES.dailyLog
               : mode === "create"
-                ? "New Task"
-                : "Edit Task"}
+                ? MODAL_TITLES.newTask
+                : MODAL_TITLES.editTask}
           </h2>
           <button
             onClick={onClose}

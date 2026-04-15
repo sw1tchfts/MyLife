@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/components/ToastProvider";
+import { SECTION_HEADINGS } from "@/lib/screens";
 
 interface FoodItem {
   id: string;
@@ -117,7 +118,7 @@ export default function FoodLibraryTab() {
       {/* Search USDA */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
         <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          Search USDA Food Database
+          {SECTION_HEADINGS.searchFoods}
         </h3>
         <div className="flex gap-3">
           <input
@@ -181,7 +182,7 @@ export default function FoodLibraryTab() {
       {/* Saved foods */}
       <div>
         <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          Your Food Library ({foods.length})
+          {SECTION_HEADINGS.yourFoodLibrary} ({foods.length})
         </h3>
         {foods.length === 0 ? (
           <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">

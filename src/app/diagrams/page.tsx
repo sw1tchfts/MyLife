@@ -22,6 +22,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import { nodeTypes } from "@/components/diagrams/DiagramNodes";
 import { useToast } from "@/components/ToastProvider";
+import { DIAGRAM_TYPE_LABELS } from "@/lib/screens";
 
 /* ── Types ─────────────────────────────────────────────── */
 
@@ -38,12 +39,7 @@ interface DiagramRecord {
   updatedAt: string;
 }
 
-const DIAGRAM_LABELS: Record<DiagramType, string> = {
-  FLOWCHART: "Flowchart",
-  PROCESS: "Process Diagram",
-  SWIMLANE: "Swim Lane",
-  ER_DIAGRAM: "ER Diagram",
-};
+const DIAGRAM_LABELS = DIAGRAM_TYPE_LABELS as Record<DiagramType, string>;
 
 /* Palette: what nodes each diagram type offers */
 interface PaletteItem {
