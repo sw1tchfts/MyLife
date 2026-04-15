@@ -41,6 +41,7 @@ Personal task tracking web app. Single user (no sharing/collaboration features).
 - **Pagination**: API routes support opt-in pagination via `?limit=50&page=1`. When `limit` is provided, response is `{ items, total, page, limit }`. Without `limit`, returns all results (backward compatible). Used by tasks and journal APIs.
 - **Dynamic imports**: Large tab components are extracted into `src/components/{feature}/` directories and loaded via `next/dynamic` to enable code splitting.
 - **React.memo**: Applied to frequently-rendered components (`TaskCard`, `StatusBadge`, `PriorityBadge`) to skip unnecessary re-renders.
+- **Centralized screen names**: All user-visible names (page titles, tab labels, modal titles, section headings, shared label maps like weekdays/meals/moods) live in `src/lib/screens.ts`. Import from there instead of hardcoding strings in components. This is the single source of truth for what anything in the UI is called.
 
 ## File Structure
 
@@ -59,6 +60,7 @@ src/
   test/tdee.test.ts            # Adaptive TDEE algorithm tests
   lib/prisma.ts                # Prisma client singleton
   lib/types.ts                 # Validation + shared types
+  lib/screens.ts               # Centralized screen, tab, modal, and shared label constants
   lib/elo.ts                   # Elo rating algorithm for pairwise ranking
   lib/tdee.ts                  # Adaptive TDEE algorithm (weight tracking + daily burn)
   lib/recurrence.ts            # Recurring task instance generation

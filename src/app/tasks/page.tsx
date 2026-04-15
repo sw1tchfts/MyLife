@@ -8,6 +8,14 @@ import type { TaskData, TaskType } from "@/components/TaskCard";
 import type { Status, Priority } from "@/generated/prisma/client";
 import ListView from "@/components/views/ListView";
 import TaskModal from "@/components/TaskModal";
+import {
+  SCREEN_NAMES,
+  TASK_TABS,
+  STATUS_LABELS,
+  PRIORITY_LABELS,
+  TASK_TYPE_LABELS,
+  SECTION_HEADINGS,
+} from "@/lib/screens";
 
 // Lazy-load tab components that aren't shown by default
 const DashboardView = dynamic(() => import("@/components/views/DashboardView"));
@@ -18,32 +26,25 @@ const RecurringConfig = dynamic(
   () => import("@/components/views/RecurringConfig"),
 );
 
-type Tab = "dashboard" | "tasks" | "adhoc-config" | "recurring-config";
-
-const TABS: { key: Tab; label: string }[] = [
-  { key: "dashboard", label: "Dashboard" },
-  { key: "tasks", label: "Tasks" },
-  { key: "adhoc-config", label: "Ad-Hoc Config" },
-  { key: "recurring-config", label: "Recurring Config" },
-];
+type Tab = (typeof TASK_TABS)[number]["key"];
 
 const STATUS_FILTERS: { label: string; value: Status }[] = [
-  { label: "To Do", value: "TODO" },
-  { label: "In Progress", value: "IN_PROGRESS" },
-  { label: "Done", value: "DONE" },
+  { label: STATUS_LABELS.TODO, value: "TODO" },
+  { label: STATUS_LABELS.IN_PROGRESS, value: "IN_PROGRESS" },
+  { label: STATUS_LABELS.DONE, value: "DONE" },
 ];
 
 const PRIORITY_FILTERS: { label: string; value: Priority }[] = [
-  { label: "High", value: "HIGH" },
-  { label: "Medium", value: "MEDIUM" },
-  { label: "Low", value: "LOW" },
+  { label: PRIORITY_LABELS.HIGH, value: "HIGH" },
+  { label: PRIORITY_LABELS.MEDIUM, value: "MEDIUM" },
+  { label: PRIORITY_LABELS.LOW, value: "LOW" },
 ];
 
 const TYPE_FILTERS: { label: string; value: TaskType | "ALL" }[] = [
-  { label: "All", value: "ALL" },
-  { label: "Tasks", value: "TASK" },
-  { label: "Meals", value: "MEAL" },
-  { label: "Meds", value: "MEDICATION" },
+  { label: TASK_TYPE_LABELS.ALL, value: "ALL" },
+  { label: TASK_TYPE_LABELS.TASK, value: "TASK" },
+  { label: TASK_TYPE_LABELS.MEAL, value: "MEAL" },
+  { label: TASK_TYPE_LABELS.MEDICATION, value: "MEDICATION" },
 ];
 
 function TasksContent() {
@@ -159,7 +160,7 @@ function TasksContent() {
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-          Tasks
+          {SCREEN_NAMES.tasks}
         </h1>
         {tab === "tasks" && (
           <button
@@ -174,7 +175,7 @@ function TasksContent() {
       {/* Tabs */}
       <div className="-mx-4 mb-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
         <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700">
-          {TABS.map((t) => (
+          {TASK_TABS.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
@@ -196,7 +197,7 @@ function TasksContent() {
           <DailyLogSection />
           <div className="border-t border-gray-200 pt-6 dark:border-gray-700">
             <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Task Stats
+              {SECTION_HEADINGS.taskStats}
             </h2>
             <DashboardView tasks={tasks} />
           </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useToast } from "@/components/ToastProvider";
+import { SCREEN_NAMES, MODAL_TITLES, MOOD_OPTIONS } from "@/lib/screens";
 
 interface JournalEntry {
   id: string;
@@ -14,20 +15,12 @@ interface JournalEntry {
   updatedAt: string;
 }
 
-const MOODS = [
-  { value: "GREAT", label: "Great", emoji: "\u{1f929}" },
-  { value: "GOOD", label: "Good", emoji: "\u{1f60a}" },
-  { value: "OKAY", label: "Okay", emoji: "\u{1f610}" },
-  { value: "BAD", label: "Bad", emoji: "\u{1f61e}" },
-  { value: "TERRIBLE", label: "Terrible", emoji: "\u{1f622}" },
-] as const;
-
 function moodEmoji(mood: string | null): string {
-  return MOODS.find((m) => m.value === mood)?.emoji ?? "";
+  return MOOD_OPTIONS.find((m) => m.value === mood)?.emoji ?? "";
 }
 
 function moodLabel(mood: string | null): string {
-  return MOODS.find((m) => m.value === mood)?.label ?? "";
+  return MOOD_OPTIONS.find((m) => m.value === mood)?.label ?? "";
 }
 
 export default function JournalPage() {
@@ -148,7 +141,7 @@ export default function JournalPage() {
     <div>
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-          Journal
+          {SCREEN_NAMES.journal}
         </h1>
         {!showForm && (
           <button
@@ -164,7 +157,7 @@ export default function JournalPage() {
       {showForm && (
         <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
           <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
-            {editId ? "Edit Entry" : "New Entry"}
+            {editId ? MODAL_TITLES.editEntry : MODAL_TITLES.newEntry}
           </h3>
           <div className="space-y-3">
             <div className="flex gap-3">
@@ -183,7 +176,7 @@ export default function JournalPage() {
               />
             </div>
             <div className="flex gap-1.5">
-              {MOODS.map((m) => (
+              {MOOD_OPTIONS.map((m) => (
                 <button
                   key={m.value}
                   onClick={() => setMood(mood === m.value ? null : m.value)}
@@ -254,7 +247,7 @@ export default function JournalPage() {
           >
             All
           </button>
-          {MOODS.map((m) => (
+          {MOOD_OPTIONS.map((m) => (
             <button
               key={m.value}
               onClick={() =>
