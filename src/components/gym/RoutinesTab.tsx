@@ -610,14 +610,14 @@ export default function RoutinesTab() {
 
             {/* Activation panel */}
             {activatingId === routine.id && (
-              <div className="mt-3 rounded-md border border-green-200 bg-green-50/50 p-3 dark:border-green-800 dark:bg-green-900/20">
-                <p className="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
+              <div className="mt-3 rounded-md border border-success bg-success-soft p-3">
+                <p className="mb-2 text-xs font-medium text-body">
                   Assign each day to a weekday:
                 </p>
                 <div className="space-y-2">
                   {routine.days.map((day) => (
                     <div key={day.id} className="flex items-center gap-2">
-                      <span className="w-24 text-xs font-medium text-gray-700 dark:text-gray-300">
+                      <span className="w-24 text-xs font-medium text-body">
                         {day.name}
                       </span>
                       <div className="flex gap-1">
@@ -632,8 +632,8 @@ export default function RoutinesTab() {
                             }
                             className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${
                               dayAssignments[day.id] === wd
-                                ? "border-green-600 bg-green-600 text-white"
-                                : "border-gray-300 text-gray-500 dark:border-gray-600 dark:text-gray-400"
+                                ? "border-success bg-success text-white"
+                                : `${pillInactive}`
                             }`}
                           >
                             {WEEKDAY_LABELS_GYM[wd]}
@@ -644,27 +644,27 @@ export default function RoutinesTab() {
                   ))}
                 </div>
                 <div className="mt-2 flex items-center gap-3">
-                  <label className="text-xs text-gray-500 dark:text-gray-400">
+                  <label className="text-xs text-muted">
                     Time:
                   </label>
                   <input
                     type="time"
                     value={activateTime}
                     onChange={(e) => setActivateTime(e.target.value)}
-                    className="rounded border border-gray-300 px-2 py-1 text-xs dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    className="rounded border border-input-border bg-card px-2 py-1 text-xs text-heading"
                   />
                 </div>
                 <div className="mt-3 flex justify-end gap-2">
                   <button
                     onClick={() => setActivatingId(null)}
-                    className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-700 dark:border-gray-600 dark:text-gray-300"
+                    className="rounded-md border border-input-border px-2.5 py-1 text-xs font-medium text-body"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => handleActivate(routine)}
                     disabled={saving}
-                    className="rounded-md bg-green-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                    className="rounded-md bg-success px-2.5 py-1 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
                   >
                     {saving ? "Creating tasks..." : "Create Recurring Tasks"}
                   </button>
@@ -677,12 +677,12 @@ export default function RoutinesTab() {
                 {routine.days.map((day) => (
                   <div
                     key={day.id}
-                    className="rounded-md border border-gray-100 p-2 dark:border-gray-700"
+                    className="rounded-md border border-border p-2"
                   >
-                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                    <p className="text-xs font-medium text-body">
                       {day.name}
                       {day.scheduledDay && (
-                        <span className="ml-1.5 rounded bg-blue-100 px-1 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                        <span className="ml-1.5 rounded bg-accent-soft px-1 py-0.5 text-[10px] font-medium text-accent-text">
                           {WEEKDAY_LABELS_GYM[day.scheduledDay]}
                         </span>
                       )}
@@ -692,9 +692,9 @@ export default function RoutinesTab() {
                         {day.exercises.map((re) => (
                           <p
                             key={re.id}
-                            className="text-xs text-gray-500 dark:text-gray-400"
+                            className="text-xs text-muted"
                           >
-                            {re.exercise.name} — {re.sets}×{re.repsMin}
+                            {re.exercise.name} — {re.sets}x{re.repsMin}
                             {re.repsMax !== re.repsMin && `-${re.repsMax}`}
                           </p>
                         ))}

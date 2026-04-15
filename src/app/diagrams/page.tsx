@@ -307,24 +307,24 @@ function DiagramsInner() {
   return (
     <div className="flex h-full flex-col">
       {/* Top toolbar */}
-      <div className="flex flex-wrap items-center gap-3 border-b border-gray-200 bg-white px-4 py-2 dark:border-gray-700 dark:bg-gray-900">
+      <div className="flex flex-wrap items-center gap-3 border-b border-border bg-surface px-4 py-2">
         <button
           onClick={() => router.push("/diagrams")}
-          className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          className="text-sm text-muted hover:text-body"
         >
           &larr; All Diagrams
         </button>
-        <div className="h-5 w-px bg-gray-300 dark:bg-gray-600" />
+        <div className="h-5 w-px bg-border" />
         <input
           value={diagramTitle}
           onChange={(e) => setDiagramTitle(e.target.value)}
-          className="flex-1 border-none bg-transparent text-base font-semibold outline-none dark:text-gray-100"
+          className="flex-1 border-none bg-transparent text-base font-semibold text-heading outline-none"
           placeholder="Diagram title..."
         />
         <select
           value={diagramType}
           onChange={(e) => setDiagramType(e.target.value as DiagramType)}
-          className="rounded border border-gray-300 bg-white px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+          className="rounded border border-input-border bg-card px-2 py-1 text-sm text-body"
         >
           {(Object.keys(DIAGRAM_LABELS) as DiagramType[]).map((t) => (
             <option key={t} value={t}>
@@ -335,18 +335,18 @@ function DiagramsInner() {
         <button
           onClick={saveDiagram}
           disabled={saving}
-          className="rounded bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="rounded bg-accent px-4 py-1.5 text-sm font-medium text-white hover:bg-accent-hover disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save"}
         </button>
         {saveMsg && (
-          <span className="text-sm text-green-600 dark:text-green-400">
+          <span className="text-sm text-success-text">
             {saveMsg}
           </span>
         )}
         <button
           onClick={newDiagram}
-          className="rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+          className="rounded border border-input-border px-3 py-1.5 text-sm text-body hover:bg-elevated"
         >
           + New
         </button>
@@ -354,10 +354,10 @@ function DiagramsInner() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Left sidebar — diagram list + palette */}
-        <div className="flex w-56 shrink-0 flex-col border-r border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
+        <div className="flex w-56 shrink-0 flex-col border-r border-border bg-surface">
           {/* Node palette */}
-          <div className="border-b border-gray-200 p-3 dark:border-gray-700">
-            <p className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
+          <div className="border-b border-border p-3">
+            <p className="mb-2 text-xs font-semibold tracking-wider text-faint uppercase">
               Add Shapes
             </p>
             <div className="flex flex-col gap-1">
@@ -365,12 +365,12 @@ function DiagramsInner() {
                 <button
                   key={item.nodeType}
                   onClick={() => addNode(item.nodeType, item.label)}
-                  className="flex items-center gap-2 rounded px-2 py-1.5 text-left text-sm text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
+                  className="flex items-center gap-2 rounded px-2 py-1.5 text-left text-sm text-body hover:bg-elevated"
                 >
                   <ShapeIcon type={item.nodeType} />
                   <div>
                     <div className="text-xs font-medium">{item.label}</div>
-                    <div className="text-[10px] text-gray-400">{item.desc}</div>
+                    <div className="text-[10px] text-faint">{item.desc}</div>
                   </div>
                 </button>
               ))}
@@ -379,13 +379,13 @@ function DiagramsInner() {
 
           {/* Saved diagrams list */}
           <div className="flex-1 overflow-y-auto p-3">
-            <p className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
+            <p className="mb-2 text-xs font-semibold tracking-wider text-faint uppercase">
               Saved Diagrams
             </p>
             {loading ? (
-              <p className="text-xs text-gray-400">Loading...</p>
+              <p className="text-xs text-muted">Loading...</p>
             ) : diagrams.length === 0 ? (
-              <p className="text-xs text-gray-400">No diagrams yet</p>
+              <p className="text-xs text-muted">No diagrams yet</p>
             ) : (
               <div className="flex flex-col gap-1">
                 {diagrams.map((d) => (
@@ -393,8 +393,8 @@ function DiagramsInner() {
                     key={d.id}
                     className={`group flex items-center justify-between rounded px-2 py-1.5 text-sm transition-colors ${
                       editId === d.id
-                        ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                        : "text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
+                        ? "bg-accent-soft font-medium text-accent-text"
+                        : "text-body hover:bg-elevated"
                     }`}
                   >
                     <button
@@ -404,13 +404,13 @@ function DiagramsInner() {
                       <div className="truncate text-xs font-medium">
                         {d.title}
                       </div>
-                      <div className="text-[10px] text-gray-400">
+                      <div className="text-[10px] text-faint">
                         {DIAGRAM_LABELS[d.type]}
                       </div>
                     </button>
                     <button
                       onClick={() => deleteDiagram(d.id)}
-                      className="ml-1 hidden rounded p-0.5 text-gray-400 hover:text-red-500 group-hover:block"
+                      className="ml-1 hidden rounded p-0.5 text-faint hover:text-danger-text group-hover:block"
                       title="Delete"
                     >
                       <svg
@@ -449,24 +449,23 @@ function DiagramsInner() {
             snapToGrid
             snapGrid={[15, 15]}
             deleteKeyCode={null}
-            className="bg-gray-100 dark:bg-gray-950"
+            className="bg-surface"
           >
             <Background
               variant={BackgroundVariant.Dots}
               gap={15}
               size={1}
-              className="dark:!bg-gray-950"
             />
-            <Controls className="!rounded !border !border-gray-300 !bg-white !shadow-sm dark:!border-gray-600 dark:!bg-gray-800 [&>button]:!border-gray-300 [&>button]:!bg-white dark:[&>button]:!border-gray-600 dark:[&>button]:!bg-gray-800 [&>button>svg]:dark:!fill-gray-200" />
+            <Controls className="!rounded !border !border-border !bg-card !shadow-sm [&>button]:!border-border [&>button]:!bg-card [&>button>svg]:!fill-body" />
             <MiniMap
-              className="!rounded !border !border-gray-300 !bg-white !shadow-sm dark:!border-gray-600 dark:!bg-gray-800"
+              className="!rounded !border !border-border !bg-card !shadow-sm"
               maskColor="rgba(0,0,0,0.1)"
               nodeColor="#93C5FD"
             />
             <Panel position="top-right">
               <button
                 onClick={deleteSelected}
-                className="rounded border border-gray-300 bg-white px-3 py-1 text-xs text-gray-600 shadow-sm hover:bg-red-50 hover:text-red-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+                className="rounded border border-border bg-card px-3 py-1 text-xs text-body shadow-sm hover:bg-danger-soft hover:text-danger-text"
               >
                 Delete Selected
               </button>
@@ -484,7 +483,7 @@ export default function DiagramsPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex h-full items-center justify-center text-gray-400">
+        <div className="flex h-full items-center justify-center text-muted">
           Loading diagrams...
         </div>
       }
@@ -497,7 +496,7 @@ export default function DiagramsPage() {
 /* ── Small shape icons for palette ─────────────────────── */
 
 function ShapeIcon({ type }: { type: string }) {
-  const cls = "h-5 w-5 text-gray-400";
+  const cls = "h-5 w-5 text-muted";
   switch (type) {
     case "process":
       return (

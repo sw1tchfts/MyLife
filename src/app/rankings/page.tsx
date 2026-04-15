@@ -9,11 +9,8 @@ import {
   panel,
   input as inputCls,
   btnPrimary,
-  btnSecondary,
   emptyState,
   deleteBtn,
-  pillActive,
-  pillInactive,
 } from "@/lib/styles";
 
 const ItemsTab = dynamic(() => import("@/components/rankings/ItemsTab"));

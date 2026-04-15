@@ -4,13 +4,15 @@ import { useEffect, useState, useCallback, Suspense } from "react";
 import { useToast } from "@/components/ToastProvider";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
-  SCREEN_NAMES,
-  MEDICATION_TABS,
-  MODAL_TITLES,
-  SECTION_HEADINGS,
-  WEEKDAYS,
-  WEEKDAY_LABELS_SHORT,
-} from "@/lib/screens";
+  panel,
+  inputSm,
+  btnPrimary,
+  btnSecondary,
+  emptyState,
+  deleteBtn,
+  labelSm,
+  pillInactive,
+} from "@/lib/styles";
 
 interface MedicationItem {
   id: string;
@@ -30,12 +32,12 @@ interface SearchResult {
   externalId: string;
 }
 
-type Tab = (typeof MEDICATION_TABS)[number]["key"];
+type Tab = "medications" | "schedule";
 
 export default function MedicationsPage() {
   return (
     <Suspense
-      fallback={<p className="text-center text-gray-400">Loading...</p>}
+      fallback={<p className="text-center text-muted">Loading...</p>}
     >
       <MedicationsContent />
     </Suspense>
@@ -49,21 +51,26 @@ function MedicationsContent() {
 
   const setTab = (t: Tab) => router.push(`/medications?tab=${t}`);
 
+  const TABS: { key: Tab; label: string }[] = [
+    { key: "medications", label: "Medications" },
+    { key: "schedule", label: "Medication Schedule" },
+  ];
+
   return (
     <div>
-      <h1 className="mb-4 text-xl font-bold text-gray-900 dark:text-gray-100">
-        {SCREEN_NAMES.medications}
+      <h1 className="mb-4 text-xl font-bold text-heading">
+        Medications
       </h1>
 
-      <div className="mb-6 flex gap-1 border-b border-gray-200 dark:border-gray-700">
-        {MEDICATION_TABS.map((t) => (
+      <div className="mb-6 flex gap-1 border-b border-border">
+        {TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`rounded-t-md px-3 py-2 text-sm font-medium transition-colors ${
               tab === t.key
-                ? "bg-blue-600 text-white"
-                : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                ? "bg-accent text-white"
+                : "text-muted hover:bg-elevated"
             }`}
           >
             {t.label}
@@ -141,9 +148,9 @@ function MedicationsTab() {
   return (
     <div className="space-y-6">
       {/* Search */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-        <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          {SECTION_HEADINGS.searchMedications}
+      <div className={`${panel} p-4`}>
+        <h3 className="mb-3 text-sm font-semibold text-body">
+          Search Medications (OpenFDA)
         </h3>
         <div className="flex gap-3">
           <input
@@ -152,12 +159,12 @@ function MedicationsTab() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && search()}
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            className={`flex-1 ${inputSm}`}
           />
           <button
             onClick={search}
             disabled={searching || !searchQuery.trim()}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className={btnPrimary}
           >
             {searching ? "Searching..." : "Search"}
           </button>
@@ -165,29 +172,29 @@ function MedicationsTab() {
 
         {searchResults.length > 0 && (
           <div className="mt-4 space-y-2">
-            <p className="text-xs text-gray-400 dark:text-gray-500">
+            <p className={labelSm}>
               {searchResults.length} results
             </p>
             {searchResults.map((r) => (
               <div
                 key={r.externalId}
-                className="flex items-center justify-between rounded-md border border-gray-100 p-3 dark:border-gray-700"
+                className="flex items-center justify-between rounded-md border border-border p-3"
               >
                 <div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <p className="text-sm font-medium text-heading">
                     {r.name}
                   </p>
                   {r.genericName && (
-                    <p className="text-xs text-gray-400">{r.genericName}</p>
+                    <p className="text-xs text-faint">{r.genericName}</p>
                   )}
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-muted">
                     {[r.dosageForm, r.strength].filter(Boolean).join(" · ")}
                   </p>
                 </div>
                 <button
                   onClick={() => saveMed(r)}
                   disabled={saving === r.externalId}
-                  className="rounded-md bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50 dark:bg-blue-900/30 dark:text-blue-400"
+                  className="rounded-md bg-accent-soft px-3 py-1.5 text-xs font-medium text-accent-text disabled:opacity-50"
                 >
                   {saving === r.externalId ? "Saving..." : "Save"}
                 </button>
@@ -199,15 +206,15 @@ function MedicationsTab() {
 
       {/* Saved medications */}
       <div>
-        <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          {SECTION_HEADINGS.yourMedications} ({meds.length})
+        <h3 className="mb-3 text-sm font-semibold text-body">
+          Your Medications ({meds.length})
         </h3>
         {meds.length === 0 ? (
-          <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-            <p className="text-gray-500 dark:text-gray-400">
+          <div className={emptyState}>
+            <p className="text-muted">
               No medications saved yet
             </p>
-            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-sm text-faint">
               Search above to find and save medications
             </p>
           </div>
@@ -216,22 +223,22 @@ function MedicationsTab() {
             {meds.map((m) => (
               <div
                 key={m.id}
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800"
+                className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
               >
                 <div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <p className="text-sm font-medium text-heading">
                     {m.name}
                   </p>
                   {m.genericName && (
-                    <p className="text-xs text-gray-400">{m.genericName}</p>
+                    <p className="text-xs text-faint">{m.genericName}</p>
                   )}
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-muted">
                     {[m.dosageForm, m.strength].filter(Boolean).join(" · ")}
                   </p>
                 </div>
                 <button
                   onClick={() => deleteMed(m.id)}
-                  className="rounded p-1 text-gray-300 hover:text-red-500 dark:text-gray-600"
+                  className={deleteBtn}
                 >
                   <svg
                     className="h-4 w-4"
@@ -257,6 +264,17 @@ function MedicationsTab() {
 }
 
 /* ── Schedule Tab ─────────────────────────────────── */
+
+const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+const WEEKDAY_LABELS: Record<string, string> = {
+  mon: "Mon",
+  tue: "Tue",
+  wed: "Wed",
+  thu: "Thu",
+  fri: "Fri",
+  sat: "Sat",
+  sun: "Sun",
+};
 
 interface ScheduleEntry {
   id: string;
@@ -361,19 +379,19 @@ function ScheduleTab() {
   };
 
   if (loading) {
-    return <p className="text-center text-gray-400">Loading...</p>;
+    return <p className="text-center text-muted">Loading...</p>;
   }
 
   return (
     <div>
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-muted">
           Set up when you take each medication. Each schedule creates a
           recurring task in your task list.
         </p>
         <button
           onClick={() => setShowForm(true)}
-          className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+          className={`inline-flex items-center shadow-sm ${btnPrimary}`}
         >
           + Add Schedule
         </button>
@@ -381,19 +399,19 @@ function ScheduleTab() {
 
       {/* Create form */}
       {showForm && (
-        <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
-          <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
-            {MODAL_TITLES.newMedSchedule}
+        <div className="mt-4 rounded-lg border border-accent bg-accent-soft p-4">
+          <h3 className="mb-3 text-sm font-semibold text-heading">
+            New Medication Schedule
           </h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className={labelSm}>
                 Medication
               </label>
               <select
                 value={selectedMedId}
                 onChange={(e) => setSelectedMedId(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className="mt-1 w-full rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
               >
                 <option value="">Select a medication...</option>
                 {meds.map((m) => (
@@ -404,14 +422,14 @@ function ScheduleTab() {
                 ))}
               </select>
               {meds.length === 0 && (
-                <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                <p className="mt-1 text-xs text-warning-text">
                   No medications saved yet. Add medications in the Medications
                   tab first.
                 </p>
               )}
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className={labelSm}>
                 Dosage
               </label>
               <input
@@ -419,11 +437,11 @@ function ScheduleTab() {
                 value={dosage}
                 onChange={(e) => setDosage(e.target.value)}
                 placeholder="e.g. 500mg, 1 tablet"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={`mt-1 ${inputSm}`}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className={labelSm}>
                 Frequency
               </label>
               <select
@@ -432,7 +450,7 @@ function ScheduleTab() {
                   setFrequency(e.target.value);
                   setDays("");
                 }}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className="mt-1 w-full rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
               >
                 <option value="DAILY">Every day</option>
                 <option value="WEEKLY">Specific days</option>
@@ -440,7 +458,7 @@ function ScheduleTab() {
             </div>
             {frequency === "WEEKLY" && (
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+                <label className={labelSm}>
                   Days
                 </label>
                 <div className="mt-1 flex gap-1">
@@ -466,11 +484,11 @@ function ScheduleTab() {
                         }}
                         className={`rounded-md border px-2 py-1 text-xs font-medium ${
                           active
-                            ? "border-blue-600 bg-blue-600 text-white"
-                            : "border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-400"
+                            ? "border-accent bg-accent text-white"
+                            : `${pillInactive}`
                         }`}
                       >
-                        {WEEKDAY_LABELS_SHORT[day]}
+                        {WEEKDAY_LABELS[day]}
                       </button>
                     );
                   })}
@@ -478,28 +496,28 @@ function ScheduleTab() {
               </div>
             )}
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              <label className={labelSm}>
                 Time
               </label>
               <input
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                className={`mt-1 ${inputSm}`}
               />
             </div>
           </div>
           <div className="mt-3 flex justify-end gap-2">
             <button
               onClick={() => setShowForm(false)}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+              className={btnSecondary}
             >
               Cancel
             </button>
             <button
               onClick={handleCreate}
               disabled={saving || !selectedMedId}
-              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className={btnPrimary}
             >
               {saving ? "Creating..." : "Create Schedule"}
             </button>
@@ -510,11 +528,11 @@ function ScheduleTab() {
       {/* Existing schedules */}
       <div className="mt-4 space-y-2">
         {schedules.length === 0 && !showForm ? (
-          <div className="rounded-lg border-2 border-dashed border-gray-300 py-12 text-center dark:border-gray-600">
-            <p className="text-gray-500 dark:text-gray-400">
+          <div className={emptyState}>
+            <p className="text-muted">
               No medication schedules yet
             </p>
-            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-sm text-faint">
               Add a schedule to create recurring medication tasks
             </p>
           </div>
@@ -522,28 +540,25 @@ function ScheduleTab() {
           schedules.map((s) => (
             <div
               key={s.id}
-              className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800"
+              className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
             >
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <p className="text-sm font-medium text-heading">
                   {s.title}
                 </p>
-                <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-0.5 text-xs text-muted">
                   {s.recurrence === "DAILY"
                     ? "Every day"
                     : `Every ${s.recurrenceDays
                         .split(",")
-                        .map(
-                          (d) =>
-                            WEEKDAY_LABELS_SHORT[d.trim().toLowerCase()] || d,
-                        )
+                        .map((d) => WEEKDAY_LABELS[d.trim().toLowerCase()] || d)
                         .join(", ")}`}
                   {s.recurrenceTime ? ` at ${s.recurrenceTime}` : ""}
                 </p>
               </div>
               <button
                 onClick={() => deleteSchedule(s.id)}
-                className="rounded p-1.5 text-gray-300 hover:text-red-500 dark:text-gray-600 dark:hover:text-red-400"
+                className={deleteBtn}
                 title="Delete schedule"
               >
                 <svg

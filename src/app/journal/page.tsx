@@ -4,14 +4,10 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useToast } from "@/components/ToastProvider";
 import {
   pageTitle,
-  panel,
-  input as inputCls,
   btnPrimary,
   btnSecondary,
   emptyState,
   deleteBtn,
-  pillActive,
-  pillInactive,
 } from "@/lib/styles";
 
 interface JournalEntry {
