@@ -147,12 +147,12 @@ export default function SubtaskList({
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="flex-1 rounded-md border border-input-border bg-card px-2 py-1 text-sm text-heading placeholder-faint focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
+          className="flex-1 rounded-[10px] border border-input-border bg-card px-2 py-1 text-sm text-heading placeholder-faint focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
         />
         <button
           onClick={addSubtask}
           disabled={adding || !newTitle.trim()}
-          className="rounded-md bg-elevated px-2 py-1 text-xs font-medium text-body hover:bg-gray-600 disabled:opacity-50"
+          className="rounded-full bg-elevated px-2 py-1 text-xs font-medium text-body hover:bg-card disabled:opacity-50"
         >
           Add
         </button>

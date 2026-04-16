@@ -329,10 +329,10 @@ export default function TaskForm({
                 key={d.key}
                 type="button"
                 onClick={() => toggleDay(d.key)}
-                className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                className={`rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors ${
                   selectedDays.has(d.key)
-                    ? "bg-accent text-white"
-                    : `border ${pillInactive}`
+                    ? "border-accent bg-accent text-white"
+                    : pillInactive
                 }`}
               >
                 {d.label}

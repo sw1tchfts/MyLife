@@ -3,7 +3,7 @@ export default function Loading() {
     <div className="animate-pulse space-y-4">
       <div className="h-7 w-36 rounded bg-elevated" />
       <div className="flex gap-1 border-b border-border">
-        {Array.from({ length: 3 }).map((_, i) => (
+        {Array.from({ length: 2 }).map((_, i) => (
           <div key={i} className="h-9 w-28 rounded-t-md bg-elevated" />
         ))}
       </div>

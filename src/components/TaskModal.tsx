@@ -456,7 +456,7 @@ function TaskMedManager({
         <button
           onClick={addMed}
           disabled={!selectedMedId}
-          className="rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-white hover:bg-accent-hover disabled:opacity-50"
+          className="rounded-full bg-success px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-success-hover active:opacity-80 disabled:opacity-50"
         >
           Add
         </button>

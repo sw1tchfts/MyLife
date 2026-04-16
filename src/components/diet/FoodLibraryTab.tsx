@@ -155,7 +155,7 @@ export default function FoodLibraryTab() {
             {searchResults.map((r) => (
               <div
                 key={r.fdcId}
-                className="flex items-center justify-between rounded-md border border-border p-3"
+                className="flex items-center justify-between rounded-xl border border-border bg-card p-3"
               >
                 <div>
                   <p className="text-sm font-medium text-heading">{r.name}</p>
@@ -172,7 +172,7 @@ export default function FoodLibraryTab() {
                 <button
                   onClick={() => saveFood(r)}
                   disabled={saving === r.fdcId}
-                  className="rounded-md bg-success-soft px-3 py-1.5 text-xs font-medium text-success-text disabled:opacity-50"
+                  className="rounded-[10px] bg-success-soft px-3 py-1.5 text-xs font-medium text-success-text disabled:opacity-50"
                 >
                   {saving === r.fdcId ? "Saving..." : "Save"}
                 </button>
@@ -256,7 +256,7 @@ export default function FoodLibraryTab() {
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            d="M6 18L18 6M6 6l12 12"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                           />
                         </svg>
                       </button>

@@ -307,7 +307,7 @@ export default function SettingsPage() {
                             },
                           }))
                         }
-                        className={`rounded-md border px-3 py-1 text-xs font-medium ${
+                        className={`rounded-full border px-3 py-1 text-xs font-medium ${
                           settings.trackerConfig.units.weight === u
                             ? pillActive
                             : pillInactive
@@ -336,7 +336,7 @@ export default function SettingsPage() {
                             },
                           }))
                         }
-                        className={`rounded-md border px-3 py-1 text-xs font-medium ${
+                        className={`rounded-full border px-3 py-1 text-xs font-medium ${
                           settings.trackerConfig.units.measurements === u
                             ? pillActive
                             : pillInactive

@@ -7,6 +7,7 @@ import {
   pageTitle,
   panel,
   inputSm,
+  select,
   btnPrimary,
   btnSecondary,
   emptyState,
@@ -19,6 +20,7 @@ import {
   tabButtonActive,
   tabButtonInactive,
 } from "@/lib/styles";
+import { WEEKDAYS, WEEKDAY_LABELS_SHORT } from "@/lib/screens";
 
 interface MedicationItem {
   id: string;
@@ -176,7 +178,7 @@ function MedicationsTab() {
             {searchResults.map((r) => (
               <div
                 key={r.externalId}
-                className="flex items-center justify-between rounded-md border border-border p-3"
+                className="flex items-center justify-between rounded-xl border border-border bg-card p-3"
               >
                 <div>
                   <p className="text-sm font-medium text-heading">{r.name}</p>
@@ -190,7 +192,7 @@ function MedicationsTab() {
                 <button
                   onClick={() => saveMed(r)}
                   disabled={saving === r.externalId}
-                  className="rounded-md bg-accent-soft px-3 py-1.5 text-xs font-medium text-accent-text disabled:opacity-50"
+                  className="rounded-[10px] bg-success-soft px-3 py-1.5 text-xs font-medium text-success-text disabled:opacity-50"
                 >
                   {saving === r.externalId ? "Saving..." : "Save"}
                 </button>
@@ -239,7 +241,7 @@ function MedicationsTab() {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                     />
                   </svg>
                 </button>
@@ -253,17 +255,6 @@ function MedicationsTab() {
 }
 
 /* ── Schedule Tab ─────────────────────────────────── */
-
-const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
-const WEEKDAY_LABELS: Record<string, string> = {
-  mon: "Mon",
-  tue: "Tue",
-  wed: "Wed",
-  thu: "Thu",
-  fri: "Fri",
-  sat: "Sat",
-  sun: "Sun",
-};
 
 interface ScheduleEntry {
   id: string;
@@ -398,7 +389,7 @@ function ScheduleTab() {
               <select
                 value={selectedMedId}
                 onChange={(e) => setSelectedMedId(e.target.value)}
-                className="mt-1 w-full rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
+                className={select}
               >
                 <option value="">Select a medication...</option>
                 {meds.map((m) => (
@@ -433,7 +424,7 @@ function ScheduleTab() {
                   setFrequency(e.target.value);
                   setDays("");
                 }}
-                className="mt-1 w-full rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
+                className={select}
               >
                 <option value="DAILY">Every day</option>
                 <option value="WEEKLY">Specific days</option>
@@ -469,7 +460,7 @@ function ScheduleTab() {
                             : `${pillInactive}`
                         }`}
                       >
-                        {WEEKDAY_LABELS[day]}
+                        {WEEKDAY_LABELS_SHORT[day]}
                       </button>
                     );
                   })}
@@ -523,7 +514,10 @@ function ScheduleTab() {
                     ? "Every day"
                     : `Every ${s.recurrenceDays
                         .split(",")
-                        .map((d) => WEEKDAY_LABELS[d.trim().toLowerCase()] || d)
+                        .map(
+                          (d) =>
+                            WEEKDAY_LABELS_SHORT[d.trim().toLowerCase()] || d,
+                        )
                         .join(", ")}`}
                   {s.recurrenceTime ? ` at ${s.recurrenceTime}` : ""}
                 </p>

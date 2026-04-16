@@ -9,7 +9,9 @@ import {
   btnSecondary,
   emptyState,
   pillInactive,
+  labelSm,
 } from "@/lib/styles";
+import { WEEKDAYS, WEEKDAY_LABELS_SHORT } from "@/lib/screens";
 
 interface RecurringTask {
   id: string;
@@ -30,18 +32,6 @@ const RECURRENCE_LABELS: Record<string, string> = {
   WEEKLY: "Weekly",
   MONTHLY: "Monthly",
 };
-
-const WEEKDAY_LABELS: Record<string, string> = {
-  mon: "Mon",
-  tue: "Tue",
-  wed: "Wed",
-  thu: "Thu",
-  fri: "Fri",
-  sat: "Sat",
-  sun: "Sun",
-};
-
-const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 
 const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   TASK: {
@@ -73,7 +63,7 @@ function describeSchedule(task: RecurringTask): string {
       .split(",")
       .map((d) => d.trim().toLowerCase())
       .filter(Boolean)
-      .map((d) => WEEKDAY_LABELS[d] || d);
+      .map((d) => WEEKDAY_LABELS_SHORT[d] || d);
     const time = task.recurrenceTime ? ` at ${task.recurrenceTime}` : "";
     return days.length > 0
       ? `Every ${days.join(", ")}${time}`
@@ -217,15 +207,13 @@ export default function RecurringConfig() {
 
       {/* Inline create form */}
       {showCreate && (
-        <div className="mt-4 rounded-xl border border-accent bg-accent-soft/30 p-4">
+        <div className="mt-4 rounded-xl border border-accent bg-accent-soft p-4">
           <h3 className="text-sm font-semibold text-heading">
             New Recurring Task
           </h3>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label className="block text-xs font-medium text-muted">
-                Title
-              </label>
+              <label className={labelSm}>Title</label>
               <input
                 type="text"
                 value={createTitle}
@@ -236,9 +224,7 @@ export default function RecurringConfig() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-muted">
-                Frequency
-              </label>
+              <label className={labelSm}>Frequency</label>
               <select
                 value={createRecurrence}
                 onChange={(e) => {
@@ -253,9 +239,7 @@ export default function RecurringConfig() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-muted">
-                Type
-              </label>
+              <label className={labelSm}>Type</label>
               <select
                 value={createType}
                 onChange={(e) => setCreateType(e.target.value)}
@@ -268,9 +252,7 @@ export default function RecurringConfig() {
             </div>
             {createRecurrence === "WEEKLY" && (
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-muted">
-                  Days
-                </label>
+                <label className={labelSm}>Days</label>
                 <div className="mt-1 flex gap-1">
                   {WEEKDAYS.map((day) => {
                     const active = createDays
@@ -298,7 +280,7 @@ export default function RecurringConfig() {
                             : `${pillInactive}`
                         }`}
                       >
-                        {WEEKDAY_LABELS[day]}
+                        {WEEKDAY_LABELS_SHORT[day]}
                       </button>
                     );
                   })}
@@ -307,7 +289,7 @@ export default function RecurringConfig() {
             )}
             {createRecurrence === "MONTHLY" && (
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-muted">
+                <label className={labelSm}>
                   Days of month (comma-separated)
                 </label>
                 <input
@@ -320,9 +302,7 @@ export default function RecurringConfig() {
               </div>
             )}
             <div>
-              <label className="block text-xs font-medium text-muted">
-                Time (optional)
-              </label>
+              <label className={labelSm}>Time (optional)</label>
               <input
                 type="time"
                 value={createTime}
@@ -331,9 +311,7 @@ export default function RecurringConfig() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-muted">
-                Priority
-              </label>
+              <label className={labelSm}>Priority</label>
               <select
                 value={createPriority}
                 onChange={(e) => setCreatePriority(e.target.value)}
@@ -400,9 +378,7 @@ export default function RecurringConfig() {
                     <div className="flex flex-wrap gap-3">
                       {task.recurrence === "WEEKLY" && (
                         <div>
-                          <label className="block text-xs text-muted">
-                            Days
-                          </label>
+                          <label className={labelSm}>Days</label>
                           <div className="mt-1 flex gap-1">
                             {WEEKDAYS.map((day) => {
                               const active = editTarget.recurrenceDays
@@ -433,7 +409,7 @@ export default function RecurringConfig() {
                                       : `${pillInactive}`
                                   }`}
                                 >
-                                  {WEEKDAY_LABELS[day]}
+                                  {WEEKDAY_LABELS_SHORT[day]}
                                 </button>
                               );
                             })}
@@ -442,9 +418,7 @@ export default function RecurringConfig() {
                       )}
                       {task.recurrence === "MONTHLY" && (
                         <div>
-                          <label className="block text-xs text-muted">
-                            Days of month
-                          </label>
+                          <label className={labelSm}>Days of month</label>
                           <input
                             type="text"
                             value={editTarget.recurrenceDays}
@@ -459,7 +433,7 @@ export default function RecurringConfig() {
                         </div>
                       )}
                       <div>
-                        <label className="block text-xs text-muted">Time</label>
+                        <label className={labelSm}>Time</label>
                         <input
                           type="time"
                           value={editTarget.recurrenceTime}
@@ -473,9 +447,7 @@ export default function RecurringConfig() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-muted">
-                          Priority
-                        </label>
+                        <label className={labelSm}>Priority</label>
                         <select
                           value={editTarget.priority}
                           onChange={(e) =>
@@ -517,7 +489,7 @@ export default function RecurringConfig() {
                           {task.title}
                         </h3>
                         <span
-                          className={`inline-flex rounded px-1 py-0.5 text-[10px] font-medium ${badge.cls}`}
+                          className={`inline-flex rounded-md px-1 py-0.5 text-[10px] font-medium ${badge.cls}`}
                         >
                           {badge.label}
                         </span>

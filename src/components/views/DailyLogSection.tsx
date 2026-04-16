@@ -80,7 +80,7 @@ export default function DailyLogSection() {
 
   if (!data) {
     return (
-      <div className="py-12 text-center">
+      <div className="flex items-center justify-center py-20">
         <p className="text-muted">Failed to load tracker data.</p>
       </div>
     );

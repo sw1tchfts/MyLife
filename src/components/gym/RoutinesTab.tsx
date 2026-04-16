@@ -5,6 +5,7 @@ import { useToast } from "@/components/ToastProvider";
 import {
   panel,
   inputSm,
+  select,
   btnPrimary,
   btnSecondary,
   btnSuccessXs,
@@ -13,6 +14,7 @@ import {
   labelSm,
   pillInactive,
 } from "@/lib/styles";
+import { WEEKDAYS, WEEKDAY_LABELS_SHORT } from "@/lib/screens";
 
 /* ── Types ─────────────────────────────────────────── */
 
@@ -57,19 +59,6 @@ interface Routine {
   daysPerWeek: number;
   days: RoutineDay[];
 }
-
-/* ── Constants ────────────────────────────────────── */
-
-const WEEKDAYS_GYM = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
-const WEEKDAY_LABELS_GYM: Record<string, string> = {
-  mon: "Mon",
-  tue: "Tue",
-  wed: "Wed",
-  thu: "Thu",
-  fri: "Fri",
-  sat: "Sat",
-  sun: "Sun",
-};
 
 /* ── Routines Tab ──────────────────────────────────── */
 
@@ -138,7 +127,7 @@ export default function RoutinesTab() {
     // Pre-assign days from saved scheduledDay, fall back to sequential
     const defaults: Record<string, string> = {};
     routine.days.forEach((day, i) => {
-      defaults[day.id] = day.scheduledDay || WEEKDAYS_GYM[i] || WEEKDAYS_GYM[0];
+      defaults[day.id] = day.scheduledDay || WEEKDAYS[i] || WEEKDAYS[0];
     });
     setDayAssignments(defaults);
   };
@@ -323,7 +312,7 @@ export default function RoutinesTab() {
               <select
                 value={goal}
                 onChange={(e) => setGoal(e.target.value)}
-                className="mt-1 w-full rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
+                className={select}
               >
                 <option value="hypertrophy">Hypertrophy</option>
                 <option value="strength">Strength</option>
@@ -336,7 +325,7 @@ export default function RoutinesTab() {
               <select
                 value={level}
                 onChange={(e) => setLevel(e.target.value)}
-                className="mt-1 w-full rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
+                className={select}
               >
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
@@ -368,7 +357,7 @@ export default function RoutinesTab() {
                   {/* Weekday selector */}
                   <div className="mt-1.5 flex items-center gap-1.5">
                     <span className="text-[10px] text-faint">Day:</span>
-                    {WEEKDAYS_GYM.map((wd) => (
+                    {WEEKDAYS.map((wd) => (
                       <button
                         key={wd}
                         type="button"
@@ -391,7 +380,7 @@ export default function RoutinesTab() {
                             : `${pillInactive}`
                         }`}
                       >
-                        {WEEKDAY_LABELS_GYM[wd]}
+                        {WEEKDAY_LABELS_SHORT[wd]}
                       </button>
                     ))}
                   </div>
@@ -482,7 +471,7 @@ export default function RoutinesTab() {
                           e.target.value = "";
                         }
                       }}
-                      className="w-full rounded-md border border-input-border bg-card px-2 py-1 text-xs text-heading"
+                      className="w-full rounded-[10px] border border-input-border bg-card px-2 py-1 text-xs text-heading"
                       defaultValue=""
                     >
                       <option value="">+ Add exercise...</option>
@@ -509,7 +498,7 @@ export default function RoutinesTab() {
               <button
                 onClick={addDay}
                 disabled={!newDayName.trim()}
-                className="rounded-md bg-elevated px-3 py-1.5 text-xs font-medium text-heading hover:bg-card disabled:opacity-50"
+                className={btnSecondary}
               >
                 Add Day
               </button>
@@ -607,7 +596,7 @@ export default function RoutinesTab() {
                         {day.name}
                       </span>
                       <div className="flex gap-1">
-                        {WEEKDAYS_GYM.map((wd) => (
+                        {WEEKDAYS.map((wd) => (
                           <button
                             key={wd}
                             onClick={() =>
@@ -622,7 +611,7 @@ export default function RoutinesTab() {
                                 : `${pillInactive}`
                             }`}
                           >
-                            {WEEKDAY_LABELS_GYM[wd]}
+                            {WEEKDAY_LABELS_SHORT[wd]}
                           </button>
                         ))}
                       </div>
@@ -641,7 +630,7 @@ export default function RoutinesTab() {
                 <div className="mt-3 flex justify-end gap-2">
                   <button
                     onClick={() => setActivatingId(null)}
-                    className="rounded-md border border-input-border px-2.5 py-1 text-xs font-medium text-body"
+                    className={btnSecondary}
                   >
                     Cancel
                   </button>
@@ -667,7 +656,7 @@ export default function RoutinesTab() {
                       {day.name}
                       {day.scheduledDay && (
                         <span className="ml-1.5 rounded bg-accent-soft px-1 py-0.5 text-[10px] font-medium text-accent-text">
-                          {WEEKDAY_LABELS_GYM[day.scheduledDay]}
+                          {WEEKDAY_LABELS_SHORT[day.scheduledDay]}
                         </span>
                       )}
                     </p>

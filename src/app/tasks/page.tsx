@@ -184,7 +184,7 @@ function TasksContent() {
       </div>
 
       {/* Tabs */}
-      <div className={`mb-4 ${tabWrapperScrollable}`}>
+      <div className={`mb-6 ${tabWrapperScrollable}`}>
         <div className={tabWrapper}>
           {TABS.map((t) => (
             <button
@@ -232,7 +232,7 @@ function TasksContent() {
                 placeholder="Search tasks..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-md border border-input-border bg-card py-2 pl-10 pr-3 text-sm text-heading placeholder-faint focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
+                className="w-full rounded-[10px] border border-input-border bg-card py-2 pl-10 pr-3 text-sm text-heading placeholder-faint focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
               />
             </div>
 

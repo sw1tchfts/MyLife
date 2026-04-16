@@ -8,6 +8,8 @@ import {
   btnSecondary,
   emptyState,
   deleteBtn,
+  pillActive,
+  pillInactive,
 } from "@/lib/styles";
 
 interface JournalEntry {
@@ -156,7 +158,10 @@ export default function JournalPage() {
       <div className="mb-4 flex items-center justify-between">
         <h1 className={pageTitle}>Journal</h1>
         {!showForm && (
-          <button onClick={() => setShowForm(true)} className={btnPrimary}>
+          <button
+            onClick={() => setShowForm(true)}
+            className={`inline-flex items-center shadow-sm ${btnPrimary}`}
+          >
             + New Entry
           </button>
         )}
@@ -174,14 +179,14 @@ export default function JournalPage() {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-40 rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
+                className="w-40 rounded-[10px] border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
               />
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Title (optional)"
-                className="flex-1 rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
+                className="flex-1 rounded-[10px] border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
               />
             </div>
             <div className="flex gap-1.5">
@@ -189,7 +194,7 @@ export default function JournalPage() {
                 <button
                   key={m.value}
                   onClick={() => setMood(mood === m.value ? null : m.value)}
-                  className={`flex items-center gap-1 rounded-md border px-2 py-1 text-xs transition-colors ${
+                  className={`flex items-center gap-1 rounded-[10px] border px-2 py-1 text-xs transition-colors ${
                     mood === m.value
                       ? "border-accent bg-accent-soft"
                       : "border-border hover:border-input-border"
@@ -205,7 +210,7 @@ export default function JournalPage() {
               onChange={(e) => setContent(e.target.value)}
               placeholder="Write about your day..."
               rows={6}
-              className="w-full rounded-md border border-input-border bg-card px-3 py-2 text-sm leading-relaxed text-heading"
+              className="w-full rounded-[10px] border border-input-border bg-card px-3 py-2 text-sm leading-relaxed text-heading"
               autoFocus
             />
             <input
@@ -213,7 +218,7 @@ export default function JournalPage() {
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="Tags (comma-separated)"
-              className="w-full rounded-md border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
+              className="w-full rounded-[10px] border border-input-border bg-card px-3 py-1.5 text-sm text-heading"
             />
             <div className="flex justify-end gap-2">
               <button onClick={resetForm} className={btnSecondary}>
@@ -238,15 +243,13 @@ export default function JournalPage() {
           placeholder="Search entries..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 rounded-md border border-input-border bg-card px-3 py-2 text-sm text-heading"
+          className="flex-1 rounded-[10px] border border-input-border bg-card px-3 py-2 text-sm text-heading focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
         />
         <div className="flex gap-1">
           <button
             onClick={() => setMoodFilter(null)}
-            className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
-              !moodFilter
-                ? "bg-accent-soft text-accent-text"
-                : "bg-elevated text-muted hover:bg-elevated"
+            className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
+              !moodFilter ? pillActive : pillInactive
             }`}
           >
             All
@@ -258,10 +261,8 @@ export default function JournalPage() {
                 setMoodFilter(moodFilter === m.value ? null : m.value)
               }
               title={m.label}
-              className={`rounded-full px-2 py-1 text-sm transition-colors ${
-                moodFilter === m.value
-                  ? "bg-accent-soft"
-                  : "bg-elevated hover:bg-elevated"
+              className={`rounded-full border px-2 py-1 text-sm transition-colors ${
+                moodFilter === m.value ? pillActive : pillInactive
               }`}
             >
               {m.emoji}

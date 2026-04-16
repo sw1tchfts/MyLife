@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import {
-  panel,
   inputSm,
   btnPrimary,
   btnSuccess,
@@ -112,7 +111,7 @@ export default function ExercisesTab() {
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className={`rounded-md border border-input-border bg-card px-2 py-1.5 text-sm text-heading`}
+          className={`rounded-[10px] border border-input-border bg-card px-2 py-1.5 text-sm text-heading`}
         >
           <option value="">All muscles</option>
           {MUSCLE_GROUPS.map((g) => (
@@ -121,14 +120,17 @@ export default function ExercisesTab() {
             </option>
           ))}
         </select>
-        <button onClick={() => setShowAdd(!showAdd)} className={btnPrimary}>
+        <button
+          onClick={() => setShowAdd(!showAdd)}
+          className={`inline-flex items-center shadow-sm ${btnPrimary}`}
+        >
           + Add
         </button>
       </div>
 
       {/* Add form */}
       {showAdd && (
-        <div className={`${panel} p-4`}>
+        <div className="rounded-xl border border-accent bg-accent-soft p-4">
           <div className="flex flex-wrap gap-2">
             <input
               type="text"
@@ -136,12 +138,12 @@ export default function ExercisesTab() {
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && addExercise()}
-              className="flex-1 rounded-md border border-input-border bg-card px-3 py-2 text-sm text-heading"
+              className="flex-1 rounded-[10px] border border-input-border bg-card px-3 py-2 text-sm text-heading"
             />
             <select
               value={newMuscle}
               onChange={(e) => setNewMuscle(e.target.value)}
-              className="rounded-md border border-input-border bg-card px-2 py-2 text-sm text-heading"
+              className="rounded-[10px] border border-input-border bg-card px-2 py-2 text-sm text-heading"
             >
               {MUSCLE_GROUPS.map((g) => (
                 <option key={g} value={g}>
@@ -152,7 +154,7 @@ export default function ExercisesTab() {
             <select
               value={newEquipment}
               onChange={(e) => setNewEquipment(e.target.value)}
-              className="rounded-md border border-input-border bg-card px-2 py-2 text-sm text-heading"
+              className="rounded-[10px] border border-input-border bg-card px-2 py-2 text-sm text-heading"
             >
               {[
                 "barbell",

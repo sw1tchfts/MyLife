@@ -12,6 +12,7 @@ import {
   labelSm,
   pillInactive,
 } from "@/lib/styles";
+import { WEEKDAYS, WEEKDAY_LABELS_FULL } from "@/lib/screens";
 
 interface FoodItem {
   id: string;
@@ -34,17 +35,6 @@ const MEAL_LABELS: Record<string, string> = {
   LUNCH: "Lunch",
   DINNER: "Dinner",
   SNACK: "Snack",
-};
-
-const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
-const WEEKDAY_LABELS: Record<string, string> = {
-  mon: "Monday",
-  tue: "Tuesday",
-  wed: "Wednesday",
-  thu: "Thursday",
-  fri: "Friday",
-  sat: "Saturday",
-  sun: "Sunday",
 };
 
 interface MealPlan {
@@ -300,7 +290,7 @@ export default function DietRoutineTab() {
                 min="0.5"
                 value={addFoodQty}
                 onChange={(e) => setAddFoodQty(e.target.value)}
-                className="w-16 rounded-md border border-input-border bg-card px-2 py-1.5 text-sm text-heading"
+                className="w-16 rounded-[10px] border border-input-border bg-card px-2 py-1.5 text-sm text-heading"
               />
               <button
                 onClick={addFoodToMeal}
@@ -351,7 +341,7 @@ export default function DietRoutineTab() {
             const mealCal = meal.foods.reduce((s, f) => s + f.calories, 0);
             const daysList = meal.days
               .split(",")
-              .map((d) => WEEKDAY_LABELS[d]?.slice(0, 3) || d)
+              .map((d) => WEEKDAY_LABELS_FULL[d]?.slice(0, 3) || d)
               .join(", ");
             return (
               <div
@@ -389,7 +379,7 @@ export default function DietRoutineTab() {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                     />
                   </svg>
                 </button>

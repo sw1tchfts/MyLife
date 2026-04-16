@@ -152,7 +152,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
   if (habitMap.length === 0) {
     return (
       <div className={emptyState}>
-        <p className="text-lg font-medium text-muted">No habits tracked yet</p>
+        <p className="text-muted">No habits tracked yet</p>
         <p className="mt-2 text-sm text-faint">
           Create a recurring task and check &quot;Track as habit on
           dashboard&quot; to see it here.
