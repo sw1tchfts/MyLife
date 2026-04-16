@@ -1,6 +1,82 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* ── Surfaces (Apple HIG dark mode) ──────────────── */
+  --color-surface: #000000;
+  --color-card: #1c1c1e;
+  --color-elevated: #2c2c2e;
+  --color-inset: rgba(28, 28, 30, 0.5);
+
+  /* ── Borders (Apple separators) ──────────────────── */
+  --color-border: #38383a;
+  --color-input-border: #48484a;
+
+  /* ── Text (Apple label hierarchy) ────────────────── */
+  --color-heading: #ffffff;
+  --color-body: rgba(235, 235, 245, 0.6);
+  --color-muted: rgba(235, 235, 245, 0.3);
+  --color-faint: rgba(235, 235, 245, 0.18);
+
+  /* ── Primary / Accent (Apple systemBlue) ─────────── */
+  --color-accent: #0a84ff;
+  --color-accent-hover: #0071e3;
+  --color-accent-soft: rgba(10, 132, 255, 0.15);
+  --color-accent-text: #0a84ff;
+
+  /* ── Success (Apple systemGreen) ─────────────────── */
+  --color-success: #30d158;
+  --color-success-hover: #28a745;
+  --color-success-soft: rgba(48, 209, 88, 0.15);
+  --color-success-text: #30d158;
+
+  /* ── Danger (Apple systemRed) ────────────────────── */
+  --color-danger: #ff453a;
+  --color-danger-hover: #e0352b;
+  --color-danger-soft: rgba(255, 69, 58, 0.15);
+  --color-danger-text: #ff453a;
+
+  /* ── Warning (Apple systemYellow) ────────────────── */
+  --color-warning: #ffd60a;
+  --color-warning-soft: rgba(255, 214, 10, 0.15);
+  --color-warning-text: #ffd60a;
+
+  /* ── Info (Apple systemCyan) ─────────────────────── */
+  --color-info: #64d2ff;
+  --color-info-hover: #50b8e0;
+  --color-info-soft: rgba(100, 210, 255, 0.15);
+  --color-info-text: #64d2ff;
+
+  /* ── Purple (Apple systemPurple) ─────────────────── */
+  --color-purple-soft: rgba(191, 90, 242, 0.15);
+  --color-purple-text: #bf5af2;
+
+  /* ── Amber / Orange (Apple systemOrange) ─────────── */
+  --color-amber-soft: rgba(255, 159, 10, 0.15);
+  --color-amber-text: #ff9f0a;
+}
+
+/* ── Global interaction defaults ───────────────────── */
+
+@layer base {
+  /* Apple-style smooth transitions on interactive elements */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    transition-property:
+      color, background-color, border-color, opacity, box-shadow;
+    transition-duration: 200ms;
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  /* Smoother skeleton pulse */
+  .animate-pulse {
+    animation-duration: 1.8s;
+  }
 }

@@ -21,7 +21,14 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const { id } = await params;
-    const task = await prisma.task.findUnique({ where: { id } });
+    const task = await prisma.task.findUnique({
+      where: { id },
+      include: {
+        subtasks: { orderBy: { sortOrder: "asc" } },
+        taskFoods: { include: { foodItem: true } },
+        taskMeds: { include: { medicationItem: true } },
+      },
+    });
 
     if (!task) {
       return NextResponse.json({ error: "Task not found" }, { status: 404 });
@@ -67,11 +74,102 @@ export async function PUT(
     if (parsed.dueDate !== undefined) {
       data.dueDate = parsed.dueDate ? new Date(parsed.dueDate) : null;
     }
+    if (body.recurrence !== undefined) data.recurrence = body.recurrence;
+    if (body.taskType !== undefined) data.taskType = body.taskType;
+    if (body.mealType !== undefined) data.mealType = body.mealType;
+    if (body.isHabit !== undefined) data.isHabit = body.isHabit;
+    if (body.recurrenceDays !== undefined)
+      data.recurrenceDays = body.recurrenceDays;
+    if (body.recurrenceTime !== undefined)
+      data.recurrenceTime = body.recurrenceTime;
+
+    // Handle food add/remove for meal tasks
+    if (body.addFood) {
+      await prisma.taskFood.create({
+        data: {
+          taskId: id,
+          foodItemId: body.addFood.foodItemId,
+          quantity: body.addFood.quantity || 1,
+        },
+      });
+    }
+    if (body.removeFood) {
+      await prisma.taskFood.delete({ where: { id: body.removeFood } });
+    }
+
+    // Handle medication add/remove
+    if (body.addMedication) {
+      await prisma.taskMedication.create({
+        data: {
+          taskId: id,
+          medicationItemId: body.addMedication.medicationItemId,
+          dosage: body.addMedication.dosage || "",
+        },
+      });
+    }
+    if (body.removeMedication) {
+      await prisma.taskMedication.delete({
+        where: { id: body.removeMedication },
+      });
+    }
 
     const task = await prisma.task.update({
       where: { id },
       data,
     });
+
+    // When a MEAL task is marked DONE, log its nutrition
+    if (
+      parsed.status === "DONE" &&
+      existing.status !== "DONE" &&
+      existing.taskType === "MEAL"
+    ) {
+      const taskFoods = await prisma.taskFood.findMany({
+        where: { taskId: id },
+        include: { foodItem: true },
+      });
+
+      const totals = {
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+        fiber: 0,
+        sugar: 0,
+        sodium: 0,
+        vitaminA: 0,
+        vitaminC: 0,
+        vitaminD: 0,
+        calcium: 0,
+        iron: 0,
+        potassium: 0,
+      };
+
+      for (const tf of taskFoods) {
+        const q = tf.quantity;
+        totals.calories += tf.foodItem.calories * q;
+        totals.protein += tf.foodItem.protein * q;
+        totals.carbs += tf.foodItem.carbs * q;
+        totals.fat += tf.foodItem.fat * q;
+        totals.fiber += tf.foodItem.fiber * q;
+        totals.sugar += tf.foodItem.sugar * q;
+        totals.sodium += tf.foodItem.sodium * q;
+        totals.vitaminA += tf.foodItem.vitaminA * q;
+        totals.vitaminC += tf.foodItem.vitaminC * q;
+        totals.vitaminD += tf.foodItem.vitaminD * q;
+        totals.calcium += tf.foodItem.calcium * q;
+        totals.iron += tf.foodItem.iron * q;
+        totals.potassium += tf.foodItem.potassium * q;
+      }
+
+      await prisma.nutritionLog.create({
+        data: {
+          date: new Date(),
+          taskId: id,
+          ...totals,
+        },
+      });
+    }
 
     return NextResponse.json(task);
   } catch (error) {

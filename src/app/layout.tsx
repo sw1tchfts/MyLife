@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Suspense } from "react";
 import "./globals.css";
-import { SignOutButton } from "@/components/SignOutButton";
+import Sidebar from "@/components/Sidebar";
+import ToastProvider from "@/components/ToastProvider";
+import TaskNotifications from "@/components/TaskNotifications";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -14,37 +16,32 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Use getSession (reads cookie, no network call) instead of getUser
+  // (which validates with Supabase servers). The proxy already validates auth.
   const supabase = await createClient();
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user ?? null;
 
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full bg-gray-50 font-sans">
-        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-          {user && (
-            <div className="mb-6 flex items-center justify-between">
-              <span className="text-sm text-gray-500">{user.email}</span>
-              <div className="flex items-center gap-4">
-                <Link
-                  href="/admin"
-                  className="text-sm text-gray-500 hover:text-gray-700"
-                >
-                  Admin
-                </Link>
-                <Link
-                  href="/settings"
-                  className="text-sm text-gray-500 hover:text-gray-700"
-                >
-                  Settings
-                </Link>
-                <SignOutButton />
-              </div>
+      <body className="h-full bg-surface font-sans text-body">
+        <ToastProvider>
+          {user ? (
+            <div className="flex h-full">
+              <Suspense>
+                <Sidebar userEmail={user.email ?? ""} />
+              </Suspense>
+              <main className="flex-1 overflow-y-auto p-4 pt-16 lg:p-8 lg:pt-8">
+                {children}
+              </main>
+              <TaskNotifications />
             </div>
+          ) : (
+            <div className="min-h-full">{children}</div>
           )}
-          {children}
-        </div>
+        </ToastProvider>
       </body>
     </html>
   );

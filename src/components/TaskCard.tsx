@@ -1,11 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { memo } from "react";
 import Link from "next/link";
 import StatusBadge from "./StatusBadge";
 import PriorityBadge from "./PriorityBadge";
-import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import { card } from "@/lib/styles";
 import type { Status, Priority } from "@/generated/prisma/client";
+
+export interface SubtaskData {
+  id: string;
+  title: string;
+  done: boolean;
+  sortOrder: number;
+}
+
+export type Recurrence = "NONE" | "DAILY" | "WEEKLY" | "MONTHLY";
+export type TaskType = "TASK" | "MEAL" | "MEDICATION" | "TRACKER";
+export type MealType = "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+
+export interface FoodItemData {
+  id: string;
+  name: string;
+  brand: string;
+  servingSize: number;
+  servingUnit: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  sugar: number;
+  sodium: number;
+}
+
+export interface TaskFoodData {
+  id: string;
+  foodItemId: string;
+  quantity: number;
+  foodItem: FoodItemData;
+}
+
+export interface MedicationItemData {
+  id: string;
+  name: string;
+  genericName: string;
+  dosageForm: string;
+  strength: string;
+}
+
+export interface TaskMedData {
+  id: string;
+  medicationItemId: string;
+  dosage: string;
+  medicationItem: MedicationItemData;
+}
+
+export interface TaskDependencyData {
+  id: string;
+  blockerId: string;
+  blocker: { id: string; title: string; status: Status };
+}
 
 export interface TaskData {
   id: string;
@@ -14,7 +68,19 @@ export interface TaskData {
   status: Status;
   priority: Priority;
   dueDate: string | null;
+  recurrence: Recurrence;
+  taskType: TaskType;
+  mealType: MealType | null;
+  isHabit: boolean;
+  isRecurringParent: boolean;
+  parentTaskId: string | null;
+  recurrenceDays: string;
+  recurrenceTime: string;
   createdAt: string;
+  subtasks?: SubtaskData[];
+  taskFoods?: TaskFoodData[];
+  taskMeds?: TaskMedData[];
+  blockedBy?: TaskDependencyData[];
 }
 
 interface TaskCardProps {
@@ -30,25 +96,34 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function isOverdue(dateStr: string | null): boolean {
-  if (!dateStr) return false;
-  return new Date(dateStr) < new Date(new Date().toDateString());
+export function getDueStatus(
+  dateStr: string | null,
+): "overdue" | "today" | "soon" | null {
+  if (!dateStr) return null;
+  const today = new Date(new Date().toDateString());
+  const due = new Date(new Date(dateStr).toDateString());
+  const diffMs = due.getTime() - today.getTime();
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+  if (diffDays < 0) return "overdue";
+  if (diffDays === 0) return "today";
+  if (diffDays <= 3) return "soon";
+  return null;
 }
 
-export default function TaskCard({ task, onDelete }: TaskCardProps) {
-  const [showDelete, setShowDelete] = useState(false);
+export default memo(function TaskCard({ task, onDelete }: TaskCardProps) {
+  const dueStatus = task.status !== "DONE" ? getDueStatus(task.dueDate) : null;
 
   return (
     <>
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+      <div className={card}>
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-gray-900 line-clamp-1">
+          <h3 className="font-semibold text-heading line-clamp-1">
             {task.title}
           </h3>
           <div className="flex shrink-0 gap-1">
             <Link
               href={`/tasks/${task.id}/edit`}
-              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded p-1 text-muted hover:bg-elevated hover:text-body"
               title="Edit task"
             >
               <svg
@@ -66,8 +141,8 @@ export default function TaskCard({ task, onDelete }: TaskCardProps) {
               </svg>
             </Link>
             <button
-              onClick={() => setShowDelete(true)}
-              className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
+              onClick={() => onDelete(task.id)}
+              className="rounded p-1 text-muted hover:bg-danger-soft hover:text-danger-text"
               title="Delete task"
             >
               <svg
@@ -88,7 +163,7 @@ export default function TaskCard({ task, onDelete }: TaskCardProps) {
         </div>
 
         {task.description && (
-          <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+          <p className="mt-1 text-sm text-faint line-clamp-2">
             {task.description}
           </p>
         )}
@@ -97,28 +172,16 @@ export default function TaskCard({ task, onDelete }: TaskCardProps) {
           <StatusBadge status={task.status} />
           <PriorityBadge priority={task.priority} />
           {task.dueDate && (
-            <span
-              className={`text-xs ${
-                isOverdue(task.dueDate) && task.status !== "DONE"
-                  ? "font-medium text-red-600"
-                  : "text-gray-500"
-              }`}
-            >
-              Due {formatDate(task.dueDate)}
+            <span className="text-xs text-muted">
+              {dueStatus === "overdue"
+                ? "Overdue"
+                : dueStatus === "today"
+                  ? "Due today"
+                  : `Due ${formatDate(task.dueDate)}`}
             </span>
           )}
         </div>
       </div>
-
-      <DeleteConfirmDialog
-        isOpen={showDelete}
-        taskTitle={task.title}
-        onConfirm={() => {
-          setShowDelete(false);
-          onDelete(task.id);
-        }}
-        onCancel={() => setShowDelete(false)}
-      />
     </>
   );
-}
+});

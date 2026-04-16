@@ -1,6 +1,6 @@
-import type { Status, Priority } from "@/generated/prisma/client";
+import type { Status, Priority, Mood } from "@/generated/prisma/client";
 
-export type { Status, Priority };
+export type { Status, Priority, Mood };
 
 export interface CreateTaskInput {
   title: string;
@@ -17,6 +17,144 @@ export interface UpdateTaskInput {
   priority?: Priority;
   dueDate?: string | null;
 }
+
+/* ── Journal types ─────────────────────────────────── */
+
+export interface CreateJournalEntryInput {
+  title?: string;
+  content: string;
+  mood?: Mood | null;
+  tags?: string;
+  date?: string;
+}
+
+export interface UpdateJournalEntryInput {
+  title?: string;
+  content?: string;
+  mood?: Mood | null;
+  tags?: string;
+  date?: string;
+}
+
+const VALID_MOODS: Mood[] = ["GREAT", "GOOD", "OKAY", "BAD", "TERRIBLE"];
+
+export function validateCreateJournalInput(data: unknown): {
+  valid: boolean;
+  errors: string[];
+  parsed?: CreateJournalEntryInput;
+} {
+  const errors: string[] = [];
+  if (!data || typeof data !== "object") {
+    return { valid: false, errors: ["Request body must be a JSON object"] };
+  }
+
+  const obj = data as Record<string, unknown>;
+
+  if (
+    !obj.content ||
+    typeof obj.content !== "string" ||
+    obj.content.trim() === ""
+  ) {
+    errors.push("Content is required and must be a non-empty string");
+  }
+
+  if (obj.title !== undefined && typeof obj.title !== "string") {
+    errors.push("Title must be a string");
+  }
+
+  if (
+    obj.mood !== undefined &&
+    obj.mood !== null &&
+    !VALID_MOODS.includes(obj.mood as Mood)
+  ) {
+    errors.push(`Mood must be one of: ${VALID_MOODS.join(", ")}`);
+  }
+
+  if (obj.tags !== undefined && typeof obj.tags !== "string") {
+    errors.push("Tags must be a string");
+  }
+
+  if (obj.date !== undefined) {
+    if (typeof obj.date !== "string" || isNaN(Date.parse(obj.date))) {
+      errors.push("Date must be a valid date string");
+    }
+  }
+
+  if (errors.length > 0) {
+    return { valid: false, errors };
+  }
+
+  return {
+    valid: true,
+    errors: [],
+    parsed: {
+      title: obj.title ? (obj.title as string).trim() : undefined,
+      content: (obj.content as string).trim(),
+      mood: obj.mood as Mood | null | undefined,
+      tags: obj.tags as string | undefined,
+      date: obj.date as string | undefined,
+    },
+  };
+}
+
+export function validateUpdateJournalInput(data: unknown): {
+  valid: boolean;
+  errors: string[];
+  parsed?: UpdateJournalEntryInput;
+} {
+  const errors: string[] = [];
+  if (!data || typeof data !== "object") {
+    return { valid: false, errors: ["Request body must be a JSON object"] };
+  }
+
+  const obj = data as Record<string, unknown>;
+
+  if (obj.content !== undefined) {
+    if (typeof obj.content !== "string" || obj.content.trim() === "") {
+      errors.push("Content must be a non-empty string");
+    }
+  }
+
+  if (obj.title !== undefined && typeof obj.title !== "string") {
+    errors.push("Title must be a string");
+  }
+
+  if (
+    obj.mood !== undefined &&
+    obj.mood !== null &&
+    !VALID_MOODS.includes(obj.mood as Mood)
+  ) {
+    errors.push(`Mood must be one of: ${VALID_MOODS.join(", ")}`);
+  }
+
+  if (obj.tags !== undefined && typeof obj.tags !== "string") {
+    errors.push("Tags must be a string");
+  }
+
+  if (obj.date !== undefined) {
+    if (typeof obj.date !== "string" || isNaN(Date.parse(obj.date))) {
+      errors.push("Date must be a valid date string");
+    }
+  }
+
+  if (errors.length > 0) {
+    return { valid: false, errors };
+  }
+
+  return {
+    valid: true,
+    errors: [],
+    parsed: {
+      title: obj.title !== undefined ? (obj.title as string).trim() : undefined,
+      content: obj.content ? (obj.content as string).trim() : undefined,
+      mood: obj.mood as Mood | null | undefined,
+      tags: obj.tags as string | undefined,
+      date: obj.date as string | undefined,
+    },
+  };
+}
+
+/* ── Task types ────────────────────────────────────── */
 
 const VALID_STATUSES: Status[] = ["TODO", "IN_PROGRESS", "DONE"];
 const VALID_PRIORITIES: Priority[] = ["LOW", "MEDIUM", "HIGH"];

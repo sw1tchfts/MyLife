@@ -19,6 +19,27 @@ enum Priority {
   HIGH
 }
 
+enum Recurrence {
+  NONE
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum TaskType {
+  TASK
+  MEAL
+  MEDICATION
+  TRACKER
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
 model Task {
   id          String     @id @default(cuid())
   title       String
@@ -26,36 +47,332 @@ model Task {
   status      Status     @default(TODO)
   priority    Priority   @default(MEDIUM)
   dueDate     DateTime?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  categories  TaskCategory[]
+  recurrence  Recurrence @default(NONE)
+  taskType    TaskType   @default(TASK)
+  mealType    MealType?
+  isHabit           Boolean    @default(false)
+  isRecurringParent Boolean    @default(false)
+  parentTaskId      String?
+  recurrenceDays    String     @default("")
+  recurrenceTime    String     @default("")
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  parentTask        Task?      @relation("TaskInstances", fields: [parentTaskId], references: [id], onDelete: SetNull)
+  instances         Task[]     @relation("TaskInstances")
+  subtasks          Subtask[]
+  taskFoods         TaskFood[]
+  taskMeds          TaskMedication[]
+  nutritionLogs     NutritionLog[]
+  blockedBy         TaskDependency[] @relation("BlockedTask")
+  blocking          TaskDependency[] @relation("BlockerTask")
+
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@index([taskType])
+  @@index([parentTaskId])
+  @@index([isRecurringParent])
+  @@index([dueDate])
+  @@index([updatedAt])
+  @@index([taskType, status])
 }
 
-model Category {
+model TaskDependency {
+  id          String @id @default(cuid())
+  blockerId   String
+  blockedId   String
+  blocker     Task   @relation("BlockerTask", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked     Task   @relation("BlockedTask", fields: [blockedId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+  @@index([blockerId])
+  @@index([blockedId])
+}
+
+model Subtask {
   id        String   @id @default(cuid())
-  name      String
-  color     String   @default("#6B7280")
+  title     String
+  done      Boolean  @default(false)
+  sortOrder Int      @default(0)
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
-  tasks     TaskCategory[]
-}
 
-model TaskCategory {
-  taskId     String
-  categoryId String
-  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  @@id([taskId, categoryId])
-}
-
-model AppSettings {
-  key   String @id
-  value String
+  @@index([taskId])
 }
 
 model UserSettings {
-  userId              String  @id
-  theme               String  @default("light")
-  emailNotifications  Boolean @default(false)
+  userId               String  @id
+  theme                String  @default("light")
+  emailNotifications   Boolean @default(false)
   browserNotifications Boolean @default(false)
+  trackerEnabled       Boolean @default(true)
+  trackerConfig        Json    @default("{\"metrics\":{\"weight\":true,\"bodyFat\":true,\"waist\":false,\"chest\":false,\"manualCalories\":false},\"units\":{\"weight\":\"lbs\",\"measurements\":\"in\"},\"profile\":{\"height\":null,\"heightUnit\":\"in\",\"age\":null,\"sex\":null,\"activityLevel\":\"moderate\"},\"goal\":{\"type\":\"maintenance\",\"weeklyRateLbs\":0}}")
+}
+
+// ── Diet & Nutrition Tracking ─────────────────────────
+
+model FoodItem {
+  id           String   @id @default(cuid())
+  name         String
+  brand        String   @default("")
+  servingSize  Float    @default(100)
+  servingUnit  String   @default("g")
+  // Macros (per serving)
+  calories     Float    @default(0)
+  protein      Float    @default(0)
+  carbs        Float    @default(0)
+  fat          Float    @default(0)
+  fiber        Float    @default(0)
+  sugar        Float    @default(0)
+  sodium       Float    @default(0)
+  // Micros (per serving)
+  vitaminA     Float    @default(0)
+  vitaminC     Float    @default(0)
+  vitaminD     Float    @default(0)
+  calcium      Float    @default(0)
+  iron         Float    @default(0)
+  potassium    Float    @default(0)
+  // Source
+  externalId   String   @default("")
+  source       String   @default("")
+  createdAt    DateTime @default(now())
+  taskFoods    TaskFood[]
+}
+
+model TaskFood {
+  id         String   @id @default(cuid())
+  taskId     String
+  foodItemId String
+  quantity   Float    @default(1)
+  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  foodItem   FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([foodItemId])
+}
+
+model NutritionLog {
+  id        String   @id @default(cuid())
+  date      DateTime
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  calories  Float    @default(0)
+  protein   Float    @default(0)
+  carbs     Float    @default(0)
+  fat       Float    @default(0)
+  fiber     Float    @default(0)
+  sugar     Float    @default(0)
+  sodium    Float    @default(0)
+  vitaminA  Float    @default(0)
+  vitaminC  Float    @default(0)
+  vitaminD  Float    @default(0)
+  calcium   Float    @default(0)
+  iron      Float    @default(0)
+  potassium Float    @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([date])
+  @@index([taskId])
+}
+
+// ── Medication Tracking ───────────────────────────────
+
+model MedicationItem {
+  id           String   @id @default(cuid())
+  name         String
+  genericName  String   @default("")
+  dosageForm   String   @default("")
+  strength     String   @default("")
+  description  String   @default("")
+  externalId   String   @default("")
+  source       String   @default("")
+  createdAt    DateTime @default(now())
+  taskMeds     TaskMedication[]
+}
+
+model TaskMedication {
+  id               String         @id @default(cuid())
+  taskId           String
+  medicationItemId String
+  dosage           String         @default("")
+  task             Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  medicationItem   MedicationItem @relation(fields: [medicationItemId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([medicationItemId])
+}
+
+// ── Journal ───────────────────────────────────────────
+
+enum Mood {
+  GREAT
+  GOOD
+  OKAY
+  BAD
+  TERRIBLE
+}
+
+model JournalEntry {
+  id        String   @id @default(cuid())
+  title     String   @default("")
+  content   String
+  mood      Mood?
+  tags      String   @default("")
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date(sort: Desc)])
+  @@index([mood])
+}
+
+// ── Body Metrics ──────────────────────────────────────
+
+enum MetricType {
+  WEIGHT
+  BODY_FAT
+  HEIGHT
+  WAIST
+  CHEST
+  BMI
+}
+
+model BodyMetric {
+  id        String     @id @default(cuid())
+  date      DateTime
+  type      MetricType
+  value     Float
+  unit      String     @default("")
+  createdAt DateTime   @default(now())
+
+  @@index([date])
+  @@index([type])
+}
+
+// ── Gym & Workout Tracking ───────────────────────────
+
+model Exercise {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  muscleGroup      String
+  secondaryMuscles String   @default("")
+  equipment        String   @default("bodyweight")
+  difficulty       String   @default("beginner")
+  category         String   @default("strength")
+  force            String   @default("")
+  mechanic         String   @default("")
+  instructions     String   @default("")
+  tips             String   @default("")
+  createdAt        DateTime @default(now())
+  routineExercises RoutineDayExercise[]
+  logExercises     WorkoutLogExercise[]
+
+  @@index([muscleGroup])
+  @@index([slug])
+}
+
+model WorkoutRoutine {
+  id          String   @id @default(cuid())
+  name        String
+  description String   @default("")
+  goal        String   @default("hypertrophy")
+  level       String   @default("beginner")
+  daysPerWeek Int      @default(3)
+  isPreset    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  days        WorkoutRoutineDay[]
+  logs        WorkoutLog[]
+
+  @@index([createdAt(sort: Desc)])
+}
+
+model WorkoutRoutineDay {
+  id           String   @id @default(cuid())
+  routineId    String
+  name         String
+  dayOrder     Int      @default(0)
+  scheduledDay String?
+  createdAt    DateTime @default(now())
+  routine      WorkoutRoutine       @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  exercises    RoutineDayExercise[]
+  logs         WorkoutLog[]
+
+  @@index([routineId])
+}
+
+model RoutineDayExercise {
+  id           String   @id @default(cuid())
+  routineDayId String
+  exerciseId   String
+  sets         Int      @default(3)
+  repsMin      Int      @default(8)
+  repsMax      Int      @default(12)
+  restSeconds  Int      @default(90)
+  sortOrder    Int      @default(0)
+  notes        String   @default("")
+  createdAt    DateTime @default(now())
+  routineDay   WorkoutRoutineDay @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
+  exercise     Exercise          @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@index([routineDayId])
+  @@index([exerciseId])
+}
+
+model WorkoutLog {
+  id              String   @id @default(cuid())
+  routineId       String?
+  routineDayId    String?
+  routineName     String   @default("")
+  routineDayName  String   @default("")
+  date            DateTime
+  durationMinutes Int      @default(0)
+  notes           String   @default("")
+  createdAt       DateTime @default(now())
+  routine         WorkoutRoutine?    @relation(fields: [routineId], references: [id], onDelete: SetNull)
+  routineDay      WorkoutRoutineDay? @relation(fields: [routineDayId], references: [id], onDelete: SetNull)
+  exercises       WorkoutLogExercise[]
+
+  @@index([date(sort: Desc)])
+  @@index([routineId])
+}
+
+model WorkoutLogExercise {
+  id         String   @id @default(cuid())
+  logId      String
+  exerciseId String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  log        WorkoutLog @relation(fields: [logId], references: [id], onDelete: Cascade)
+  exercise   Exercise   @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  sets       WorkoutLogSet[]
+
+  @@index([logId])
+  @@index([exerciseId])
+}
+
+model WorkoutLogSet {
+  id            String   @id @default(cuid())
+  logExerciseId String
+  setNumber     Int      @default(1)
+  reps          Int      @default(0)
+  weight        Float    @default(0)
+  unit          String   @default("lbs")
+  completed     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  logExercise   WorkoutLogExercise @relation(fields: [logExerciseId], references: [id], onDelete: Cascade)
+
+  @@index([logExerciseId])
+}
+
+model ProgressPhoto {
+  id        String   @id @default(cuid())
+  date      DateTime
+  photoUrl  String
+  notes     String   @default("")
+  createdAt DateTime @default(now())
+
+  @@index([date(sort: Desc)])
 }
