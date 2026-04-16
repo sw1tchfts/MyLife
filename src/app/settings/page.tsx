@@ -59,16 +59,12 @@ const DEFAULT_TRACKER_CONFIG: TrackerConfig = {
 };
 
 interface UserSettingsData {
-  emailNotifications: boolean;
-  browserNotifications: boolean;
   trackerEnabled: boolean;
   trackerConfig: TrackerConfig;
 }
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<UserSettingsData>({
-    emailNotifications: false,
-    browserNotifications: false,
     trackerEnabled: true,
     trackerConfig: DEFAULT_TRACKER_CONFIG,
   });
@@ -84,8 +80,6 @@ export default function SettingsPage() {
       .then((r) => r.json())
       .then((data) => {
         setSettings({
-          emailNotifications: data.emailNotifications || false,
-          browserNotifications: data.browserNotifications || false,
           trackerEnabled: data.trackerEnabled ?? true,
           trackerConfig: data.trackerConfig
             ? { ...DEFAULT_TRACKER_CONFIG, ...data.trackerConfig }
@@ -170,54 +164,6 @@ export default function SettingsPage() {
               </button>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Notifications */}
-      <div className="mt-8">
-        <h2 className={sectionTitle}>Notifications</h2>
-        <div className="mt-4 space-y-3">
-          <label className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              checked={settings.emailNotifications}
-              onChange={(e) =>
-                setSettings((s) => ({
-                  ...s,
-                  emailNotifications: e.target.checked,
-                }))
-              }
-              className="h-4 w-4 rounded border-input-border"
-            />
-            <span className="text-sm text-body">
-              Email notifications for upcoming due dates
-            </span>
-          </label>
-          <label className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              checked={settings.browserNotifications}
-              onChange={async (e) => {
-                if (e.target.checked && "Notification" in window) {
-                  const perm = await Notification.requestPermission();
-                  if (perm !== "granted") {
-                    setError(
-                      "Browser notifications were blocked. Enable them in your browser settings.",
-                    );
-                    return;
-                  }
-                }
-                setSettings((s) => ({
-                  ...s,
-                  browserNotifications: e.target.checked,
-                }));
-              }}
-              className="h-4 w-4 rounded border-input-border"
-            />
-            <span className="text-sm text-body">
-              Browser notifications for overdue and due-today tasks
-            </span>
-          </label>
         </div>
       </div>
 

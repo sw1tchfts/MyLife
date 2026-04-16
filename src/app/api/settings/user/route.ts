@@ -19,8 +19,6 @@ export async function GET() {
       settings || {
         userId: user.id,
         theme: "light",
-        emailNotifications: false,
-        browserNotifications: false,
         trackerEnabled: true,
         trackerConfig: {
           metrics: {
@@ -66,12 +64,6 @@ export async function PUT(request: NextRequest) {
       where: { userId: user.id },
       update: {
         ...(body.theme !== undefined && { theme: body.theme }),
-        ...(body.emailNotifications !== undefined && {
-          emailNotifications: body.emailNotifications,
-        }),
-        ...(body.browserNotifications !== undefined && {
-          browserNotifications: body.browserNotifications,
-        }),
         ...(body.trackerEnabled !== undefined && {
           trackerEnabled: body.trackerEnabled,
         }),
@@ -82,8 +74,6 @@ export async function PUT(request: NextRequest) {
       create: {
         userId: user.id,
         theme: body.theme || "light",
-        emailNotifications: body.emailNotifications || false,
-        browserNotifications: body.browserNotifications || false,
         trackerEnabled: body.trackerEnabled ?? true,
         trackerConfig: body.trackerConfig || undefined,
       },

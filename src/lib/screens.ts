@@ -82,7 +82,6 @@ const SECTION_HEADINGS = {
   // Settings page
   appearance: "Appearance",
   account: "Account",
-  notifications: "Notifications",
   dailyTracker: "Daily Tracker",
 
   // Daily Log dashboard sections

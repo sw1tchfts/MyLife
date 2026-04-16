@@ -73,7 +73,6 @@ src/
     api/tasks/[id]/subtasks/route.ts # POST + PUT + DELETE subtasks
     api/tasks/[id]/dependencies/route.ts # GET + POST + DELETE task dependencies
     api/tasks/generate-instances/route.ts # POST — generate recurring task instances (called on app startup)
-    api/tasks/notifications/route.ts     # GET — lightweight overdue/due-today counts
     api/rankings/categories/route.ts     # GET + POST ranking categories
     api/rankings/categories/[id]/route.ts # GET + PUT + DELETE ranking category
     api/rankings/items/route.ts          # POST ranking items
@@ -113,7 +112,7 @@ src/
     gym/page.tsx               # Gym (exercises, routines)
     diagrams/page.tsx          # Diagram creator (flowcharts, process, swim lane, ER)
     auth/reset-password/page.tsx # Password reset page
-    settings/page.tsx          # User settings (theme, account, notifications, tracker config)
+    settings/page.tsx          # User settings (theme, account, tracker config)
   components/
     Sidebar.tsx                # Left navigation sidebar (Notion-style)
     SubtaskList.tsx            # Subtask checklist with progress bar
@@ -124,7 +123,6 @@ src/
     StatusBadge.tsx            # Status pill (React.memo)
     PriorityBadge.tsx          # Priority pill (React.memo)
     ToastProvider.tsx          # Toast notifications with undo support
-    TaskNotifications.tsx      # Browser notifications using lightweight /api/tasks/notifications
     diagrams/
       DiagramNodes.tsx         # Custom React Flow node types (process, decision, etc.)
     views/
