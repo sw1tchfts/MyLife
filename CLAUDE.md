@@ -62,7 +62,6 @@ src/
   lib/prisma.ts                # Prisma client singleton
   lib/types.ts                 # Validation + shared types
   lib/screens.ts               # Centralized screen, tab, modal, and shared label constants
-  lib/elo.ts                   # Elo rating algorithm for pairwise ranking
   lib/tdee.ts                  # Adaptive TDEE algorithm (weight tracking + daily burn)
   lib/recurrence.ts            # Recurring task instance generation
   app/
@@ -74,11 +73,6 @@ src/
     api/tasks/[id]/dependencies/route.ts # GET + POST + DELETE task dependencies
     api/tasks/generate-instances/route.ts # POST — generate recurring task instances (called on app startup)
     api/tasks/notifications/route.ts     # GET — lightweight overdue/due-today counts
-    api/rankings/categories/route.ts     # GET + POST ranking categories
-    api/rankings/categories/[id]/route.ts # GET + PUT + DELETE ranking category
-    api/rankings/items/route.ts          # POST ranking items
-    api/rankings/items/[id]/route.ts     # PUT + DELETE ranking items
-    api/rankings/compare/route.ts        # GET next pair + POST comparison result
     api/foods/search/route.ts          # GET search USDA FoodData Central
     api/foods/route.ts                 # GET + POST saved foods
     api/foods/[id]/route.ts            # DELETE saved food
@@ -86,8 +80,6 @@ src/
     api/medications/route.ts           # GET + POST saved medications
     api/medications/[id]/route.ts      # DELETE saved medication
     api/nutrition/route.ts             # GET nutrition logs (by date range)
-    api/diagrams/route.ts              # GET + POST diagrams
-    api/diagrams/[id]/route.ts         # GET + PUT + DELETE single diagram
     api/body-metrics/route.ts          # GET + POST body metrics
     api/body-metrics/[id]/route.ts     # DELETE body metric
     api/tracker/route.ts               # GET tracker dashboard data + POST daily log
@@ -106,12 +98,10 @@ src/
     tasks/[id]/edit/page.tsx   # Edit task page
     journal/page.tsx           # Journal (write, entries list, calendar view)
     journal/loading.tsx        # Skeleton loading state for journal page
-    rankings/page.tsx          # Pairwise ranking system (categories, items, compare, rankings, stats)
     diet/page.tsx              # Diet & nutrition (food library, diet routines)
     diet/loading.tsx           # Skeleton loading state for diet page
     medications/page.tsx       # Medication tracking (search, saved meds, schedule)
     gym/page.tsx               # Gym (exercises, routines)
-    diagrams/page.tsx          # Diagram creator (flowcharts, process, swim lane, ER)
     auth/reset-password/page.tsx # Password reset page
     settings/page.tsx          # User settings (theme, account, notifications, tracker config)
   components/
@@ -125,8 +115,6 @@ src/
     PriorityBadge.tsx          # Priority pill (React.memo)
     ToastProvider.tsx          # Toast notifications with undo support
     TaskNotifications.tsx      # Browser notifications using lightweight /api/tasks/notifications
-    diagrams/
-      DiagramNodes.tsx         # Custom React Flow node types (process, decision, etc.)
     views/
       ListView.tsx             # Table/list view with sortable columns + mobile cards
       DashboardView.tsx        # Habit tracking grid, streaks, and weekly progress
@@ -138,17 +126,12 @@ src/
     diet/
       FoodLibraryTab.tsx       # Food search + saved food library
       DietRoutineTab.tsx       # Meal planning with food assignments
-    rankings/
-      ItemsTab.tsx             # Ranking list item management
-      CompareTab.tsx           # Pairwise comparison UI
-      RankingsTab.tsx          # Ranked results display with tiers
-      StatsTab.tsx             # Ranking statistics overview
 ```
 
 ## Navigation
 
 - Left sidebar (Notion-style) with section links and manage links
-- Sidebar links: Tasks, Diet, Gym, Medications, Journal, Rankings, Diagrams
+- Sidebar links: Tasks, Diet, Gym, Medications, Journal
 - Manage section: Settings
 - `/` redirects to `/tasks`
 - Sidebar only shown for authenticated users; login page gets plain layout
@@ -239,10 +222,10 @@ src/
 - #8 Calendar view — DONE
 - #9 Admin settings page — REMOVED (categories, default task settings, data export)
 - #10 User settings page — DONE
-- #12 Pairwise ranking system — DONE
+- #12 Pairwise ranking system — REMOVED
 - #14 Diet and medication tracking — DONE
 - #15 Journal section — DONE
-- #16 Diagram creator — DONE
+- #16 Diagram creator — REMOVED
 - #19 Weight tracking & adaptive TDEE Daily Burn — DONE
 - #20 Undo on delete (toast instead of confirmation dialog) — DONE
 - #21 Landing page dashboard with today's overview

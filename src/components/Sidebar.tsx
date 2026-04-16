@@ -161,28 +161,6 @@ export default function Sidebar({ userEmail }: SidebarProps) {
               <JournalIcon active={pathname.startsWith("/journal")} />
               Journal
             </Link>
-            <Link
-              href="/rankings"
-              className={`${navLinkBase} ${
-                pathname.startsWith("/rankings")
-                  ? navLinkActive
-                  : navLinkInactive
-              }`}
-            >
-              <RankingIcon active={pathname.startsWith("/rankings")} />
-              Pairwise Ranker
-            </Link>
-            <Link
-              href="/diagrams"
-              className={`${navLinkBase} ${
-                pathname.startsWith("/diagrams")
-                  ? navLinkActive
-                  : navLinkInactive
-              }`}
-            >
-              <DiagramIcon active={pathname.startsWith("/diagrams")} />
-              Diagram Creator
-            </Link>
           </div>
 
           {/* Manage */}
@@ -301,25 +279,6 @@ function GymIcon({ active }: { active: boolean }) {
   );
 }
 
-function RankingIcon({ active }: { active: boolean }) {
-  const cls = active ? "text-accent-text" : "text-muted";
-  return (
-    <svg
-      className={`h-4 w-4 ${cls}`}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      strokeWidth={2}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
-      />
-    </svg>
-  );
-}
-
 function JournalIcon({ active }: { active: boolean }) {
   const cls = active ? "text-accent-text" : "text-muted";
   return (
@@ -334,25 +293,6 @@ function JournalIcon({ active }: { active: boolean }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-      />
-    </svg>
-  );
-}
-
-function DiagramIcon({ active }: { active: boolean }) {
-  const cls = active ? "text-accent-text" : "text-muted";
-  return (
-    <svg
-      className={`h-4 w-4 ${cls}`}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      strokeWidth={2}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM9 7h5M7 10v4m10-4v4M4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
       />
     </svg>
   );

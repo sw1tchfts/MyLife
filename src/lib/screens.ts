@@ -13,8 +13,6 @@ export const SCREEN_NAMES = {
   gym: "Gym",
   medications: "Medications",
   journal: "Journal",
-  rankings: "Pairwise Ranker",
-  diagrams: "Diagram Creator",
   settings: "Settings",
 } as const;
 
@@ -51,13 +49,6 @@ export const MEDICATION_TABS = [
   { key: "schedule", label: "Medication Schedule" },
 ] as const;
 
-export const RANKING_TABS = [
-  { key: "items", label: "Items" },
-  { key: "compare", label: "Compare" },
-  { key: "rankings", label: "Rankings" },
-  { key: "stats", label: "Stats" },
-] as const;
-
 /* ── Modal / Panel Titles ────────────────────────────── */
 
 export const MODAL_TITLES = {
@@ -70,7 +61,6 @@ export const MODAL_TITLES = {
   newMedSchedule: "New Medication Schedule",
   addMealToPlan: "Add Meal to Plan",
   newWorkoutRoutine: "New Workout Routine",
-  manageRankingLists: "Manage Ranking Lists",
 } as const;
 
 /* ── Section Headings ────────────────────────────────── */
@@ -173,9 +163,3 @@ const MOOD_OPTIONS = [
   { value: "TERRIBLE", label: "Terrible", emoji: "\u{1f622}" },
 ] as const;
 
-export const DIAGRAM_TYPE_LABELS: Record<string, string> = {
-  FLOWCHART: "Flowchart",
-  PROCESS: "Process Diagram",
-  SWIMLANE: "Swim Lane",
-  ER_DIAGRAM: "ER Diagram",
-};
