@@ -287,7 +287,7 @@ function TaskFoodManager({
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-body">Foods</h3>
         {taskFoods.length > 0 && (
-          <span className="text-xs text-success-text">
+          <span className="text-xs text-accent-text">
             {totalCal} cal · {totalPro}g protein
           </span>
         )}
@@ -303,7 +303,7 @@ function TaskFoodManager({
           </span>
           <button
             onClick={() => removeFood(tf.id)}
-            className="text-faint opacity-0 hover:text-danger group-hover:opacity-100"
+            className="text-faint opacity-0 hover:text-accent-text group-hover:opacity-100"
           >
             <svg
               className="h-3.5 w-3.5"
@@ -414,7 +414,7 @@ function TaskMedManager({
           </span>
           <button
             onClick={() => removeMed(tm.id)}
-            className="text-faint opacity-0 hover:text-danger group-hover:opacity-100"
+            className="text-faint opacity-0 hover:text-accent-text group-hover:opacity-100"
           >
             <svg
               className="h-3.5 w-3.5"
@@ -456,7 +456,7 @@ function TaskMedManager({
         <button
           onClick={addMed}
           disabled={!selectedMedId}
-          className="rounded-full bg-success px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-success-hover active:opacity-80 disabled:opacity-50"
+          className="rounded-full bg-accent px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-accent-hover active:opacity-80 disabled:opacity-50"
         >
           Add
         </button>

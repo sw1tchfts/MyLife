@@ -6,7 +6,7 @@ import PriorityBadge from "@/components/PriorityBadge";
 import { getDueStatus } from "@/components/TaskCard";
 import type { TaskData } from "@/components/TaskCard";
 import {
-  badgeSm,
+  badge,
   btnDangerSm,
   emptyState,
   deleteBtn,
@@ -417,7 +417,7 @@ function TaskTable({
                         ),
                       );
                       return (
-                        <p className="mt-0.5 text-xs text-success-text">
+                        <p className="mt-0.5 text-xs text-accent-text">
                           {totalCal} cal · {totalPro}g protein
                         </p>
                       );
@@ -436,28 +436,28 @@ function TaskTable({
                     <PriorityBadge priority={task.priority} />
                     {task.taskType === "MEAL" && (
                       <span
-                        className={`${badgeSm} bg-accent-soft text-accent-text`}
+                        className={`${badge} bg-accent-soft text-accent-text`}
                       >
                         Meal
                       </span>
                     )}
                     {task.taskType === "MEDICATION" && (
                       <span
-                        className={`${badgeSm} bg-accent-soft text-accent-text`}
+                        className={`${badge} bg-accent-soft text-accent-text`}
                       >
                         Med
                       </span>
                     )}
                     {task.taskType === "TRACKER" && (
                       <span
-                        className={`${badgeSm} bg-accent-soft text-accent-text`}
+                        className={`${badge} bg-accent-soft text-accent-text`}
                       >
                         Tracker
                       </span>
                     )}
                     {task.recurrence && task.recurrence !== "NONE" && (
                       <span
-                        className={`${badgeSm} bg-accent-soft text-accent-text`}
+                        className={`${badge} bg-accent-soft text-accent-text`}
                       >
                         ↻{" "}
                         {task.recurrence.charAt(0) +
@@ -469,7 +469,7 @@ function TaskTable({
                         (d) => d.blocker.status !== "DONE",
                       ) && (
                         <span
-                          className={`${badgeSm} bg-accent-soft text-accent-text`}
+                          className={`${badge} bg-accent-soft text-accent-text`}
                         >
                           Blocked
                         </span>
@@ -581,28 +581,28 @@ function TaskTable({
                       </span>
                       {task.taskType === "MEAL" && (
                         <span
-                          className={`${badgeSm} bg-accent-soft text-accent-text`}
+                          className={`${badge} bg-accent-soft text-accent-text`}
                         >
                           Meal
                         </span>
                       )}
                       {task.taskType === "MEDICATION" && (
                         <span
-                          className={`${badgeSm} bg-accent-soft text-accent-text`}
+                          className={`${badge} bg-accent-soft text-accent-text`}
                         >
                           Med
                         </span>
                       )}
                       {task.taskType === "TRACKER" && (
                         <span
-                          className={`${badgeSm} bg-accent-soft text-accent-text`}
+                          className={`${badge} bg-accent-soft text-accent-text`}
                         >
                           Tracker
                         </span>
                       )}
                       {task.recurrence && task.recurrence !== "NONE" && (
                         <span
-                          className={`${badgeSm} bg-accent-soft text-accent-text`}
+                          className={`${badge} bg-accent-soft text-accent-text`}
                           title={`Repeats ${task.recurrence.toLowerCase()}`}
                         >
                           ↻{" "}
@@ -620,7 +620,7 @@ function TaskTable({
                           (d) => d.blocker.status !== "DONE",
                         ) && (
                           <span
-                            className={`${badgeSm} bg-accent-soft text-accent-text`}
+                            className={`${badge} bg-accent-soft text-accent-text`}
                             title={`Blocked by: ${task.blockedBy
                               .filter((d) => d.blocker.status !== "DONE")
                               .map((d) => d.blocker.title)
@@ -651,7 +651,7 @@ function TaskTable({
                           ),
                         );
                         return (
-                          <p className="mt-0.5 text-xs text-success-text">
+                          <p className="mt-0.5 text-xs text-accent-text">
                             {totalCal} cal · {totalPro}g protein ·{" "}
                             {task.taskFoods.length} food
                             {task.taskFoods.length !== 1 ? "s" : ""}

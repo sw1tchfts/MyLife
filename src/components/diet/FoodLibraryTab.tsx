@@ -172,7 +172,7 @@ export default function FoodLibraryTab() {
                 <button
                   onClick={() => saveFood(r)}
                   disabled={saving === r.fdcId}
-                  className="rounded-[10px] bg-success-soft px-3 py-1.5 text-xs font-medium text-success-text disabled:opacity-50"
+                  className="rounded-[10px] bg-accent-soft px-3 py-1.5 text-xs font-medium text-accent-text disabled:opacity-50"
                 >
                   {saving === r.fdcId ? "Saving..." : "Save"}
                 </button>

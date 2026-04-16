@@ -192,7 +192,7 @@ function MedicationsTab() {
                 <button
                   onClick={() => saveMed(r)}
                   disabled={saving === r.externalId}
-                  className="rounded-[10px] bg-success-soft px-3 py-1.5 text-xs font-medium text-success-text disabled:opacity-50"
+                  className="rounded-[10px] bg-accent-soft px-3 py-1.5 text-xs font-medium text-accent-text disabled:opacity-50"
                 >
                   {saving === r.externalId ? "Saving..." : "Save"}
                 </button>
@@ -400,7 +400,7 @@ function ScheduleTab() {
                 ))}
               </select>
               {meds.length === 0 && (
-                <p className="mt-1 text-xs text-warning-text">
+                <p className="mt-1 text-xs text-accent-text">
                   No medications saved yet. Add medications in the Medications
                   tab first.
                 </p>

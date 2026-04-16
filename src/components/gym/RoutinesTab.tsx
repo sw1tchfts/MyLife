@@ -349,7 +349,7 @@ export default function RoutinesTab() {
                     </span>
                     <button
                       onClick={() => removeDay(dayIdx)}
-                      className="text-xs text-faint hover:text-danger-text"
+                      className="text-xs text-faint hover:text-accent-text"
                     >
                       Remove
                     </button>
@@ -453,7 +453,7 @@ export default function RoutinesTab() {
                               onClick={() =>
                                 removeExerciseFromDay(dayIdx, exIdx)
                               }
-                              className="text-faint hover:text-danger-text"
+                              className="text-faint hover:text-accent-text"
                             >
                               &times;
                             </button>
@@ -585,7 +585,7 @@ export default function RoutinesTab() {
 
             {/* Activation panel */}
             {activatingId === routine.id && (
-              <div className="mt-3 rounded-md border border-success bg-success-soft p-3">
+              <div className="mt-3 rounded-md border border-accent bg-accent-soft p-3">
                 <p className="mb-2 text-xs font-medium text-body">
                   Assign each day to a weekday:
                 </p>
@@ -607,7 +607,7 @@ export default function RoutinesTab() {
                             }
                             className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${
                               dayAssignments[day.id] === wd
-                                ? "border-success bg-success text-white"
+                                ? "border-accent bg-accent text-white"
                                 : `${pillInactive}`
                             }`}
                           >

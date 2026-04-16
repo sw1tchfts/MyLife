@@ -122,7 +122,7 @@ export default function TaskForm({
       inactive: `border px-3 py-1.5 text-sm font-medium ${pillInactive}`,
     },
     green: {
-      active: "border-green-600 bg-success-soft text-success-text",
+      active: "border-accent bg-accent-soft text-accent-text",
       inactive: `border px-3 py-1.5 text-sm font-medium ${pillInactive}`,
     },
     blue: {
@@ -134,7 +134,7 @@ export default function TaskForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
-        <div className="rounded-md bg-danger-soft p-3 text-sm text-danger-text">
+        <div className="rounded-md bg-accent-soft p-3 text-sm text-accent-text">
           {error}
         </div>
       )}
@@ -199,7 +199,7 @@ export default function TaskForm({
 
       <div>
         <label htmlFor="title" className={labelCls}>
-          Title <span className="text-danger">*</span>
+          Title <span className="text-accent-text">*</span>
         </label>
         <input
           id="title"

@@ -45,9 +45,9 @@ interface TrackerFormProps {
 }
 
 const CONFIDENCE_LABELS = {
-  low: { text: "Low", color: "text-danger", bg: "bg-danger-soft" },
-  medium: { text: "Medium", color: "text-warning", bg: "bg-warning-soft" },
-  high: { text: "High", color: "text-success-text", bg: "bg-success-soft" },
+  low: { text: "Low", color: "text-accent-text", bg: "bg-accent-soft" },
+  medium: { text: "Medium", color: "text-accent-text", bg: "bg-accent-soft" },
+  high: { text: "High", color: "text-accent-text", bg: "bg-accent-soft" },
 };
 
 export default function TrackerForm({
@@ -164,16 +164,16 @@ export default function TrackerForm({
   const conf = tdee ? CONFIDENCE_LABELS[tdee.confidence] : null;
 
   return (
-    <div className="rounded-xl border border-info-soft bg-info-soft/30 p-4">
+    <div className="rounded-xl border border-accent-soft bg-accent-soft/30 p-4">
       {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className={`${badge} bg-info-soft text-info-text`}>
+          <span className={`${badge} bg-accent-soft text-accent-text`}>
             Tracker
           </span>
           <h3 className="text-sm font-semibold text-heading">Daily Log</h3>
           {isDone && (
-            <span className={`${badge} bg-success-soft text-success-text`}>
+            <span className={`${badge} bg-accent-soft text-accent-text`}>
               Logged
             </span>
           )}
@@ -218,7 +218,7 @@ export default function TrackerForm({
             <span>
               Weekly:{" "}
               <span
-                className={`font-medium ${tdee.weeklyWeightChange > 0 ? "text-danger-text" : tdee.weeklyWeightChange < 0 ? "text-success-text" : "text-heading"}`}
+                className={`font-medium ${tdee.weeklyWeightChange > 0 ? "text-accent-text" : tdee.weeklyWeightChange < 0 ? "text-accent-text" : "text-heading"}`}
               >
                 {tdee.weeklyWeightChange > 0 ? "+" : ""}
                 {tdee.weeklyWeightChange} {tdee.weightUnit}
@@ -229,7 +229,7 @@ export default function TrackerForm({
             <span>
               Balance:{" "}
               <span
-                className={`font-medium ${tdee.dailySurplusDeficit > 0 ? "text-danger-text" : "text-success-text"}`}
+                className={`font-medium ${tdee.dailySurplusDeficit > 0 ? "text-accent-text" : "text-accent-text"}`}
               >
                 {tdee.dailySurplusDeficit > 0 ? "+" : ""}
                 {tdee.dailySurplusDeficit} cal
@@ -255,10 +255,10 @@ export default function TrackerForm({
             <span className="text-accent-text">
               {Math.round(nutrition.protein)}g P
             </span>
-            <span className="text-amber-text">
+            <span className="text-accent-text">
               {Math.round(nutrition.carbs)}g C
             </span>
-            <span className="text-danger-text">
+            <span className="text-accent-text">
               {Math.round(nutrition.fat)}g F
             </span>
           </div>

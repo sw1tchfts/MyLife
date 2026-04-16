@@ -12,7 +12,6 @@ import {
   labelSm,
   hint,
   badge,
-  badgeSm,
   card,
   panel,
   input,
@@ -20,12 +19,6 @@ import {
   select,
   btnPrimary,
   btnSecondary,
-  btnDanger,
-  btnDangerSm,
-  btnSuccess,
-  btnSuccessSm,
-  btnSuccessXs,
-  btnInfo,
   btnGhost,
   pillActive,
   pillInactive,
@@ -110,10 +103,9 @@ export default function UIElementsTab() {
       {/* ── Buttons ──────────────────────────────── */}
       <Section title="Buttons">
         <div className="space-y-6">
-          {/* Primary row */}
           <div>
             <TokenLabel name="btnPrimary" />
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <button className={btnPrimary}>Primary</button>
               <button className={btnPrimary} disabled>
                 Disabled
@@ -121,7 +113,6 @@ export default function UIElementsTab() {
             </div>
           </div>
 
-          {/* Secondary */}
           <div>
             <TokenLabel name="btnSecondary" />
             <div className="flex flex-wrap gap-3">
@@ -129,34 +120,6 @@ export default function UIElementsTab() {
             </div>
           </div>
 
-          {/* Danger */}
-          <div>
-            <TokenLabel name="btnDanger / btnDangerSm" />
-            <div className="flex flex-wrap items-center gap-3">
-              <button className={btnDanger}>Danger</button>
-              <button className={btnDangerSm}>Danger Sm</button>
-            </div>
-          </div>
-
-          {/* Success */}
-          <div>
-            <TokenLabel name="btnSuccess / btnSuccessSm / btnSuccessXs" />
-            <div className="flex flex-wrap items-center gap-3">
-              <button className={btnSuccess}>Success</button>
-              <button className={btnSuccessSm}>Success Sm</button>
-              <button className={btnSuccessXs}>Success Xs</button>
-            </div>
-          </div>
-
-          {/* Info */}
-          <div>
-            <TokenLabel name="btnInfo" />
-            <div className="flex flex-wrap gap-3">
-              <button className={btnInfo}>Info</button>
-            </div>
-          </div>
-
-          {/* Ghost */}
           <div>
             <TokenLabel name="btnGhost" />
             <div className="flex flex-wrap gap-3">
@@ -164,9 +127,8 @@ export default function UIElementsTab() {
             </div>
           </div>
 
-          {/* Delete icon button */}
           <div>
-            <TokenLabel name="deleteBtn" />
+            <TokenLabel name="deleteBtn (icon button)" />
             <button className={deleteBtn}>
               <svg
                 className="h-4 w-4"
@@ -184,7 +146,6 @@ export default function UIElementsTab() {
             </button>
           </div>
 
-          {/* Common combos */}
           <div>
             <TokenLabel name="Common combo: Cancel + Save" />
             <div className="flex gap-3">
@@ -200,67 +161,16 @@ export default function UIElementsTab() {
       {/* ── Badges ──────────────────────────────── */}
       <Section title="Badges">
         <div className="space-y-6">
-          {/* Standard badge */}
           <div>
-            <TokenLabel name="badge (standard)" />
+            <TokenLabel name="badge" />
             <div className="flex flex-wrap gap-2">
               <span className={`${badge} bg-accent-soft text-accent-text`}>
                 Default
-              </span>
-              <span className={`${badge} bg-success-soft text-success-text`}>
-                Success
-              </span>
-              <span className={`${badge} bg-danger-soft text-danger-text`}>
-                Danger
-              </span>
-              <span className={`${badge} bg-warning-soft text-warning-text`}>
-                Warning
-              </span>
-              <span className={`${badge} bg-info-soft text-info-text`}>
-                Info
-              </span>
-              <span className={`${badge} bg-purple-soft text-purple-text`}>
-                Purple
-              </span>
-              <span className={`${badge} bg-amber-soft text-amber-text`}>
-                Amber
               </span>
               <span className={`${badge} bg-elevated text-body`}>Neutral</span>
             </div>
           </div>
 
-          {/* Small badge */}
-          <div>
-            <TokenLabel name="badgeSm (compact)" />
-            <div className="flex flex-wrap gap-2">
-              <span className={`${badgeSm} bg-accent-soft text-accent-text`}>
-                Default
-              </span>
-              <span className={`${badgeSm} bg-success-soft text-success-text`}>
-                Success
-              </span>
-              <span className={`${badgeSm} bg-danger-soft text-danger-text`}>
-                Danger
-              </span>
-              <span className={`${badgeSm} bg-warning-soft text-warning-text`}>
-                Warning
-              </span>
-              <span className={`${badgeSm} bg-info-soft text-info-text`}>
-                Info
-              </span>
-              <span className={`${badgeSm} bg-purple-soft text-purple-text`}>
-                Purple
-              </span>
-              <span className={`${badgeSm} bg-amber-soft text-amber-text`}>
-                Amber
-              </span>
-              <span className={`${badgeSm} bg-elevated text-body`}>
-                Neutral
-              </span>
-            </div>
-          </div>
-
-          {/* Component badges */}
           <div>
             <TokenLabel name="StatusBadge component" />
             <div className="flex flex-wrap gap-2">
@@ -340,7 +250,6 @@ export default function UIElementsTab() {
       {/* ── Form Inputs ──────────────────────────── */}
       <Section title="Form Inputs">
         <div className="space-y-6">
-          {/* Standard input */}
           <div>
             <TokenLabel name="input (standard)" />
             <label className={label}>Email Address</label>
@@ -353,7 +262,6 @@ export default function UIElementsTab() {
             />
           </div>
 
-          {/* Small input */}
           <div>
             <TokenLabel name="inputSm (compact)" />
             <label className={labelSm}>Search</label>
@@ -364,7 +272,6 @@ export default function UIElementsTab() {
             />
           </div>
 
-          {/* Select */}
           <div>
             <TokenLabel name="select" />
             <label className={label}>Category</label>
@@ -379,9 +286,8 @@ export default function UIElementsTab() {
             </select>
           </div>
 
-          {/* Textarea */}
           <div>
-            <TokenLabel name="textarea (uses input border radius)" />
+            <TokenLabel name="textarea" />
             <label className={label}>Description</label>
             <textarea
               rows={3}
@@ -390,7 +296,6 @@ export default function UIElementsTab() {
             />
           </div>
 
-          {/* Checkbox */}
           <div>
             <TokenLabel name="checkbox" />
             <div className="space-y-2">
@@ -415,7 +320,6 @@ export default function UIElementsTab() {
             </div>
           </div>
 
-          {/* Disabled input */}
           <div>
             <TokenLabel name="input (disabled)" />
             <label className={label}>Disabled Field</label>
@@ -434,7 +338,6 @@ export default function UIElementsTab() {
       {/* ── Cards & Panels ───────────────────────── */}
       <Section title="Cards & Panels">
         <div className="space-y-6">
-          {/* Card */}
           <div>
             <TokenLabel name="card (hoverable)" />
             <div className={card}>
@@ -444,14 +347,13 @@ export default function UIElementsTab() {
                 items.
               </p>
               <div className="mt-3 flex gap-2">
-                <span className={`${badgeSm} bg-accent-soft text-accent-text`}>
+                <span className={`${badge} bg-accent-soft text-accent-text`}>
                   Badge
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Panel */}
           <div>
             <TokenLabel name="panel (static container)" />
             <div className={`${panel} p-4`}>
@@ -463,7 +365,6 @@ export default function UIElementsTab() {
             </div>
           </div>
 
-          {/* Accent form panel */}
           <div>
             <TokenLabel name="Accent panel (inline create forms)" />
             <div className="rounded-xl border border-accent bg-accent-soft p-4">

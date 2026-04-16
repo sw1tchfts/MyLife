@@ -38,20 +38,20 @@ interface TrackerResponse {
 const CONFIDENCE_CONFIG = {
   low: {
     label: "Low",
-    color: "text-danger-text",
-    bg: "bg-danger-soft",
+    color: "text-accent-text",
+    bg: "bg-accent-soft",
     desc: "Less than 2 weeks of data. Estimate based mostly on formula.",
   },
   medium: {
     label: "Medium",
-    color: "text-amber-text",
-    bg: "bg-amber-soft",
+    color: "text-accent-text",
+    bg: "bg-accent-soft",
     desc: "2-4 weeks of data. Estimate becoming personalized.",
   },
   high: {
     label: "High",
-    color: "text-success-text",
-    bg: "bg-success-soft",
+    color: "text-accent-text",
+    bg: "bg-accent-soft",
     desc: "4+ weeks of data. Estimate driven by your real data.",
   },
 };
@@ -112,10 +112,10 @@ export default function DailyLogSection() {
   return (
     <div>
       {/* TDEE Hero Card */}
-      <div className="mt-6 rounded-xl border border-info-soft bg-gradient-to-br from-info-soft/30 to-info-soft/20 p-6">
+      <div className="mt-6 rounded-xl border border-accent-soft bg-gradient-to-br from-info-soft/30 to-info-soft/20 p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-info-text">
+            <p className="text-sm font-medium text-accent-text">
               Estimated Daily Burn (TDEE)
             </p>
             <p className="mt-1 text-4xl font-bold text-heading">
@@ -155,9 +155,9 @@ export default function DailyLogSection() {
               color={
                 tdee.weeklyWeightChange !== null
                   ? tdee.weeklyWeightChange > 0
-                    ? "text-danger-text"
+                    ? "text-accent-text"
                     : tdee.weeklyWeightChange < 0
-                      ? "text-success-text"
+                      ? "text-accent-text"
                       : undefined
                   : undefined
               }
@@ -284,7 +284,7 @@ export default function DailyLogSection() {
               </svg>
               <div className="mt-1 flex justify-between text-[10px] text-faint">
                 <span>{calorieEntries[0]?.date}</span>
-                <span className="text-info-text">
+                <span className="text-accent-text">
                   — TDEE: {tdee.estimatedTDEE.toLocaleString()} cal
                 </span>
                 <span>{calorieEntries[calorieEntries.length - 1]?.date}</span>
@@ -315,8 +315,8 @@ export default function DailyLogSection() {
                   <div
                     className={`h-full rounded-full transition-all ${
                       todayNutrition.calories > tdee.calorieTarget
-                        ? "bg-danger"
-                        : "bg-info"
+                        ? "bg-accent"
+                        : "bg-accent"
                     }`}
                     style={{
                       width: `${Math.min((todayNutrition.calories / tdee.calorieTarget) * 100, 100)}%`,
@@ -335,12 +335,12 @@ export default function DailyLogSection() {
                 <MacroCard
                   label="Carbs"
                   grams={todayNutrition.carbs}
-                  color="text-amber-text"
+                  color="text-accent-text"
                 />
                 <MacroCard
                   label="Fat"
                   grams={todayNutrition.fat}
-                  color="text-danger-text"
+                  color="text-accent-text"
                 />
               </div>
             </div>
@@ -364,7 +364,7 @@ export default function DailyLogSection() {
                   className="flex items-center gap-2 text-sm text-body"
                 >
                   <svg
-                    className="h-4 w-4 text-success-text"
+                    className="h-4 w-4 text-accent-text"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -396,7 +396,7 @@ export default function DailyLogSection() {
               <span
                 className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
                   hasLoggedToday
-                    ? "bg-success-soft text-success-text"
+                    ? "bg-accent-soft text-accent-text"
                     : "bg-elevated text-faint"
                 }`}
               >
@@ -412,7 +412,7 @@ export default function DailyLogSection() {
               <span
                 className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
                   todayNutrition.calories > 0
-                    ? "bg-success-soft text-success-text"
+                    ? "bg-accent-soft text-accent-text"
                     : "bg-elevated text-faint"
                 }`}
               >
@@ -425,7 +425,7 @@ export default function DailyLogSection() {
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-info-soft/30 text-xs font-bold text-info-text">
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-accent-soft/30 text-xs font-bold text-accent-text">
                 {tdee.weeksOfData}
               </span>
               <span className="text-sm text-body">weeks of tracking data</span>

@@ -4,15 +4,16 @@
  * Import and compose these instead of duplicating class strings.
  * Color values come from design tokens defined in globals.css @theme.
  * Visual language follows Apple Human Interface Guidelines.
+ *
+ * COLOR POLICY: All accent/highlight colors use the accent (blue) palette.
+ * Neutral greys (elevated, card, muted, faint) are used for backgrounds
+ * and secondary text. White is used for text on accent-colored buttons.
  * ------------------------------------------------------------------ */
 
 /* ── Badges ─────────────────────────────────────────────────────── */
 
 export const badge =
   "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium";
-
-export const badgeSm =
-  "inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-medium";
 
 /* ── Cards & Panels ─────────────────────────────────────────────── */
 
@@ -41,22 +42,22 @@ export const btnSecondary =
   "rounded-full border border-input-border bg-card px-4 py-2.5 text-sm font-medium text-body hover:bg-elevated active:opacity-80";
 
 export const btnDanger =
-  "rounded-full bg-danger px-5 py-2.5 text-sm font-semibold text-white hover:bg-danger-hover active:opacity-80 disabled:opacity-50";
+  "rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent-hover active:opacity-80 disabled:opacity-50";
 
 export const btnDangerSm =
-  "rounded-full bg-danger px-3 py-1 text-xs font-semibold text-white hover:bg-danger-hover active:opacity-80";
+  "rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white hover:bg-accent-hover active:opacity-80";
 
 export const btnSuccess =
-  "rounded-full bg-success px-5 py-2.5 text-sm font-semibold text-white hover:bg-success-hover active:opacity-80 disabled:opacity-50";
+  "rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent-hover active:opacity-80 disabled:opacity-50";
 
 export const btnSuccessSm =
-  "rounded-full bg-success px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-success-hover active:opacity-80 disabled:opacity-50";
+  "rounded-full bg-accent px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-accent-hover active:opacity-80 disabled:opacity-50";
 
 export const btnSuccessXs =
-  "rounded-full bg-success px-3 py-1 text-xs font-semibold text-white hover:bg-success-hover active:opacity-80 disabled:opacity-50";
+  "rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white hover:bg-accent-hover active:opacity-80 disabled:opacity-50";
 
 export const btnInfo =
-  "rounded-full bg-info px-5 py-2 text-sm font-semibold text-white hover:bg-info-hover active:opacity-80 disabled:opacity-50";
+  "rounded-full bg-accent px-5 py-2 text-sm font-semibold text-white hover:bg-accent-hover active:opacity-80 disabled:opacity-50";
 
 export const btnGhost =
   "rounded-[10px] px-4 py-2.5 text-sm font-medium text-muted hover:bg-elevated hover:text-body active:opacity-80";
@@ -108,6 +109,6 @@ export const emptyState =
   "rounded-xl border-2 border-dashed border-input-border py-12 text-center";
 
 export const deleteBtn =
-  "rounded-[10px] p-1 text-faint hover:bg-danger-soft hover:text-danger-text";
+  "rounded-[10px] p-1 text-faint hover:bg-accent-soft hover:text-accent-text";
 
 export const sectionDivider = "border-t border-border";

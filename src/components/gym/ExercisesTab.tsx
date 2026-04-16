@@ -1,13 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import {
-  inputSm,
-  btnPrimary,
-  btnSuccess,
-  emptyState,
-  badgeSm,
-} from "@/lib/styles";
+import { inputSm, btnPrimary, emptyState, badge } from "@/lib/styles";
 
 /* ── Types ─────────────────────────────────────────── */
 
@@ -38,20 +32,8 @@ const MUSCLE_GROUPS = [
 ];
 
 function MuscleGroupBadge({ group }: { group: string }) {
-  const colors: Record<string, string> = {
-    chest: "bg-danger-soft text-danger-text",
-    back: "bg-accent-soft text-accent-text",
-    shoulders: "bg-amber-soft text-amber-text",
-    biceps: "bg-purple-soft text-purple-text",
-    triceps: "bg-info-soft text-info-text",
-    legs: "bg-success-soft text-success-text",
-    core: "bg-warning-soft text-warning-text",
-    cardio: "bg-purple-soft text-purple-text",
-  };
   return (
-    <span
-      className={`${badgeSm} capitalize ${colors[group] || "bg-elevated text-body"}`}
-    >
+    <span className={`${badge} capitalize bg-accent-soft text-accent-text`}>
       {group}
     </span>
   );
@@ -171,7 +153,7 @@ export default function ExercisesTab() {
                 </option>
               ))}
             </select>
-            <button onClick={addExercise} className={btnSuccess}>
+            <button onClick={addExercise} className={btnPrimary}>
               Save
             </button>
           </div>

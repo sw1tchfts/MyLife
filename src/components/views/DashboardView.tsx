@@ -213,7 +213,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
             <p className="text-xs text-muted">Habits</p>
           </div>
           <div className={`flex-1 p-3 text-center ${panel}`}>
-            <p className="text-2xl font-bold text-success-text">
+            <p className="text-2xl font-bold text-accent-text">
               {totalCompleted}
             </p>
             <p className="text-xs text-muted">Completed</p>
@@ -277,7 +277,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
                 </div>
                 <div className="h-3 overflow-hidden rounded-full bg-elevated">
                   <div
-                    className="h-full rounded-full bg-success transition-all"
+                    className="h-full rounded-full bg-accent transition-all"
                     style={{ width: `${weekPct}%` }}
                   />
                 </div>
@@ -334,14 +334,14 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
                       className={`flex h-5 w-7 shrink-0 items-center justify-center ${isToday ? "rounded ring-1 ring-accent-text" : ""}`}
                     >
                       {done ? (
-                        <div className="h-4 w-4 rounded-sm bg-success" />
+                        <div className="h-4 w-4 rounded-sm bg-accent" />
                       ) : (
                         <div className="h-4 w-4 rounded-sm border border-input-border" />
                       )}
                     </div>
                   );
                 })}
-                <div className="ml-2 w-16 shrink-0 text-center text-[10px] font-medium text-success-text">
+                <div className="ml-2 w-16 shrink-0 text-center text-[10px] font-medium text-accent-text">
                   {pct}%
                 </div>
               </div>
@@ -387,9 +387,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
                     <p className="text-[10px] text-muted">Done</p>
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-success-text">
-                      {pct}%
-                    </p>
+                    <p className="text-sm font-bold text-accent-text">{pct}%</p>
                     <p className="text-[10px] text-muted">Rate</p>
                   </div>
                   <div>
@@ -399,7 +397,7 @@ export default function DashboardView({ tasks }: DashboardViewProps) {
                     <p className="text-[10px] text-muted">Streak</p>
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-purple-text">
+                    <p className="text-sm font-bold text-accent-text">
                       {longest}
                     </p>
                     <p className="text-[10px] text-muted">Best</p>

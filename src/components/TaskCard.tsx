@@ -142,7 +142,7 @@ export default memo(function TaskCard({ task, onDelete }: TaskCardProps) {
             </Link>
             <button
               onClick={() => onDelete(task.id)}
-              className="rounded p-1 text-muted hover:bg-danger-soft hover:text-danger-text"
+              className="rounded p-1 text-muted hover:bg-accent-soft hover:text-accent-text"
               title="Delete task"
             >
               <svg

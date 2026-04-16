@@ -165,7 +165,7 @@ export default function DietRoutineTab() {
             create recurring tasks.
           </p>
           {meals.length > 0 && (
-            <p className="mt-1 text-xs text-info-text">
+            <p className="mt-1 text-xs text-accent-text">
               Plan total: ~{Math.round(totalDailyCal)} cal/day
             </p>
           )}
@@ -262,7 +262,7 @@ export default function DietRoutineTab() {
                       </span>
                       <button
                         onClick={() => removeFoodFromMeal(i)}
-                        className="text-faint hover:text-danger-text"
+                        className="text-faint hover:text-accent-text"
                       >
                         &times;
                       </button>
@@ -301,7 +301,7 @@ export default function DietRoutineTab() {
               </button>
             </div>
             {foods.length === 0 && (
-              <p className="mt-1 text-xs text-warning-text">
+              <p className="mt-1 text-xs text-accent-text">
                 No foods saved. Add foods in the Food Library tab first.
               </p>
             )}
@@ -354,7 +354,7 @@ export default function DietRoutineTab() {
                       {MEAL_LABELS[meal.mealType]}
                     </span>
                     <span className="text-xs text-faint">{meal.time}</span>
-                    <span className="text-xs text-success-text">
+                    <span className="text-xs text-accent-text">
                       {Math.round(mealCal)} cal
                     </span>
                   </div>

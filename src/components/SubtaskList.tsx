@@ -90,7 +90,7 @@ export default function SubtaskList({
       {total > 0 && (
         <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-elevated">
           <div
-            className="h-full rounded-full bg-success transition-all"
+            className="h-full rounded-full bg-accent transition-all"
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -118,7 +118,7 @@ export default function SubtaskList({
             </span>
             <button
               onClick={() => deleteSubtask(subtask.id)}
-              className="rounded p-0.5 text-faint opacity-0 transition-opacity hover:text-danger group-hover:opacity-100"
+              className="rounded p-0.5 text-faint opacity-0 transition-opacity hover:text-accent-text group-hover:opacity-100"
               title="Remove"
             >
               <svg
