@@ -36,11 +36,11 @@ const RECURRENCE_LABELS: Record<string, string> = {
 const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   TASK: {
     label: "Task",
-    cls: "bg-elevated text-body",
+    cls: "bg-accent-soft text-accent-text",
   },
   MEAL: {
     label: "Meal",
-    cls: "bg-success-soft text-success-text",
+    cls: "bg-accent-soft text-accent-text",
   },
   MEDICATION: {
     label: "Med",
@@ -48,7 +48,7 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   },
   TRACKER: {
     label: "Tracker",
-    cls: "bg-info-soft text-info-text",
+    cls: "bg-accent-soft text-accent-text",
   },
 };
 
@@ -493,7 +493,7 @@ export default function RecurringConfig() {
                         >
                           {badge.label}
                         </span>
-                        <span className="inline-flex rounded bg-purple-soft px-1 py-0.5 text-[10px] font-medium text-purple-text">
+                        <span className="inline-flex rounded-md bg-accent-soft px-1 py-0.5 text-[10px] font-medium text-accent-text">
                           ↻{" "}
                           {RECURRENCE_LABELS[task.recurrence] ||
                             task.recurrence}

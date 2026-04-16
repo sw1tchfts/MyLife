@@ -168,13 +168,14 @@ export default function ListView({
   }
 
   const GROUP_COLORS: Record<string, string> = {
-    Overdue: "border-danger-soft bg-danger-soft text-danger-text",
-    Today: "border-amber-soft bg-amber-soft text-amber-text",
+    Overdue: "border-accent-soft bg-accent-soft text-accent-text",
+    Today: "border-accent-soft bg-accent-soft text-accent-text",
     Tomorrow: "border-accent-soft bg-accent-soft text-accent-text",
-    "This Week": "border-purple-soft bg-purple-soft text-purple-text",
+    "This Week": "border-accent-soft bg-accent-soft text-accent-text",
   };
 
-  const defaultGroupColor = "border-border bg-elevated text-muted";
+  const defaultGroupColor =
+    "border-accent-soft bg-accent-soft text-accent-text";
 
   return (
     <>
@@ -435,7 +436,7 @@ function TaskTable({
                     <PriorityBadge priority={task.priority} />
                     {task.taskType === "MEAL" && (
                       <span
-                        className={`${badgeSm} bg-success-soft text-success-text`}
+                        className={`${badgeSm} bg-accent-soft text-accent-text`}
                       >
                         Meal
                       </span>
@@ -449,14 +450,14 @@ function TaskTable({
                     )}
                     {task.taskType === "TRACKER" && (
                       <span
-                        className={`${badgeSm} bg-info-soft text-info-text`}
+                        className={`${badgeSm} bg-accent-soft text-accent-text`}
                       >
                         Tracker
                       </span>
                     )}
                     {task.recurrence && task.recurrence !== "NONE" && (
                       <span
-                        className={`${badgeSm} bg-purple-soft text-purple-text`}
+                        className={`${badgeSm} bg-accent-soft text-accent-text`}
                       >
                         ↻{" "}
                         {task.recurrence.charAt(0) +
@@ -468,7 +469,7 @@ function TaskTable({
                         (d) => d.blocker.status !== "DONE",
                       ) && (
                         <span
-                          className={`${badgeSm} bg-danger-soft text-danger-text`}
+                          className={`${badgeSm} bg-accent-soft text-accent-text`}
                         >
                           Blocked
                         </span>
@@ -580,7 +581,7 @@ function TaskTable({
                       </span>
                       {task.taskType === "MEAL" && (
                         <span
-                          className={`${badgeSm} bg-success-soft text-success-text`}
+                          className={`${badgeSm} bg-accent-soft text-accent-text`}
                         >
                           Meal
                         </span>
@@ -594,14 +595,14 @@ function TaskTable({
                       )}
                       {task.taskType === "TRACKER" && (
                         <span
-                          className={`${badgeSm} bg-info-soft text-info-text`}
+                          className={`${badgeSm} bg-accent-soft text-accent-text`}
                         >
                           Tracker
                         </span>
                       )}
                       {task.recurrence && task.recurrence !== "NONE" && (
                         <span
-                          className={`${badgeSm} bg-purple-soft text-purple-text`}
+                          className={`${badgeSm} bg-accent-soft text-accent-text`}
                           title={`Repeats ${task.recurrence.toLowerCase()}`}
                         >
                           ↻{" "}
@@ -619,7 +620,7 @@ function TaskTable({
                           (d) => d.blocker.status !== "DONE",
                         ) && (
                           <span
-                            className={`${badgeSm} bg-danger-soft text-danger-text`}
+                            className={`${badgeSm} bg-accent-soft text-accent-text`}
                             title={`Blocked by: ${task.blockedBy
                               .filter((d) => d.blocker.status !== "DONE")
                               .map((d) => d.blocker.title)

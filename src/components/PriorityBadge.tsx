@@ -8,15 +8,15 @@ const PRIORITY_CONFIG: Record<Priority, { label: string; className: string }> =
   {
     LOW: {
       label: "Low",
-      className: "bg-elevated text-body",
+      className: "bg-accent-soft text-accent-text",
     },
     MEDIUM: {
       label: "Medium",
-      className: "bg-warning-soft text-warning-text",
+      className: "bg-accent-soft text-accent-text",
     },
     HIGH: {
       label: "High",
-      className: "bg-danger-soft text-danger-text",
+      className: "bg-accent-soft text-accent-text",
     },
   };
 

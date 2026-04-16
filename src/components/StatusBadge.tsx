@@ -7,7 +7,7 @@ import { badge } from "@/lib/styles";
 const STATUS_CONFIG: Record<Status, { label: string; className: string }> = {
   TODO: {
     label: "To Do",
-    className: "bg-elevated text-body",
+    className: "bg-accent-soft text-accent-text",
   },
   IN_PROGRESS: {
     label: "In Progress",
@@ -15,7 +15,7 @@ const STATUS_CONFIG: Record<Status, { label: string; className: string }> = {
   },
   DONE: {
     label: "Done",
-    className: "bg-success-soft text-success-text",
+    className: "bg-accent-soft text-accent-text",
   },
 };
 
