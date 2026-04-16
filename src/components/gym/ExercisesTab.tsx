@@ -1,37 +1,50 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { inputSm, btnPrimary, emptyState, badge } from "@/lib/styles";
+import { MUSCLE_GROUPS } from "@/lib/screens";
 
 /* ── Types ─────────────────────────────────────────── */
+
+interface MuscleInfo {
+  id: string;
+  role: string;
+  muscle: {
+    id: string;
+    name: string;
+    group: string;
+  };
+}
 
 interface Exercise {
   id: string;
   name: string;
   slug: string;
-  muscleGroup: string;
-  secondaryMuscles: string;
+  utility: string;
+  mechanics: string;
+  force: string;
   equipment: string;
   difficulty: string;
   instructions: string;
   tips: string;
+  muscles: MuscleInfo[];
 }
 
-/* ── Muscle group helpers ─────────────────────────── */
+/* ── Helpers ─────────────────────────────────────────── */
 
-const MUSCLE_GROUPS = [
-  "chest",
-  "back",
-  "shoulders",
-  "biceps",
-  "triceps",
-  "legs",
-  "core",
-  "cardio",
-  "other",
-];
+function getTargetMuscle(exercise: Exercise): string {
+  const target = exercise.muscles.find((m) => m.role === "target");
+  return target?.muscle.name || "";
+}
 
-function MuscleGroupBadge({ group }: { group: string }) {
+function getTargetGroup(exercise: Exercise): string {
+  const target = exercise.muscles.find((m) => m.role === "target");
+  return target?.muscle.group || "";
+}
+
+function TargetMuscleBadge({ exercise }: { exercise: Exercise }) {
+  const group = getTargetGroup(exercise);
+  if (!group) return null;
   return (
     <span className={`${badge} capitalize bg-accent-soft text-accent-text`}>
       {group}
@@ -47,12 +60,12 @@ export default function ExercisesTab() {
   const [search, setSearch] = useState("");
   const [showAdd, setShowAdd] = useState(false);
   const [newName, setNewName] = useState("");
-  const [newMuscle, setNewMuscle] = useState("chest");
   const [newEquipment, setNewEquipment] = useState("barbell");
+  const seededRef = useRef(false);
 
   const fetchExercises = useCallback(() => {
     const params = new URLSearchParams();
-    if (filter) params.set("muscleGroup", filter);
+    if (filter) params.set("group", filter);
     if (search) params.set("search", search);
     fetch(`/api/gym/exercises?${params}`)
       .then((r) => r.json())
@@ -63,6 +76,16 @@ export default function ExercisesTab() {
     fetchExercises();
   }, [fetchExercises]);
 
+  // Auto-seed if no exercises exist
+  useEffect(() => {
+    if (exercises.length === 0 && !filter && !search && !seededRef.current) {
+      seededRef.current = true;
+      fetch("/api/gym/exercises/seed", { method: "POST" }).then(() =>
+        fetchExercises(),
+      );
+    }
+  }, [exercises.length, filter, search, fetchExercises]);
+
   const addExercise = async () => {
     if (!newName.trim()) return;
     await fetch("/api/gym/exercises", {
@@ -70,7 +93,6 @@ export default function ExercisesTab() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: newName,
-        muscleGroup: newMuscle,
         equipment: newEquipment,
       }),
     });
@@ -98,7 +120,7 @@ export default function ExercisesTab() {
           <option value="">All muscles</option>
           {MUSCLE_GROUPS.map((g) => (
             <option key={g} value={g}>
-              {g.charAt(0).toUpperCase() + g.slice(1)}
+              {g}
             </option>
           ))}
         </select>
@@ -123,17 +145,6 @@ export default function ExercisesTab() {
               className="flex-1 rounded-[10px] border border-input-border bg-card px-3 py-2 text-sm text-heading"
             />
             <select
-              value={newMuscle}
-              onChange={(e) => setNewMuscle(e.target.value)}
-              className="rounded-[10px] border border-input-border bg-card px-2 py-2 text-sm text-heading"
-            >
-              {MUSCLE_GROUPS.map((g) => (
-                <option key={g} value={g}>
-                  {g.charAt(0).toUpperCase() + g.slice(1)}
-                </option>
-              ))}
-            </select>
-            <select
               value={newEquipment}
               onChange={(e) => setNewEquipment(e.target.value)}
               className="rounded-[10px] border border-input-border bg-card px-2 py-2 text-sm text-heading"
@@ -146,6 +157,8 @@ export default function ExercisesTab() {
                 "bodyweight",
                 "kettlebell",
                 "band",
+                "smith",
+                "sled",
                 "other",
               ].map((e) => (
                 <option key={e} value={e}>
@@ -175,13 +188,13 @@ export default function ExercisesTab() {
               key={ex.id}
               className="rounded-xl border border-border bg-card p-3"
             >
-              <div className="flex items-start justify-between">
+              <div className="flex items-start justify-between gap-2">
                 <p className="text-sm font-medium text-heading">{ex.name}</p>
-                <MuscleGroupBadge group={ex.muscleGroup} />
+                <TargetMuscleBadge exercise={ex} />
               </div>
               <p className="mt-1 text-xs text-faint">
-                {ex.equipment}
-                {ex.difficulty !== "beginner" && ` · ${ex.difficulty}`}
+                {getTargetMuscle(ex)}
+                {ex.equipment && ` · ${ex.equipment}`}
               </p>
             </div>
           ))}

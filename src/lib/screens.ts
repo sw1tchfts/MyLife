@@ -45,6 +45,19 @@ export const GYM_TABS = [
   { key: "routines", label: "Routines" },
 ] as const;
 
+export const MUSCLE_GROUPS = [
+  "Arms",
+  "Back",
+  "Calves",
+  "Chest",
+  "Core",
+  "Forearms",
+  "Hips",
+  "Neck",
+  "Shoulders",
+  "Thighs",
+] as const;
+
 export const MEDICATION_TABS = [
   { key: "medications", label: "Medications" },
   { key: "schedule", label: "Medication Schedule" },

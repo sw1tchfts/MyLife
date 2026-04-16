@@ -1,36 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
-
-const EXERCISE_DB_URL =
-  "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json";
-
-interface RawExercise {
-  id: string;
-  name: string;
-  force: string | null;
-  level: string;
-  mechanic: string | null;
-  equipment: string | null;
-  primaryMuscles: string[];
-  secondaryMuscles: string[];
-  instructions: string[];
-  category: string;
-}
-
-function mapEquipment(raw: string | null): string {
-  if (!raw) return "bodyweight";
-  const map: Record<string, string> = {
-    "body only": "bodyweight",
-    kettlebells: "kettlebell",
-    bands: "band",
-    "e-z curl bar": "barbell",
-    "foam roll": "foam roll",
-    "medicine ball": "medicine ball",
-    "exercise ball": "exercise ball",
-  };
-  return map[raw] || raw;
-}
+import { MUSCLES, EXERCISES } from "@/lib/gym-seed-data";
 
 function makeSlug(name: string): string {
   return name
@@ -40,7 +11,7 @@ function makeSlug(name: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-// POST /api/gym/exercises/seed — import exercises from free-exercise-db
+// POST /api/gym/exercises/seed — seed muscles and exercises from static data
 export async function POST() {
   try {
     const supabase = await createClient();
@@ -51,67 +22,108 @@ export async function POST() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fetch the exercise database
-    const res = await fetch(EXERCISE_DB_URL);
-    if (!res.ok) {
-      return NextResponse.json(
-        { error: "Failed to fetch exercise database" },
-        { status: 502 },
-      );
-    }
-    const rawExercises: RawExercise[] = await res.json();
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Delete all existing data (order matters for FK constraints)
+      await tx.exerciseMuscle.deleteMany();
+      await tx.exercise.deleteMany(); // cascades to RoutineDayExercise, WorkoutLogExercise
+      await tx.muscle.deleteMany();
 
-    // Get existing slugs to skip duplicates
-    const existing = await prisma.exercise.findMany({
-      select: { slug: true },
-    });
-    const existingSlugs = new Set(existing.map((e) => e.slug));
-
-    // Build exercises to insert
-    const toInsert = [];
-    const seenSlugs = new Set<string>();
-
-    for (const raw of rawExercises) {
-      const slug = makeSlug(raw.name);
-      if (existingSlugs.has(slug) || seenSlugs.has(slug)) continue;
-      seenSlugs.add(slug);
-
-      toInsert.push({
-        name: raw.name,
-        slug,
-        muscleGroup: raw.primaryMuscles[0] || "other",
-        secondaryMuscles: [
-          ...raw.primaryMuscles.slice(1),
-          ...raw.secondaryMuscles,
-        ].join(", "),
-        equipment: mapEquipment(raw.equipment),
-        difficulty: raw.level || "beginner",
-        category: raw.category || "strength",
-        force: raw.force || "",
-        mechanic: raw.mechanic || "",
-        instructions: raw.instructions.join("\n\n"),
-        tips: "",
+      // 2. Insert parent muscles (those without parentName)
+      const parentMuscles = MUSCLES.filter((m) => !m.parentName);
+      await tx.muscle.createMany({
+        data: parentMuscles.map((m) => ({ name: m.name, group: m.group })),
       });
-    }
 
-    if (toInsert.length === 0) {
-      return NextResponse.json({
-        message: "No new exercises to import",
-        imported: 0,
-        total: existing.length,
-      });
-    }
+      // 3. Look up parent IDs, then insert child muscles
+      const parents = await tx.muscle.findMany();
+      const parentMap = new Map(parents.map((p) => [p.name, p.id]));
 
-    // Batch insert
-    const result = await prisma.exercise.createMany({
-      data: toInsert,
-      skipDuplicates: true,
+      const childMuscles = MUSCLES.filter((m) => m.parentName);
+      if (childMuscles.length > 0) {
+        await tx.muscle.createMany({
+          data: childMuscles.map((m) => ({
+            name: m.name,
+            group: m.group,
+            parentId: parentMap.get(m.parentName!) ?? undefined,
+          })),
+        });
+      }
+
+      // 4. Build full muscle name → ID map
+      const allMuscles = await tx.muscle.findMany();
+      const muscleMap = new Map(allMuscles.map((m) => [m.name, m.id]));
+
+      // 5. Insert exercises and their muscle relationships
+      let exerciseCount = 0;
+      let muscleRelCount = 0;
+      const seenSlugs = new Set<string>();
+
+      for (const ex of EXERCISES) {
+        const slug = makeSlug(ex.name);
+        if (seenSlugs.has(slug)) continue;
+        seenSlugs.add(slug);
+
+        const exercise = await tx.exercise.create({
+          data: {
+            name: ex.name,
+            slug,
+            utility: ex.utility,
+            mechanics: ex.mechanics,
+            force: ex.force,
+            equipment: ex.equipment,
+          },
+        });
+        exerciseCount++;
+
+        // Build muscle role entries
+        const roleEntries: { muscleId: string; role: string }[] = [];
+
+        const addRoles = (muscles: string[], role: string) => {
+          for (const name of muscles) {
+            const muscleId = muscleMap.get(name);
+            if (muscleId) {
+              roleEntries.push({ muscleId, role });
+            }
+          }
+        };
+
+        addRoles(ex.target, "target");
+        addRoles(ex.synergists, "synergist");
+        addRoles(ex.dynamicStabilizers, "dynamic_stabilizer");
+        addRoles(ex.stabilizers, "stabilizer");
+        addRoles(ex.antagonistStabilizers, "antagonist_stabilizer");
+
+        if (roleEntries.length > 0) {
+          // Deduplicate by [muscleId, role]
+          const seen = new Set<string>();
+          const unique = roleEntries.filter((e) => {
+            const key = `${e.muscleId}:${e.role}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+
+          await tx.exerciseMuscle.createMany({
+            data: unique.map((e) => ({
+              exerciseId: exercise.id,
+              muscleId: e.muscleId,
+              role: e.role,
+            })),
+          });
+          muscleRelCount += unique.length;
+        }
+      }
+
+      return {
+        muscles: allMuscles.length,
+        exercises: exerciseCount,
+        muscleRelations: muscleRelCount,
+      };
     });
 
     return NextResponse.json({
-      message: `Imported ${result.count} exercises`,
-      imported: result.count,
-      total: existing.length + result.count,
+      message: `Seeded ${result.exercises} exercises, ${result.muscles} muscles, ${result.muscleRelations} muscle-exercise relations`,
+      ...result,
     });
   } catch (error) {
     console.error("Failed to seed exercises:", error);

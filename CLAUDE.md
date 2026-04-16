@@ -64,6 +64,7 @@ src/
   lib/screens.ts               # Centralized screen, tab, modal, and shared label constants
   lib/tdee.ts                  # Adaptive TDEE algorithm (weight tracking + daily burn)
   lib/recurrence.ts            # Recurring task instance generation
+  lib/gym-seed-data.ts         # Static exercise + muscle seed data (1128 exercises, 81 muscles)
   app/
     page.tsx                   # Home — redirects to /tasks
     layout.tsx                 # Root layout (sidebar for authed, plain for login)
@@ -85,8 +86,9 @@ src/
     api/tracker/route.ts               # GET tracker dashboard data + POST daily log
     api/journal/route.ts               # GET (paginated) + POST journal entries
     api/journal/[id]/route.ts          # GET + PUT + DELETE single journal entry
-    api/gym/exercises/route.ts         # GET + POST exercises (filter by muscleGroup, category, search)
-    api/gym/exercises/seed/route.ts    # POST — import exercises from free-exercise-db (~870 exercises)
+    api/gym/exercises/route.ts         # GET + POST exercises (filter by muscle group, category, search)
+    api/gym/exercises/seed/route.ts    # POST — seed exercises + muscles from static data (1128 exercises)
+    api/gym/muscles/route.ts           # GET muscles (filter by group, includes hierarchy)
     api/gym/routines/route.ts          # GET + POST workout routines
     api/gym/routines/[id]/route.ts     # GET + DELETE single routine
     api/gym/logs/route.ts              # GET + POST workout logs
@@ -173,7 +175,9 @@ src/
 
 ## Gym & Workout Logs
 
-- **Exercise library**: Seeded from [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (~870 exercises). Each exercise has: `muscleGroup` (specific: quadriceps, lats, abdominals, etc.), `secondaryMuscles`, `equipment`, `difficulty`, `category` (strength/stretching/plyometrics/etc.), `force` (push/pull/static), `mechanic` (compound/isolation). Seed via `POST /api/gym/exercises/seed`.
+- **Muscle database**: `Muscle` table with self-referencing hierarchy (`parentId`). Each muscle has a `group` (Arms, Back, Calves, Chest, Core, Forearms, Hips, Neck, Shoulders, Thighs) and optional parent (e.g., "Deltoid, Anterior" → parent "Deltoid"). ~81 muscles. Muscle group constants in `src/lib/screens.ts`.
+- **Exercise-muscle relationships**: `ExerciseMuscle` junction table links exercises to muscles with a `role` field: `target`, `synergist`, `dynamic_stabilizer`, `stabilizer`, `antagonist_stabilizer`. Based on ExRx.net's classification system.
+- **Exercise library**: Seeded from [MuscleBook](https://github.com/cfilipov/MuscleBook) exercises.yaml (1128 exercises from ExRx.net). Static seed data in `src/lib/gym-seed-data.ts`. Each exercise has: `utility` (Basic/Auxiliary), `mechanics` (Compound/Isolated), `force` (Push/Pull), `equipment`, plus detailed muscle role mappings. Seed via `POST /api/gym/exercises/seed`.
 - **Routine creation**: Each `WorkoutRoutineDay` has an optional `scheduledDay` field (mon/tue/wed/thu/fri/sat/sun) so weekdays can be assigned during routine building
 - **Activation**: Creates recurring tasks from routine days; pre-populates weekday assignments from saved `scheduledDay` values
 - **Workout log persistence**: `WorkoutLog.routineId` and `routineDayId` use `onDelete: SetNull` — deleting a routine preserves all logged workouts

@@ -22,8 +22,11 @@ const ROUTINE_INCLUDE = {
               id: true,
               name: true,
               slug: true,
-              muscleGroup: true,
               equipment: true,
+              muscles: {
+                where: { role: "target" },
+                include: { muscle: true },
+              },
             },
           },
         },

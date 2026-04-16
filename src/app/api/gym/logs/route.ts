@@ -16,7 +16,16 @@ const LOG_INCLUDE = {
   exercises: {
     orderBy: { sortOrder: "asc" as const },
     include: {
-      exercise: { select: { id: true, name: true, muscleGroup: true } },
+      exercise: {
+        select: {
+          id: true,
+          name: true,
+          muscles: {
+            where: { role: "target" },
+            include: { muscle: true },
+          },
+        },
+      },
       sets: { orderBy: { setNumber: "asc" as const } },
     },
   },

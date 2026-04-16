@@ -36,8 +36,11 @@ export async function GET(
                     id: true,
                     name: true,
                     slug: true,
-                    muscleGroup: true,
                     equipment: true,
+                    muscles: {
+                      where: { role: "target" },
+                      include: { muscle: true },
+                    },
                   },
                 },
               },

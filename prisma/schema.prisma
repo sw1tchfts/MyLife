@@ -252,24 +252,50 @@ model BodyMetric {
 
 // ── Gym & Workout Tracking ───────────────────────────
 
+model Muscle {
+  id              String           @id @default(cuid())
+  name            String           @unique
+  group           String
+  parentId        String?
+  parent          Muscle?          @relation("MuscleHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children        Muscle[]         @relation("MuscleHierarchy")
+  exerciseMuscles ExerciseMuscle[]
+  createdAt       DateTime         @default(now())
+
+  @@index([group])
+  @@index([parentId])
+}
+
+model ExerciseMuscle {
+  id         String   @id @default(cuid())
+  exerciseId String
+  muscleId   String
+  role       String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  muscle     Muscle   @relation(fields: [muscleId], references: [id], onDelete: Cascade)
+
+  @@unique([exerciseId, muscleId, role])
+  @@index([exerciseId])
+  @@index([muscleId])
+}
+
 model Exercise {
-  id               String   @id @default(cuid())
+  id               String           @id @default(cuid())
   name             String
-  slug             String   @unique
-  muscleGroup      String
-  secondaryMuscles String   @default("")
-  equipment        String   @default("bodyweight")
-  difficulty       String   @default("beginner")
-  category         String   @default("strength")
-  force            String   @default("")
-  mechanic         String   @default("")
-  instructions     String   @default("")
-  tips             String   @default("")
-  createdAt        DateTime @default(now())
+  slug             String           @unique
+  utility          String           @default("")
+  mechanics        String           @default("")
+  force            String           @default("")
+  equipment        String           @default("bodyweight")
+  difficulty       String           @default("beginner")
+  category         String           @default("strength")
+  instructions     String           @default("")
+  tips             String           @default("")
+  createdAt        DateTime         @default(now())
+  muscles          ExerciseMuscle[]
   routineExercises RoutineDayExercise[]
   logExercises     WorkoutLogExercise[]
 
-  @@index([muscleGroup])
   @@index([slug])
 }
 

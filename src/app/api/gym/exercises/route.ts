@@ -10,7 +10,7 @@ async function requireAuth() {
   return user;
 }
 
-// GET /api/gym/exercises — list all exercises, optionally filter by muscleGroup
+// GET /api/gym/exercises — list all exercises, optionally filter by muscle group
 export async function GET(request: NextRequest) {
   try {
     const user = await requireAuth();
@@ -19,12 +19,14 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const muscleGroup = searchParams.get("muscleGroup");
+    const group = searchParams.get("group");
     const category = searchParams.get("category");
     const search = searchParams.get("search");
 
     const where: Record<string, unknown> = {};
-    if (muscleGroup) where.muscleGroup = muscleGroup;
+    if (group) {
+      where.muscles = { some: { role: "target", muscle: { group } } };
+    }
     if (category) where.category = category;
     if (search) {
       where.name = { contains: search, mode: "insensitive" };
@@ -32,6 +34,11 @@ export async function GET(request: NextRequest) {
 
     const exercises = await prisma.exercise.findMany({
       where,
+      include: {
+        muscles: {
+          include: { muscle: true },
+        },
+      },
       orderBy: { name: "asc" },
     });
 
@@ -68,15 +75,19 @@ export async function POST(request: NextRequest) {
       data: {
         name: body.name.trim(),
         slug,
-        muscleGroup: body.muscleGroup || "other",
-        secondaryMuscles: body.secondaryMuscles || "",
+        utility: body.utility || "",
+        mechanics: body.mechanics || "",
+        force: body.force || "",
         equipment: body.equipment || "bodyweight",
         difficulty: body.difficulty || "beginner",
         category: body.category || "strength",
-        force: body.force || "",
-        mechanic: body.mechanic || "",
         instructions: body.instructions || "",
         tips: body.tips || "",
+      },
+      include: {
+        muscles: {
+          include: { muscle: true },
+        },
       },
     });
 

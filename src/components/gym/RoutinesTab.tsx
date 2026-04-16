@@ -18,16 +18,33 @@ import { WEEKDAYS, WEEKDAY_LABELS_SHORT } from "@/lib/screens";
 
 /* ── Types ─────────────────────────────────────────── */
 
+interface MuscleInfo {
+  id: string;
+  role: string;
+  muscle: {
+    id: string;
+    name: string;
+    group: string;
+  };
+}
+
 interface Exercise {
   id: string;
   name: string;
   slug: string;
-  muscleGroup: string;
-  secondaryMuscles: string;
+  utility: string;
+  mechanics: string;
+  force: string;
   equipment: string;
   difficulty: string;
   instructions: string;
   tips: string;
+  muscles: MuscleInfo[];
+}
+
+function getTargetMuscle(ex: Exercise): string {
+  const target = ex.muscles?.find((m) => m.role === "target");
+  return target?.muscle.name || "";
 }
 
 interface RoutineExercise {
@@ -477,7 +494,7 @@ export default function RoutinesTab() {
                       <option value="">+ Add exercise...</option>
                       {exercises.map((ex) => (
                         <option key={ex.id} value={ex.id}>
-                          {ex.name} ({ex.muscleGroup})
+                          {ex.name} ({getTargetMuscle(ex)})
                         </option>
                       ))}
                     </select>
