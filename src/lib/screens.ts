@@ -14,6 +14,7 @@ export const SCREEN_NAMES = {
   medications: "Medications",
   journal: "Journal",
   settings: "Settings",
+  admin: "Admin",
 } as const;
 
 /* ── Sidebar Section Names ───────────────────────────── */
