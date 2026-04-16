@@ -13,12 +13,8 @@ import {
   deleteBtn,
   labelSm,
   pillInactive,
-  tabWrapper,
-  tabWrapperScrollable,
-  tabButton,
-  tabButtonActive,
-  tabButtonInactive,
 } from "@/lib/styles";
+import TabBar from "@/components/ui/TabBar";
 
 interface MedicationItem {
   id: string;
@@ -53,9 +49,7 @@ function MedicationsContent() {
   const router = useRouter();
   const tab = (searchParams.get("tab") as Tab) || "medications";
 
-  const setTab = (t: Tab) => router.push(`/medications?tab=${t}`);
-
-  const TABS: { key: Tab; label: string }[] = [
+  const TABS = [
     { key: "medications", label: "Medications" },
     { key: "schedule", label: "Medication Schedule" },
   ];
@@ -63,21 +57,11 @@ function MedicationsContent() {
   return (
     <div>
       <h1 className={`mb-4 ${pageTitle}`}>Medications</h1>
-
-      <div className={`mb-6 ${tabWrapperScrollable}`}>
-        <div className={tabWrapper}>
-          {TABS.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`${tabButton} ${tab === t.key ? tabButtonActive : tabButtonInactive}`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
+      <TabBar
+        tabs={TABS}
+        active={tab}
+        onChange={(t) => router.push(`/medications?tab=${t}`)}
+      />
       {tab === "medications" && <MedicationsTab />}
       {tab === "schedule" && <ScheduleTab />}
     </div>

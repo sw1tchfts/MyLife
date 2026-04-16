@@ -60,6 +60,12 @@ export default function TaskModal({
 }: TaskModalProps) {
   const [task, setTask] = useState<TaskResponse | null>(null);
   const [loading, setLoading] = useState(mode === "edit");
+  const [closing, setClosing] = useState(false);
+
+  const handleClose = useCallback(() => {
+    setClosing(true);
+    setTimeout(onClose, 250);
+  }, [onClose]);
 
   const fetchTask = useCallback(() => {
     if (!taskId) return;
@@ -78,11 +84,11 @@ export default function TaskModal({
   // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [onClose]);
+  }, [handleClose]);
 
   const initialData: TaskFormData | undefined =
     mode === "edit" && task
@@ -130,10 +136,15 @@ export default function TaskModal({
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
+      <div
+        className={`fixed inset-0 z-50 bg-black/50 ${closing ? "animate-fade-out" : "animate-fade-in"}`}
+        onClick={handleClose}
+      />
 
       {/* Panel */}
-      <div className="fixed top-0 right-0 z-50 flex h-full w-full max-w-lg flex-col border-l border-border bg-card shadow-xl">
+      <div
+        className={`fixed top-0 right-0 z-50 flex h-full w-full max-w-lg flex-col border-l border-border bg-card shadow-xl ${closing ? "animate-slide-out-right" : "animate-slide-in-right"}`}
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <h2 className={sectionTitle}>
@@ -144,8 +155,8 @@ export default function TaskModal({
                 : MODAL_TITLES.editTask}
           </h2>
           <button
-            onClick={onClose}
-            className="rounded-md p-1 text-muted hover:bg-elevated hover:text-body"
+            onClick={handleClose}
+            className="rounded-[10px] p-1 text-muted hover:bg-elevated hover:text-body"
           >
             <svg
               className="h-5 w-5"

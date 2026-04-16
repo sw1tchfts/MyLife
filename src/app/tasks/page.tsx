@@ -16,12 +16,8 @@ import {
   pillActive,
   pillInactive,
   emptyState,
-  tabWrapper,
-  tabWrapperScrollable,
-  tabButton,
-  tabButtonActive,
-  tabButtonInactive,
 } from "@/lib/styles";
+import TabBar from "@/components/ui/TabBar";
 
 // Lazy-load tab components that aren't shown by default
 const DashboardView = dynamic(() => import("@/components/views/DashboardView"));
@@ -184,19 +180,12 @@ function TasksContent() {
       </div>
 
       {/* Tabs */}
-      <div className={`mb-4 ${tabWrapperScrollable}`}>
-        <div className={tabWrapper}>
-          {TABS.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`${tabButton} ${tab === t.key ? tabButtonActive : tabButtonInactive}`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <TabBar
+        tabs={TABS}
+        active={tab}
+        onChange={(t) => setTab(t as Tab)}
+        className="mb-4"
+      />
 
       {/* Tab content */}
       {tab === "dashboard" && (

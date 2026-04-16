@@ -107,26 +107,42 @@ function ToastItem({
   onUndo: () => void;
 }) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [exiting, setExiting] = useState(false);
+
+  const animatedDismiss = useCallback(() => {
+    setExiting(true);
+    setTimeout(onDismiss, 200);
+  }, [onDismiss]);
+
+  const animatedUndo = useCallback(() => {
+    setExiting(true);
+    setTimeout(onUndo, 200);
+  }, [onUndo]);
 
   useEffect(() => {
-    timerRef.current = setTimeout(onDismiss, toast.duration);
+    timerRef.current = setTimeout(animatedDismiss, toast.duration);
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [toast.duration, onDismiss]);
+  }, [toast.duration, animatedDismiss]);
 
   return (
-    <div className="flex items-center gap-3 rounded-xl bg-elevated px-4 py-3 text-sm text-white shadow-lg">
+    <div
+      className={`flex items-center gap-3 rounded-xl bg-elevated px-4 py-3 text-sm text-white shadow-lg ${exiting ? "animate-slide-down" : "animate-slide-up"}`}
+    >
       <span>{toast.message}</span>
       {toast.onUndo && (
         <button
-          onClick={onUndo}
+          onClick={animatedUndo}
           className="font-medium text-accent-text hover:text-accent-text/70"
         >
           Undo
         </button>
       )}
-      <button onClick={onDismiss} className="ml-1 text-muted hover:text-body">
+      <button
+        onClick={animatedDismiss}
+        className="ml-1 text-muted hover:text-body"
+      >
         <svg
           className="h-4 w-4"
           fill="none"
