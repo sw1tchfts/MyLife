@@ -162,4 +162,3 @@ const MOOD_OPTIONS = [
   { value: "BAD", label: "Bad", emoji: "\u{1f61e}" },
   { value: "TERRIBLE", label: "Terrible", emoji: "\u{1f622}" },
 ] as const;
-
